@@ -1,5 +1,6 @@
-darkwalker247
+by darkwalker247 with edits by ExPorygon
 
+**From Bulletforge**
 v2: Fixed delay graphic and added optional improved ones for each color at the bottom of the texture for use in custom delay effect code (top left is at x=0,y=2013 and their dimensions are 33x33). Improved the graphics of butterflies and notes.
 
 A shot sheet that imitates ZUN's (with some little extra animation and changes) but they're all handmade by me so feel free to use them.
