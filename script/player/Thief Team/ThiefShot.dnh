@@ -1,0 +1,53 @@
+shot_image  = "./IMG/player_shot.png"
+
+ShotData{
+	id = 1 //Normal Shot (Marisa)
+	rect = (0,95,15,128)
+	render = ALPHA 
+	alpha=120
+	collision = 24
+}
+ShotData{
+	id = 2 //Normal Shot Fade (Marisa)
+	AnimationData { 
+		animation_data=(3,0,95,15,128)
+		animation_data=(3,15,95,30,128)
+		animation_data=(3,30,95,45,128)
+		animation_data=(3,45,95,60,128)
+	}
+	render = ALPHA
+	alpha=90
+	collision = 24
+}
+ShotData{
+	id = 3 //Gold Coin (Nazrin)
+	rect = (110,103,126,119)
+	render = ALPHA 
+	alpha=120
+	angular_velocity = 25
+	collision = 24
+}
+ShotData{
+	id = 4 //Star (Marisa)
+	rect = (60,95,92,127)
+	render = ADD_ARGB
+	alpha=190
+	angular_velocity = 20
+	collision = 24
+}
+ShotData{
+	id = 5 //Silver Coin (Nazrin)
+	rect = (93,103,109,119)
+	render = ALPHA 
+	alpha=120
+	angular_velocity = 25
+	collision = 24
+}
+ShotData{
+	id = 6 //Giant Rock
+	rect = (86,84,125,127)
+	render = ALPHA 
+	alpha=230
+	angular_velocity = 10
+	collision = 40
+}

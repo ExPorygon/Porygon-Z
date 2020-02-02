@@ -1,0 +1,500 @@
+#include"System/LIB/Event_Const.dnh"
+
+function ExplosionA1(objEnemy,type,circlecolor,objectcolor) { //Standard normal enemy explosion effect
+	if(type=="STAR") { NotifyEventAll(EV_EXPLODE,[[1.01],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="MAGIC") { NotifyEventAll(EV_EXPLODE,[[1.02],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="MAPLE") { NotifyEventAll(EV_EXPLODE,[[1.03],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="SNOW") { NotifyEventAll(EV_EXPLODE,[[1.04],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="CHERRY") { NotifyEventAll(EV_EXPLODE,[[1.05],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="MUSIC") { NotifyEventAll(EV_EXPLODE,[[1.06],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="FLOWER") { NotifyEventAll(EV_EXPLODE,[[1.07],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="HEART") { NotifyEventAll(EV_EXPLODE,[[1.08],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="CLOUD") { NotifyEventAll(EV_EXPLODE,[[1.09],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="EARTH") { NotifyEventAll(EV_EXPLODE,[[1.10],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="LIGHTNING") { NotifyEventAll(EV_EXPLODE,[[1.11],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="MOON") { NotifyEventAll(EV_EXPLODE,[[1.12],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="NUCLEAR") { NotifyEventAll(EV_EXPLODE,[[1.13],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="ATOM") { NotifyEventAll(EV_EXPLODE,[[1.14],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="LEAF") { NotifyEventAll(EV_EXPLODE,[[1.15],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="METAL") { NotifyEventAll(EV_EXPLODE,[[1.16],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="FIRE") { NotifyEventAll(EV_EXPLODE,[[1.17],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="WATER") { NotifyEventAll(EV_EXPLODE,[[1.18],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="SUN") { NotifyEventAll(EV_EXPLODE,[[1.19],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="FEATHER") { NotifyEventAll(EV_EXPLODE,[[1.20],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="GLASS") { NotifyEventAll(EV_EXPLODE,[[1.21],[objEnemy],objectcolor,circlecolor]); }
+}
+function ExplosionA2(objEnemy,type,circlecolor,objectcolor) { //A slightly larger normal enemy explosion effect
+	if(type=="STAR") { NotifyEventAll(EV_EXPLODE,[[2.01],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="MAGIC") { NotifyEventAll(EV_EXPLODE,[[2.02],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="MAPLE") { NotifyEventAll(EV_EXPLODE,[[2.03],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="SNOW") { NotifyEventAll(EV_EXPLODE,[[2.04],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="CHERRY") { NotifyEventAll(EV_EXPLODE,[[2.05],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="MUSIC") { NotifyEventAll(EV_EXPLODE,[[2.06],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="FLOWER") { NotifyEventAll(EV_EXPLODE,[[2.07],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="HEART") { NotifyEventAll(EV_EXPLODE,[[2.08],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="CLOUD") { NotifyEventAll(EV_EXPLODE,[[2.09],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="EARTH") { NotifyEventAll(EV_EXPLODE,[[2.10],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="LIGHTNING") { NotifyEventAll(EV_EXPLODE,[[2.11],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="MOON") { NotifyEventAll(EV_EXPLODE,[[2.12],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="NUCLEAR") { NotifyEventAll(EV_EXPLODE,[[2.13],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="ATOM") { NotifyEventAll(EV_EXPLODE,[[2.14],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="LEAF") { NotifyEventAll(EV_EXPLODE,[[2.15],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="METAL") { NotifyEventAll(EV_EXPLODE,[[2.16],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="FIRE") { NotifyEventAll(EV_EXPLODE,[[2.17],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="WATER") { NotifyEventAll(EV_EXPLODE,[[2.18],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="SUN") { NotifyEventAll(EV_EXPLODE,[[2.19],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="FEATHER") { NotifyEventAll(EV_EXPLODE,[[2.20],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="GLASS") { NotifyEventAll(EV_EXPLODE,[[2.21],[objEnemy],objectcolor,circlecolor]); }
+}
+function ExplosionA3(objEnemy,type,circlecolor,objectcolor) { //A larger enemy explosion effect used for Koakuma's pumpkins
+	if(type=="STAR") { NotifyEventAll(EV_EXPLODE,[[2.51],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="MAGIC") { NotifyEventAll(EV_EXPLODE,[[2.52],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="MAPLE") { NotifyEventAll(EV_EXPLODE,[[2.53],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="SNOW") { NotifyEventAll(EV_EXPLODE,[[2.54],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="CHERRY") { NotifyEventAll(EV_EXPLODE,[[2.55],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="MUSIC") { NotifyEventAll(EV_EXPLODE,[[2.56],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="FLOWER") { NotifyEventAll(EV_EXPLODE,[[2.57],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="HEART") { NotifyEventAll(EV_EXPLODE,[[2.58],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="CLOUD") { NotifyEventAll(EV_EXPLODE,[[2.59],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="EARTH") { NotifyEventAll(EV_EXPLODE,[[2.60],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="LIGHTNING") { NotifyEventAll(EV_EXPLODE,[[2.61],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="MOON") { NotifyEventAll(EV_EXPLODE,[[2.62],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="NUCLEAR") { NotifyEventAll(EV_EXPLODE,[[2.63],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="ATOM") { NotifyEventAll(EV_EXPLODE,[[2.64],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="LEAF") { NotifyEventAll(EV_EXPLODE,[[2.65],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="METAL") { NotifyEventAll(EV_EXPLODE,[[2.66],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="FIRE") { NotifyEventAll(EV_EXPLODE,[[2.67],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="WATER") { NotifyEventAll(EV_EXPLODE,[[2.68],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="SUN") { NotifyEventAll(EV_EXPLODE,[[2.69],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="FEATHER") { NotifyEventAll(EV_EXPLODE,[[2.70],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="GLASS") { NotifyEventAll(EV_EXPLODE,[[2.71],[objEnemy],objectcolor,circlecolor]); }
+}
+function ExplosionB1(objEnemy,type,circlecolor,objectcolor) { //Standard boss enemy explosion effect 
+	if(type=="STAR") { NotifyEventAll(EV_EXPLODE,[[3.01],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="MAGIC") { NotifyEventAll(EV_EXPLODE,[[3.02],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="MAPLE") { NotifyEventAll(EV_EXPLODE,[[3.03],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="SNOW") { NotifyEventAll(EV_EXPLODE,[[3.04],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="CHERRY") { NotifyEventAll(EV_EXPLODE,[[3.05],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="MUSIC") { NotifyEventAll(EV_EXPLODE,[[3.06],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="FLOWER") { NotifyEventAll(EV_EXPLODE,[[3.07],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="HEART") { NotifyEventAll(EV_EXPLODE,[[3.08],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="CLOUD") { NotifyEventAll(EV_EXPLODE,[[3.09],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="EARTH") { NotifyEventAll(EV_EXPLODE,[[3.10],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="LIGHTNING") { NotifyEventAll(EV_EXPLODE,[[3.11],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="MOON") { NotifyEventAll(EV_EXPLODE,[[3.12],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="NUCLEAR") { NotifyEventAll(EV_EXPLODE,[[3.13],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="ATOM") { NotifyEventAll(EV_EXPLODE,[[3.14],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="LEAF") { NotifyEventAll(EV_EXPLODE,[[3.15],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="METAL") { NotifyEventAll(EV_EXPLODE,[[3.16],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="FIRE") { NotifyEventAll(EV_EXPLODE,[[3.17],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="WATER") { NotifyEventAll(EV_EXPLODE,[[3.18],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="SUN") { NotifyEventAll(EV_EXPLODE,[[3.19],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="FEATHER") { NotifyEventAll(EV_EXPLODE,[[3.20],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="GLASS") { NotifyEventAll(EV_EXPLODE,[[3.21],[objEnemy],objectcolor,circlecolor]); }
+}
+function ExplosionB2(objEnemy,type,circlecolor,objectcolor) { //Standard "end of stage" boss enemy explosion effect
+	if(type=="STAR") { NotifyEventAll(EV_EXPLODE,[[4.01],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="MAGIC") { NotifyEventAll(EV_EXPLODE,[[4.02],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="MAPLE") { NotifyEventAll(EV_EXPLODE,[[4.03],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="SNOW") { NotifyEventAll(EV_EXPLODE,[[4.04],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="CHERRY") { NotifyEventAll(EV_EXPLODE,[[4.05],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="MUSIC") { NotifyEventAll(EV_EXPLODE,[[4.06],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="FLOWER") { NotifyEventAll(EV_EXPLODE,[[4.07],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="HEART") { NotifyEventAll(EV_EXPLODE,[[4.08],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="CLOUD") { NotifyEventAll(EV_EXPLODE,[[4.09],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="EARTH") { NotifyEventAll(EV_EXPLODE,[[4.10],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="LIGHTNING") { NotifyEventAll(EV_EXPLODE,[[4.11],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="MOON") { NotifyEventAll(EV_EXPLODE,[[4.12],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="NUCLEAR") { NotifyEventAll(EV_EXPLODE,[[4.13],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="ATOM") { NotifyEventAll(EV_EXPLODE,[[4.14],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="LEAF") { NotifyEventAll(EV_EXPLODE,[[4.15],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="METAL") { NotifyEventAll(EV_EXPLODE,[[4.16],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="FIRE") { NotifyEventAll(EV_EXPLODE,[[4.17],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="WATER") { NotifyEventAll(EV_EXPLODE,[[4.18],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="SUN") { NotifyEventAll(EV_EXPLODE,[[4.19],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="FEATHER") { NotifyEventAll(EV_EXPLODE,[[4.20],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="GLASS") { NotifyEventAll(EV_EXPLODE,[[4.21],[objEnemy],objectcolor,circlecolor]); }
+}
+function ExplosionB3(objEnemy,type,circlecolor,objectcolor) { //Boss enemy explosion effect modelled from Magical Singular Day
+	if(type=="STAR") { NotifyEventAll(EV_EXPLODE,[[5.01],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="MAGIC") { NotifyEventAll(EV_EXPLODE,[[5.02],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="MAPLE") { NotifyEventAll(EV_EXPLODE,[[5.03],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="SNOW") { NotifyEventAll(EV_EXPLODE,[[5.04],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="CHERRY") { NotifyEventAll(EV_EXPLODE,[[5.05],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="MUSIC") { NotifyEventAll(EV_EXPLODE,[[5.06],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="FLOWER") { NotifyEventAll(EV_EXPLODE,[[5.07],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="HEART") { NotifyEventAll(EV_EXPLODE,[[5.08],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="CLOUD") { NotifyEventAll(EV_EXPLODE,[[5.09],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="EARTH") { NotifyEventAll(EV_EXPLODE,[[5.10],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="LIGHTNING") { NotifyEventAll(EV_EXPLODE,[[5.11],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="MOON") { NotifyEventAll(EV_EXPLODE,[[5.12],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="NUCLEAR") { NotifyEventAll(EV_EXPLODE,[[5.13],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="ATOM") { NotifyEventAll(EV_EXPLODE,[[5.14],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="LEAF") { NotifyEventAll(EV_EXPLODE,[[5.15],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="METAL") { NotifyEventAll(EV_EXPLODE,[[5.16],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="FIRE") { NotifyEventAll(EV_EXPLODE,[[5.17],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="WATER") { NotifyEventAll(EV_EXPLODE,[[5.18],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="SUN") { NotifyEventAll(EV_EXPLODE,[[5.19],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="FEATHER") { NotifyEventAll(EV_EXPLODE,[[5.20],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="GLASS") { NotifyEventAll(EV_EXPLODE,[[5.21],[objEnemy],objectcolor,circlecolor]); }
+}
+function ExplosionB4(objEnemy,type,circlecolor,objectcolor) { //Same as B3 minus the MSD effect
+	if(type=="STAR") { NotifyEventAll(EV_EXPLODE,[[6.01],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="MAGIC") { NotifyEventAll(EV_EXPLODE,[[6.02],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="MAPLE") { NotifyEventAll(EV_EXPLODE,[[6.03],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="SNOW") { NotifyEventAll(EV_EXPLODE,[[6.04],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="CHERRY") { NotifyEventAll(EV_EXPLODE,[[6.05],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="MUSIC") { NotifyEventAll(EV_EXPLODE,[[6.06],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="FLOWER") { NotifyEventAll(EV_EXPLODE,[[6.07],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="HEART") { NotifyEventAll(EV_EXPLODE,[[6.08],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="CLOUD") { NotifyEventAll(EV_EXPLODE,[[6.09],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="EARTH") { NotifyEventAll(EV_EXPLODE,[[6.10],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="LIGHTNING") { NotifyEventAll(EV_EXPLODE,[[6.11],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="MOON") { NotifyEventAll(EV_EXPLODE,[[6.12],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="NUCLEAR") { NotifyEventAll(EV_EXPLODE,[[6.13],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="ATOM") { NotifyEventAll(EV_EXPLODE,[[6.14],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="LEAF") { NotifyEventAll(EV_EXPLODE,[[6.15],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="METAL") { NotifyEventAll(EV_EXPLODE,[[6.16],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="FIRE") { NotifyEventAll(EV_EXPLODE,[[6.17],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="WATER") { NotifyEventAll(EV_EXPLODE,[[6.18],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="SUN") { NotifyEventAll(EV_EXPLODE,[[6.19],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="FEATHER") { NotifyEventAll(EV_EXPLODE,[[6.20],[objEnemy],objectcolor,circlecolor]); }
+	if(type=="GLASS") { NotifyEventAll(EV_EXPLODE,[[6.21],[objEnemy],objectcolor,circlecolor]); }
+}
+function ExplosionRainbowB1(objEnemy,type) { //Rainbow version of B1
+	if(type=="STAR") { NotifyEventAll(EV_EXPLODE,[[7.01],[objEnemy]]); }
+	if(type=="MAGIC") { NotifyEventAll(EV_EXPLODE,[[7.02],[objEnemy]]); }
+	if(type=="MAPLE") { NotifyEventAll(EV_EXPLODE,[[7.03],[objEnemy]]); }
+	if(type=="SNOW") { NotifyEventAll(EV_EXPLODE,[[7.04],[objEnemy]]); }
+	if(type=="CHERRY") { NotifyEventAll(EV_EXPLODE,[[7.05],[objEnemy]]); }
+	if(type=="MUSIC") { NotifyEventAll(EV_EXPLODE,[[7.06],[objEnemy]]); }
+	if(type=="FLOWER") { NotifyEventAll(EV_EXPLODE,[[7.07],[objEnemy]]); }
+	if(type=="HEART") { NotifyEventAll(EV_EXPLODE,[[7.08],[objEnemy]]); }
+	if(type=="CLOUD") { NotifyEventAll(EV_EXPLODE,[[7.09],[objEnemy]]); }
+	if(type=="EARTH") { NotifyEventAll(EV_EXPLODE,[[7.10],[objEnemy]]); }
+	if(type=="LIGHTNING") { NotifyEventAll(EV_EXPLODE,[[7.11],[objEnemy]]); }
+	if(type=="MOON") { NotifyEventAll(EV_EXPLODE,[[7.12],[objEnemy]]); }
+	if(type=="NUCLEAR") { NotifyEventAll(EV_EXPLODE,[[7.13],[objEnemy]]); }
+	if(type=="ATOM") { NotifyEventAll(EV_EXPLODE,[[7.14],[objEnemy]]); }
+	if(type=="LEAF") { NotifyEventAll(EV_EXPLODE,[[7.15],[objEnemy]]); }
+	if(type=="METAL") { NotifyEventAll(EV_EXPLODE,[[7.16],[objEnemy]]); }
+	if(type=="FIRE") { NotifyEventAll(EV_EXPLODE,[[7.17],[objEnemy]]); }
+	if(type=="WATER") { NotifyEventAll(EV_EXPLODE,[[7.18],[objEnemy]]); }
+	if(type=="SUN") { NotifyEventAll(EV_EXPLODE,[[7.19],[objEnemy]]); }
+	if(type=="FEATHER") { NotifyEventAll(EV_EXPLODE,[[7.20],[objEnemy]]); }
+	if(type=="GLASS") { NotifyEventAll(EV_EXPLODE,[[7.21],[objEnemy]]); }
+}
+function ExplosionRainbowB2(objEnemy,type) { //Rainbow version of B2
+	if(type=="STAR") { NotifyEventAll(EV_EXPLODE,[[8.01],[objEnemy]]); }
+	if(type=="MAGIC") { NotifyEventAll(EV_EXPLODE,[[8.02],[objEnemy]]); }
+	if(type=="MAPLE") { NotifyEventAll(EV_EXPLODE,[[8.03],[objEnemy]]); }
+	if(type=="SNOW") { NotifyEventAll(EV_EXPLODE,[[8.04],[objEnemy]]); }
+	if(type=="CHERRY") { NotifyEventAll(EV_EXPLODE,[[8.05],[objEnemy]]); }
+	if(type=="MUSIC") { NotifyEventAll(EV_EXPLODE,[[8.06],[objEnemy]]); }
+	if(type=="FLOWER") { NotifyEventAll(EV_EXPLODE,[[8.07],[objEnemy]]); }
+	if(type=="HEART") { NotifyEventAll(EV_EXPLODE,[[8.08],[objEnemy]]); }
+	if(type=="CLOUD") { NotifyEventAll(EV_EXPLODE,[[8.09],[objEnemy]]); }
+	if(type=="EARTH") { NotifyEventAll(EV_EXPLODE,[[8.10],[objEnemy]]); }
+	if(type=="LIGHTNING") { NotifyEventAll(EV_EXPLODE,[[8.11],[objEnemy]]); }
+	if(type=="MOON") { NotifyEventAll(EV_EXPLODE,[[8.12],[objEnemy]]); }
+	if(type=="NUCLEAR") { NotifyEventAll(EV_EXPLODE,[[8.13],[objEnemy]]); }
+	if(type=="ATOM") { NotifyEventAll(EV_EXPLODE,[[8.14],[objEnemy]]); }
+	if(type=="LEAF") { NotifyEventAll(EV_EXPLODE,[[8.15],[objEnemy]]); }
+	if(type=="METAL") { NotifyEventAll(EV_EXPLODE,[[8.16],[objEnemy]]); }
+	if(type=="FIRE") { NotifyEventAll(EV_EXPLODE,[[8.17],[objEnemy]]); }
+	if(type=="WATER") { NotifyEventAll(EV_EXPLODE,[[8.18],[objEnemy]]); }
+	if(type=="SUN") { NotifyEventAll(EV_EXPLODE,[[8.19],[objEnemy]]); }
+	if(type=="FEATHER") { NotifyEventAll(EV_EXPLODE,[[8.20],[objEnemy]]); }
+	if(type=="GLASS") { NotifyEventAll(EV_EXPLODE,[[8.21],[objEnemy]]); }
+}
+function ExplosionRainbowB3(objEnemy,type) { //Rainbow version of B3
+	if(type=="STAR") { NotifyEventAll(EV_EXPLODE,[[9.01],[objEnemy]]); }
+	if(type=="MAGIC") { NotifyEventAll(EV_EXPLODE,[[9.02],[objEnemy]]); }
+	if(type=="MAPLE") { NotifyEventAll(EV_EXPLODE,[[9.03],[objEnemy]]); }
+	if(type=="SNOW") { NotifyEventAll(EV_EXPLODE,[[9.04],[objEnemy]]); }
+	if(type=="CHERRY") { NotifyEventAll(EV_EXPLODE,[[9.05],[objEnemy]]); }
+	if(type=="MUSIC") { NotifyEventAll(EV_EXPLODE,[[9.06],[objEnemy]]); }
+	if(type=="FLOWER") { NotifyEventAll(EV_EXPLODE,[[9.07],[objEnemy]]); }
+	if(type=="HEART") { NotifyEventAll(EV_EXPLODE,[[9.08],[objEnemy]]); }
+	if(type=="CLOUD") { NotifyEventAll(EV_EXPLODE,[[9.09],[objEnemy]]); }
+	if(type=="EARTH") { NotifyEventAll(EV_EXPLODE,[[9.10],[objEnemy]]); }
+	if(type=="LIGHTNING") { NotifyEventAll(EV_EXPLODE,[[9.11],[objEnemy]]); }
+	if(type=="MOON") { NotifyEventAll(EV_EXPLODE,[[9.12],[objEnemy]]); }
+	if(type=="NUCLEAR") { NotifyEventAll(EV_EXPLODE,[[9.13],[objEnemy]]); }
+	if(type=="ATOM") { NotifyEventAll(EV_EXPLODE,[[9.14],[objEnemy]]); }
+	if(type=="LEAF") { NotifyEventAll(EV_EXPLODE,[[9.15],[objEnemy]]); }
+	if(type=="METAL") { NotifyEventAll(EV_EXPLODE,[[9.16],[objEnemy]]); }
+	if(type=="FIRE") { NotifyEventAll(EV_EXPLODE,[[9.17],[objEnemy]]); }
+	if(type=="WATER") { NotifyEventAll(EV_EXPLODE,[[9.18],[objEnemy]]); }
+	if(type=="SUN") { NotifyEventAll(EV_EXPLODE,[[9.19],[objEnemy]]); }
+	if(type=="FEATHER") { NotifyEventAll(EV_EXPLODE,[[9.20],[objEnemy]]); }
+	if(type=="GLASS") { NotifyEventAll(EV_EXPLODE,[[9.21],[objEnemy]]); }
+}
+function ExplosionPPC(objEnemy,color) { //Modeled off of the "burst" summoning effect used in Pretty Pretty Contagion, at the beginning of one of the final cutscenes.
+	NotifyEventAll(EV_EXPLODE,[[10],[objEnemy],color]);
+}
+function ExplosionPPCRainbow(objEnemy) { //Rainbow version of the above
+	NotifyEventAll(EV_EXPLODE,[[11],[objEnemy]]);
+}
+function ConcentrationA1(objEnemy,type,duration,speed,radius,color) { //Standard concentration effect
+	if(type=="STAR") { NotifyEventAll(EV_CONCENTRATION,[[1.01],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="MAGIC") { NotifyEventAll(EV_CONCENTRATION,[[1.02],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="MAPLE") { NotifyEventAll(EV_CONCENTRATION,[[1.03],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="SNOW") { NotifyEventAll(EV_CONCENTRATION,[[1.04],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="CHERRY") { NotifyEventAll(EV_CONCENTRATION,[[1.05],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="MUSIC") { NotifyEventAll(EV_CONCENTRATION,[[1.06],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="FLOWER") { NotifyEventAll(EV_CONCENTRATION,[[1.07],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="HEART") { NotifyEventAll(EV_CONCENTRATION,[[1.08],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="CLOUD") { NotifyEventAll(EV_CONCENTRATION,[[1.09],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="EARTH") { NotifyEventAll(EV_CONCENTRATION,[[1.10],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="LIGHTNING") { NotifyEventAll(EV_CONCENTRATION,[[1.11],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="MOON") { NotifyEventAll(EV_CONCENTRATION,[[1.12],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="NUCLEAR") { NotifyEventAll(EV_CONCENTRATION,[[1.13],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="ATOM") { NotifyEventAll(EV_CONCENTRATION,[[1.14],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="LEAF") { NotifyEventAll(EV_CONCENTRATION,[[1.15],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="METAL") { NotifyEventAll(EV_CONCENTRATION,[[1.16],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="FIRE") { NotifyEventAll(EV_CONCENTRATION,[[1.17],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="WATER") { NotifyEventAll(EV_CONCENTRATION,[[1.18],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="SUN") { NotifyEventAll(EV_CONCENTRATION,[[1.19],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="FEATHER") { NotifyEventAll(EV_CONCENTRATION,[[1.20],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="GLASS") { NotifyEventAll(EV_CONCENTRATION,[[1.21],[objEnemy],[duration],[speed],[radius],color]); }
+}
+function ConcentrationA2(objEnemy,type,duration,speed,radius,color) { //Concentration effect with effects modelled from MSD's explosions
+	if(type=="STAR") { NotifyEventAll(EV_CONCENTRATION,[[2.01],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="MAGIC") { NotifyEventAll(EV_CONCENTRATION,[[2.02],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="MAPLE") { NotifyEventAll(EV_CONCENTRATION,[[2.03],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="SNOW") { NotifyEventAll(EV_CONCENTRATION,[[2.04],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="CHERRY") { NotifyEventAll(EV_CONCENTRATION,[[2.05],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="MUSIC") { NotifyEventAll(EV_CONCENTRATION,[[2.06],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="FLOWER") { NotifyEventAll(EV_CONCENTRATION,[[2.07],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="HEART") { NotifyEventAll(EV_CONCENTRATION,[[2.08],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="CLOUD") { NotifyEventAll(EV_CONCENTRATION,[[2.09],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="EARTH") { NotifyEventAll(EV_CONCENTRATION,[[2.10],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="LIGHTNING") { NotifyEventAll(EV_CONCENTRATION,[[2.11],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="MOON") { NotifyEventAll(EV_CONCENTRATION,[[2.12],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="NUCLEAR") { NotifyEventAll(EV_CONCENTRATION,[[2.13],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="ATOM") { NotifyEventAll(EV_CONCENTRATION,[[2.14],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="LEAF") { NotifyEventAll(EV_CONCENTRATION,[[2.15],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="METAL") { NotifyEventAll(EV_CONCENTRATION,[[2.16],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="FIRE") { NotifyEventAll(EV_CONCENTRATION,[[2.17],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="WATER") { NotifyEventAll(EV_CONCENTRATION,[[2.18],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="SUN") { NotifyEventAll(EV_CONCENTRATION,[[2.19],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="FEATHER") { NotifyEventAll(EV_CONCENTRATION,[[2.20],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="GLASS") { NotifyEventAll(EV_CONCENTRATION,[[2.21],[objEnemy],[duration],[speed],[radius],color]); }
+}
+function ConcentrationA3(objEnemy,type,duration,speed,radius,color) { //Standard concentration effect with a SpellBurstA1 at the end
+	if(type=="STAR") { NotifyEventAll(EV_CONCENTRATION,[[3.01],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="MAGIC") { NotifyEventAll(EV_CONCENTRATION,[[3.02],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="MAPLE") { NotifyEventAll(EV_CONCENTRATION,[[3.03],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="SNOW") { NotifyEventAll(EV_CONCENTRATION,[[3.04],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="CHERRY") { NotifyEventAll(EV_CONCENTRATION,[[3.05],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="MUSIC") { NotifyEventAll(EV_CONCENTRATION,[[3.06],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="FLOWER") { NotifyEventAll(EV_CONCENTRATION,[[3.07],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="HEART") { NotifyEventAll(EV_CONCENTRATION,[[3.08],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="CLOUD") { NotifyEventAll(EV_CONCENTRATION,[[3.09],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="EARTH") { NotifyEventAll(EV_CONCENTRATION,[[3.10],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="LIGHTNING") { NotifyEventAll(EV_CONCENTRATION,[[3.11],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="MOON") { NotifyEventAll(EV_CONCENTRATION,[[3.12],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="NUCLEAR") { NotifyEventAll(EV_CONCENTRATION,[[3.13],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="ATOM") { NotifyEventAll(EV_CONCENTRATION,[[3.14],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="LEAF") { NotifyEventAll(EV_CONCENTRATION,[[3.15],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="METAL") { NotifyEventAll(EV_CONCENTRATION,[[3.16],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="FIRE") { NotifyEventAll(EV_CONCENTRATION,[[3.17],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="WATER") { NotifyEventAll(EV_CONCENTRATION,[[3.18],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="SUN") { NotifyEventAll(EV_CONCENTRATION,[[3.19],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="FEATHER") { NotifyEventAll(EV_CONCENTRATION,[[3.20],[objEnemy],[duration],[speed],[radius],color]); }
+	if(type=="GLASS") { NotifyEventAll(EV_CONCENTRATION,[[3.21],[objEnemy],[duration],[speed],[radius],color]); }
+}
+function ConcentrationA4(objEnemy,type,speed,radius,color) { //Smaller and shorter concentration effect
+	if(type=="STAR") { NotifyEventAll(EV_CONCENTRATION,[[4.01],[objEnemy],[speed],[radius],color]); }
+	if(type=="MAGIC") { NotifyEventAll(EV_CONCENTRATION,[[4.02],[objEnemy],[speed],[radius],color]); }
+	if(type=="MAPLE") { NotifyEventAll(EV_CONCENTRATION,[[4.03],[objEnemy],[speed],[radius],color]); }
+	if(type=="SNOW") { NotifyEventAll(EV_CONCENTRATION,[[4.04],[objEnemy],[speed],[radius],color]); }
+	if(type=="CHERRY") { NotifyEventAll(EV_CONCENTRATION,[[4.05],[objEnemy],[speed],[radius],color]); }
+	if(type=="MUSIC") { NotifyEventAll(EV_CONCENTRATION,[[4.06],[objEnemy],[speed],[radius],color]); }
+	if(type=="FLOWER") { NotifyEventAll(EV_CONCENTRATION,[[4.07],[objEnemy],[speed],[radius],color]); }
+	if(type=="HEART") { NotifyEventAll(EV_CONCENTRATION,[[4.08],[objEnemy],[speed],[radius],color]); }
+	if(type=="CLOUD") { NotifyEventAll(EV_CONCENTRATION,[[4.09],[objEnemy],[speed],[radius],color]); }
+	if(type=="EARTH") { NotifyEventAll(EV_CONCENTRATION,[[4.10],[objEnemy],[speed],[radius],color]); }
+	if(type=="LIGHTNING") { NotifyEventAll(EV_CONCENTRATION,[[4.11],[objEnemy],[speed],[radius],color]); }
+	if(type=="MOON") { NotifyEventAll(EV_CONCENTRATION,[[4.12],[objEnemy],[speed],[radius],color]); }
+	if(type=="NUCLEAR") { NotifyEventAll(EV_CONCENTRATION,[[4.13],[objEnemy],[speed],[radius],color]); }
+	if(type=="ATOM") { NotifyEventAll(EV_CONCENTRATION,[[4.14],[objEnemy],[speed],[radius],color]); }
+	if(type=="LEAF") { NotifyEventAll(EV_CONCENTRATION,[[4.15],[objEnemy],[speed],[radius],color]); }
+	if(type=="METAL") { NotifyEventAll(EV_CONCENTRATION,[[4.16],[objEnemy],[speed],[radius],color]); }
+	if(type=="FIRE") { NotifyEventAll(EV_CONCENTRATION,[[4.17],[objEnemy],[speed],[radius],color]); }
+	if(type=="WATER") { NotifyEventAll(EV_CONCENTRATION,[[4.18],[objEnemy],[speed],[radius],color]); }
+	if(type=="SUN") { NotifyEventAll(EV_CONCENTRATION,[[4.19],[objEnemy],[speed],[radius],color]); }
+	if(type=="FEATHER") { NotifyEventAll(EV_CONCENTRATION,[[4.20],[objEnemy],[speed],[radius],color]); }
+	if(type=="GLASS") { NotifyEventAll(EV_CONCENTRATION,[[4.21],[objEnemy],[speed],[radius],color]); }
+}
+function ConcentrationRainbowA1(objEnemy,type,duration,speed,radius) { //Rainbow version of A1
+	if(type=="STAR") { NotifyEventAll(EV_CONCENTRATION,[[5.01],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="MAGIC") { NotifyEventAll(EV_CONCENTRATION,[[5.02],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="MAPLE") { NotifyEventAll(EV_CONCENTRATION,[[5.03],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="SNOW") { NotifyEventAll(EV_CONCENTRATION,[[5.04],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="CHERRY") { NotifyEventAll(EV_CONCENTRATION,[[5.05],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="MUSIC") { NotifyEventAll(EV_CONCENTRATION,[[5.06],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="FLOWER") { NotifyEventAll(EV_CONCENTRATION,[[5.07],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="HEART") { NotifyEventAll(EV_CONCENTRATION,[[5.08],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="CLOUD") { NotifyEventAll(EV_CONCENTRATION,[[5.09],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="EARTH") { NotifyEventAll(EV_CONCENTRATION,[[5.10],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="LIGHTNING") { NotifyEventAll(EV_CONCENTRATION,[[5.11],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="MOON") { NotifyEventAll(EV_CONCENTRATION,[[5.12],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="NUCLEAR") { NotifyEventAll(EV_CONCENTRATION,[[5.13],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="ATOM") { NotifyEventAll(EV_CONCENTRATION,[[5.14],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="LEAF") { NotifyEventAll(EV_CONCENTRATION,[[5.15],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="METAL") { NotifyEventAll(EV_CONCENTRATION,[[5.16],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="FIRE") { NotifyEventAll(EV_CONCENTRATION,[[5.17],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="WATER") { NotifyEventAll(EV_CONCENTRATION,[[5.18],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="SUN") { NotifyEventAll(EV_CONCENTRATION,[[5.19],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="FEATHER") { NotifyEventAll(EV_CONCENTRATION,[[5.20],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="GLASS") { NotifyEventAll(EV_CONCENTRATION,[[5.21],[objEnemy],[duration],[speed],[radius]]); }
+}
+function ConcentrationRainbowA2(objEnemy,type,duration,speed,radius) { //Rainbow version of A2
+	if(type=="STAR") { NotifyEventAll(EV_CONCENTRATION,[[6.01],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="MAGIC") { NotifyEventAll(EV_CONCENTRATION,[[6.02],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="MAPLE") { NotifyEventAll(EV_CONCENTRATION,[[6.03],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="SNOW") { NotifyEventAll(EV_CONCENTRATION,[[6.04],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="CHERRY") { NotifyEventAll(EV_CONCENTRATION,[[6.05],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="MUSIC") { NotifyEventAll(EV_CONCENTRATION,[[6.06],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="FLOWER") { NotifyEventAll(EV_CONCENTRATION,[[6.07],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="HEART") { NotifyEventAll(EV_CONCENTRATION,[[6.08],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="CLOUD") { NotifyEventAll(EV_CONCENTRATION,[[6.09],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="EARTH") { NotifyEventAll(EV_CONCENTRATION,[[6.10],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="LIGHTNING") { NotifyEventAll(EV_CONCENTRATION,[[6.11],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="MOON") { NotifyEventAll(EV_CONCENTRATION,[[6.12],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="NUCLEAR") { NotifyEventAll(EV_CONCENTRATION,[[6.13],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="ATOM") { NotifyEventAll(EV_CONCENTRATION,[[6.14],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="LEAF") { NotifyEventAll(EV_CONCENTRATION,[[6.15],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="METAL") { NotifyEventAll(EV_CONCENTRATION,[[6.16],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="FIRE") { NotifyEventAll(EV_CONCENTRATION,[[6.17],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="WATER") { NotifyEventAll(EV_CONCENTRATION,[[6.18],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="SUN") { NotifyEventAll(EV_CONCENTRATION,[[6.19],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="FEATHER") { NotifyEventAll(EV_CONCENTRATION,[[6.20],[objEnemy],[duration],[speed],[radius]]); }
+	if(type=="GLASS") { NotifyEventAll(EV_CONCENTRATION,[[6.21],[objEnemy],[duration],[speed],[radius]]); }
+}
+function ConcentrationB1(objEnemy,duration,num,angle,rot,speed,layer,color) { //"Dark" concentration effect modelled from Double Dealing Character (adapted from Mystical Power Plant)
+	NotifyEventAll(EV_CONCENTRATION,[[7],[objEnemy],[duration],[num],[angle],[rot],[speed],[layer],color]);
+}
+function ConcentrationB2(objEnemy,duration,num,angle,rot,speed,layer,color1,color2) { //Same as B1 but with two effects crisscrossing, like how bosses appear in later stages of DDC
+	NotifyEventAll(EV_CONCENTRATION,[[8],[objEnemy],[duration],[num],[angle],[rot],[speed],[layer],color1,color2]);
+}
+function ConcentrationC1(objEnemy,duration,speed,radius,color) { 
+	NotifyEventAll(EV_CONCENTRATION,[[9],[objEnemy],[duration],[speed],[radius],color]);
+}
+function SpellBurstA1(x,y,type,color) {
+	if(type=="STAR") { NotifyEventAll(EV_EFFECT,[[1.01],[x],[y],color]); }
+	if(type=="MAGIC") { NotifyEventAll(EV_EFFECT,[[1.02],[x],[y],color]); }
+	if(type=="MAPLE") { NotifyEventAll(EV_EFFECT,[[1.03],[x],[y],color]); }
+	if(type=="SNOW") { NotifyEventAll(EV_EFFECT,[[1.04],[x],[y],color]); }
+	if(type=="CHERRY") { NotifyEventAll(EV_EFFECT,[[1.05],[x],[y],color]); }
+	if(type=="MUSIC") { NotifyEventAll(EV_EFFECT,[[1.06],[x],[y],color]); }
+	if(type=="FLOWER") { NotifyEventAll(EV_EFFECT,[[1.07],[x],[y],color]); }
+	if(type=="HEART") { NotifyEventAll(EV_EFFECT,[[1.08],[x],[y],color]); }
+	if(type=="CLOUD") { NotifyEventAll(EV_EFFECT,[[1.09],[x],[y],color]); }
+	if(type=="EARTH") { NotifyEventAll(EV_EFFECT,[[1.10],[x],[y],color]); }
+	if(type=="LIGHTNING") { NotifyEventAll(EV_EFFECT,[[1.11],[x],[y],color]); }
+	if(type=="MOON") { NotifyEventAll(EV_EFFECT,[[1.12],[x],[y],color]); }
+	if(type=="NUCLEAR") { NotifyEventAll(EV_EFFECT,[[1.13],[x],[y],color]); }
+	if(type=="ATOM") { NotifyEventAll(EV_EFFECT,[[1.14],[x],[y],color]); }
+	if(type=="LEAF") { NotifyEventAll(EV_EFFECT,[[1.15],[x],[y],color]); }
+	if(type=="METAL") { NotifyEventAll(EV_EFFECT,[[1.16],[x],[y],color]); }
+	if(type=="FIRE") { NotifyEventAll(EV_EFFECT,[[1.17],[x],[y],color]); }
+	if(type=="WATER") { NotifyEventAll(EV_EFFECT,[[1.18],[x],[y],color]); }
+	if(type=="SUN") { NotifyEventAll(EV_EFFECT,[[1.19],[x],[y],color]); }
+	if(type=="FEATHER") { NotifyEventAll(EV_EFFECT,[[1.20],[x],[y],color]); }
+	if(type=="GLASS") { NotifyEventAll(EV_EFFECT,[[1.21],[x],[y],color]); }
+}
+function SpellBurstB1(x,y,maxscale,frame,color) {
+	NotifyEventAll(EV_EFFECT,[[2],[x],[y],[maxscale],[frame],color]);
+}
+function ConcentrationCircle(x,y,speed,r,color) {
+	NotifyEventAll(EV_EFFECT,[[3],[x],[y],[speed],[r],color]);
+}
+function ScreenShake(duration,range) {
+	NotifyEventAll(EV_EFFECT,[[4],[duration],[range]]);
+}
+function ShieldStart(objEnemy) {
+	NotifyEventAll(EV_EFFECT,[[5],[objEnemy]]);
+	Obj_SetValue(objEnemy,"Shield End",false);
+}
+function ShieldStart_DS(objEnemy) {
+	NotifyEventAll(EV_EFFECT,[[5.1],[objEnemy]]);
+	Obj_SetValue(objEnemy,"Shield End",false);
+}
+function SetShieldColor(objEnemy,color) {
+	Obj_SetValue(objEnemy,"Shield Color",color);
+}
+function SetShieldAlpha(objEnemy,alpha) {
+	Obj_SetValue(objEnemy,"Shield Alpha",alpha);
+}
+function SetShieldScale(objEnemy,scale) {
+	Obj_SetValue(objEnemy,"Shield Scale",scale);
+}
+function ShieldEnd(objEnemy) {
+	Obj_SetValue(objEnemy,"Shield End",true);
+}
+function ShieldShatter(objEnemy,duration,scale,speed) {
+	NotifyEventAll(EV_EFFECT,[[6],[objEnemy],[duration],[scale],[speed]]);
+}
+function Sephirot(objEnemy,objTarget,color) { // Input string for color to be converted to RGB array
+	NotifyEventAll(EV_EFFECT,[[7],[objEnemy],[objTarget],ConvertColorRGB(color)]);
+}
+function SetSephirotAlpha(objEnemy,alpha) {
+	Obj_SetValue(objEnemy,"Sephirot Alpha",alpha);
+}
+function SummonEffectA1(obj,scale,frames,color) { //Basic and familiar enemy summoning effect
+	NotifyEventAll(EV_EFFECT,[[8.1],[obj],[scale],[frames],color]);
+}
+function SummonEffectA2(x,y,scale,frames,color) { //Basic and familiar enemy summoning effect
+	NotifyEventAll(EV_EFFECT,[[8.2],[x],[y],[scale],[frames],color]);
+}
+function AlertZone01(num,x,y,dir,frames) { //Sora styled "CAUTION" warning field
+	NotifyEventAll(EV_EFFECT,[[9.1],[num],[x],[y],[dir],[frames]]); // num must be either 2,3,4, or 5
+}
+function AlertZone02(num,x,y,frames) { // Warning field on a single point
+	NotifyEventAll(EV_EFFECT,[[9.2],[num],[x],[y],[frames]]);
+}
+function AlertZone03(num_width,num_length,x,y,dir,frames) { // Variable length warning field
+	NotifyEventAll(EV_EFFECT,[[9.3],[num_width],[num_length],[x],[y],[dir],[frames]]);
+}
+function WingsEffect(ID,arg) {
+	NotifyEventAll(EV_EFFECT,[[10],[ID],[arg]]);
+}
+function Slowdown(fps,frames) {
+	NotifyEventAll(EV_EFFECT,[[11],[fps],[frames]]);
+}
+function Darkness(objEnemy,duration,speed,color) {
+	NotifyEventAll(EV_EFFECT,[[12],[objEnemy],[duration],[speed],color]);
+}
+function StageClear(score) {
+	NotifyEventAll(EV_STAGE_CLEAR,score);
+}
+function ConvertColorRGB(color) {
+	let CircleColor = [];
+	alternative(color)
+	case("White") { CircleColor = [255,255,255]; }
+	case("Red") { CircleColor = [255,96,96]; }
+	case("Orange") { CircleColor = [255,128,64]; }
+	case("Yellow") { CircleColor = [255,255,96]; }
+	case("Swamp") { CircleColor = [128,255,64]; }
+	case("Green") { CircleColor = [96,255,96]; }
+	case("Spring") { CircleColor = [64,255,128]; }
+	case("Aqua") { CircleColor = [96,255,255]; }
+	case("Azure") { CircleColor = [64,128,255]; }
+	case("Blue") { CircleColor = [96,96,255]; }
+	case("Purple") { CircleColor = [128,64,255]; }
+	case("Magenta") { CircleColor = [255,96,255]; }
+	case("Pink") { CircleColor = [255,64,128]; }
+	return CircleColor;
+}
+function EncoreChance {
+	NotifyEventAll(EV_ENCORE_CHANCE,0);
+}
+function LaserBase(objLaser,width) {
+	NotifyEventAll(EV_EFFECT,[[13],[objLaser],[width]]);
+}
+// function SetHueSaturation(obj,hue,sat) {
+	// NotifyEventAll(EV_EFFECT,[[14],[obj],[hue],[sat]]);
+// }

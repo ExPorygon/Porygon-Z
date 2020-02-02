@@ -1,0 +1,399 @@
+//Bullet Effect Script
+
+let CSD = GetCurrentScriptDirectory;
+let MD = GetModuleDirectory;
+
+
+let BreakRender = ID_INVALID;
+
+#include"System/LIB/Event_Const.dnh"
+#include"Script/LIB/Function_Rand.dnh"
+
+@Initialize {
+	BreakRender = InitRender(BreakRender, 0.49,  MD ~ "System/IMG/Effect/BulletBreak.png");
+	ObjSpriteList2D_SetDestRect(BreakRender, -32, -32, 32, 32);
+	SetShotDeleteEventEnable(EV_DELETE_SHOT_IMMEDIATE,true);
+	SetShotDeleteEventEnable(EV_DELETE_SHOT_TO_ITEM,true);
+}
+
+@MainLoop {
+	if(!GetCommonData("Discord",false)) { ObjRender_SetBlendType(BreakRender,BLEND_ADD_ARGB); }
+	else { ObjRender_SetBlendType(BreakRender,BLEND_ALPHA); }
+	yield;
+}
+	
+@Event {
+	alternative(GetEventType)
+	case(EV_DELETE_SHOT) {
+		let eventParam = GetEventArgument(0);
+		BulletDeleteEffect(eventParam[0],eventParam[1],eventParam[2],eventParam[3]);
+	}
+	case(EV_DELETE_LASER) {
+		let eventParam = GetEventArgument(0);
+		LaserDelete(eventParam[0],eventParam[1]);
+	}
+	case(EV_DELETE_ST_LASER) {
+		let eventParam = GetEventArgument(0);
+		StLaserDelete(eventParam[0],eventParam[1]);
+	}
+	case(EV_DELETE_WAVE) {
+		let eventParam = GetEventArgument(0);
+		DeleteShotWave(eventParam[0],eventParam[1],eventParam[2],eventParam[3]);
+	}
+	case(EV_DELETE_SHOT_IMMEDIATE) {
+		let objShot = GetEventArgument(0);
+		let objPos = GetEventArgument(1);
+		BulletDeleteEffect(objPos[0],objPos[1],ObjShot_GetImageID(objShot),objShot);
+	}
+	case(EV_DELETE_SHOT_TO_ITEM) {
+		let objShot = GetEventArgument(0);
+		let objPos = GetEventArgument(1);
+		if(Obj_GetValueD(objShot,"Effect",true)) {
+			BulletDeleteEffect(objPos[0],objPos[1],ObjShot_GetImageID(objShot),objShot);
+		}
+	}
+}
+
+task SimpleDelete(xpos,ypos,graphic,objShot) {
+	let objbreak = ObjPrim_Create(OBJ_SPRITE_2D);
+	let scale = 1;
+	let maxscale = 2.5;
+	let alpha = 255;
+
+	ObjPrim_SetTexture(objbreak, MD ~ "Shot/RCFShot.png");
+	let rect = GetShotDataInfoA1(graphic,TARGET_ENEMY,INFO_RECT);
+	ObjSprite2D_SetSourceRect(objbreak,rect[0],rect[1],rect[2],rect[3]);
+	ObjSprite2D_SetDestCenter(objbreak);
+	Obj_SetRenderPriorityI(objbreak,49);
+	if(!GetCommonData("Discord",false)) { ObjRender_SetBlendType(objbreak,BLEND_ADD_ARGB); }
+	else { ObjRender_SetBlendType(objbreak,BLEND_ALPHA); }
+
+	ObjRender_SetAngleXYZ(objbreak,0,0,ObjMove_GetAngle(objShot)+90);
+	ObjRender_SetPosition(objbreak,xpos,ypos,0);
+
+	ascent(i in 0..20) {
+		scale = 1+(maxscale-1)*sin(90*i/20);
+		//scale+=(maxscale-1)/20;
+		alpha-=255/20;
+		ObjRender_SetScaleXYZ(objbreak,scale,scale,scale);
+		ObjRender_SetAlpha(objbreak,alpha);
+		if(ObjRender_GetBlendType(objbreak)!=BLEND_ALPHA) { ObjRender_SetColor(objbreak,alpha,alpha,alpha); }
+		yield;
+	}
+	Obj_Delete(objbreak);
+}
+
+task DeleteShotWave(type,x,y,speed) {
+	let r = 0;
+	if(type==1) {
+		while(r<=400) {
+			DeleteShotInCircle(TYPE_ALL,TYPE_ITEM,x,y,r);
+			r+=speed;
+			yield;
+		}
+	}
+	if(type==2) {
+		while(r<=400) {
+			DeleteShotInCircle(TYPE_ALL,TYPE_IMMEDIATE,x,y,r);
+			r+=speed;
+			yield;
+		}
+	}
+	if(type==3) {
+		while(r<=400) {
+			let ShotAll = GetShotIdInCircleA2(GetStgFrameWidth/2,GetStgFrameHeight/2,r,TARGET_ENEMY);
+			ascent(i in 0..length(ShotAll)) {
+				let objid = ShotAll[i];
+				if(!ObjShot_IsSpellResist(objid)) {
+					BulletDeleteEffect(ObjMove_GetX(objid),ObjMove_GetY(objid),ObjShot_GetImageID(objid),objid);
+					Obj_Delete(objid);
+					//DeleteShotInCircle(TYPE_ALL,TYPE_IMMEDIATE,ObjMove_GetX(ShotAll[i]),ObjMove_GetY(ShotAll[i]),1);
+				}
+			}
+			r+=speed;
+			yield;
+		}
+	}
+	if(type==4) {
+		let rval = 600+round(speed*30); //it is meant to be 600, but there are added frames to have it persist 30 more frames
+		while(r<=rval) { 
+			let ShotAll = GetShotIdInCircleA2(x,y,r,TARGET_ENEMY);
+			ascent(i in 0..length(ShotAll)) {
+				let objid = ShotAll[i];
+				if(!Obj_IsDeleted(objid)){
+					if(!ObjShot_IsSpellResist(objid)) {
+						BulletDeleteEffect(ObjMove_GetX(objid),ObjMove_GetY(objid),ObjShot_GetImageID(objid),objid);
+						Obj_Delete(objid);
+						//DeleteShotInCircle(TYPE_ALL,TYPE_IMMEDIATE,ObjMove_GetX(ShotAll[i]),ObjMove_GetY(ShotAll[i]),1);
+					}
+				}
+				if(i%10 == 0){yield;}
+			}
+			r+=speed;
+			yield;
+		}
+	}
+}
+
+task LaserDelete(obj,width) {
+	let xpos = 0;
+	let ypos = 0;
+	let angle = 0;
+	let length = 0;
+	let graphic = 0;
+	let x_init = 0;
+	let y_init = 0;
+	if(!Obj_IsDeleted(obj)) { 
+		x_init = ObjRender_GetX(obj);
+		y_init = ObjRender_GetY(obj);
+	}
+	while(!Obj_IsDeleted(obj)) {
+		xpos = ObjRender_GetX(obj);
+		ypos = ObjRender_GetY(obj);
+		angle = ObjMove_GetAngle(obj);
+		length = ObjLaser_GetLength(obj);
+		graphic = ObjShot_GetImageID(obj);
+		yield;
+	}
+	//if(xpos>GetStgFrameWidth+length*0.7 || ypos>GetStgFrameHeight+length*0.7 || xpos<0-length*0.7 || ypos<0-length*0.7) { return; }
+	let x_diff = xpos-x_init;
+	let y_diff = ypos-y_init;
+	let dist = (x_diff^2+y_diff^2)^(1/2);
+	if(length<dist) { dist = length; }
+	let deletewidth = width/20;
+	let DelayColor = [0,0,0];
+	if(graphic>0) { DelayColor = GetShotDataInfoA1(graphic,TARGET_ENEMY,INFO_DELAY_COLOR); }
+	ascent(i in 0..dist*0.90) {
+		if(i%25==0) {
+			loop(round(deletewidth)) {
+				let randnumber1 = rand(-width/2+16,width/2-16);
+				let randnumber2 = rand(-width/2+16,width/2-16);
+				let x_effect = xpos-i*cos(angle)+randnumber1;
+				let y_effect = ypos-i*sin(angle)+randnumber2;
+
+				if(x_effect<GetStgFrameWidth+20 && x_effect>-20 && y_effect<GetStgFrameHeight+20 && y_effect>-20) {
+					BulletBreak(x_effect,y_effect,1.0,DelayColor[0],DelayColor[1],DelayColor[2]);
+					//NotifyEventAll(EV_DELETE_ITEM,[x_effect,y_effect]);
+				}
+			}
+		}
+	}
+}
+
+task StLaserDelete(obj,width) {
+	let xpos = 0;
+	let ypos = 0;
+	let angle = 0;
+	let length = 0;
+	let graphic = 0;
+	let effect = true;
+	let count = 0-ObjShot_GetDelay(obj);
+	let del = 0;
+	while(!Obj_IsDeleted(obj)) {
+		count++;
+		xpos = ObjMove_GetX(obj);
+		ypos = ObjMove_GetY(obj);
+		angle = ObjStLaser_GetAngle(obj);
+		length = ObjLaser_GetLength(obj);
+		graphic = ObjShot_GetImageID(obj);
+		del = Obj_GetValueD(obj,"__Delete Frame__",0);
+		effect = Obj_GetValueD(obj,"Effect",true);
+		yield;
+	}
+	if(count>=del) { return; }
+	let deletewidth = width/20;
+	let DelayColor = [0,0,0];
+	if(graphic>0) { DelayColor = GetShotDataInfoA1(graphic,TARGET_ENEMY,INFO_DELAY_COLOR); }
+	if(effect) {
+		ascent(i in 0..length) {
+			if(i%35==0) {
+				loop(round(deletewidth)) {
+					let randnumber1 = rand(-width/2+16,width/2-16);
+					let randnumber2 = rand(-width/2+16,width/2-16);
+					let x_effect = xpos+i*cos(angle)+randnumber1;
+					let y_effect = ypos+i*sin(angle)+randnumber2;
+
+					if(x_effect<GetStgFrameWidth+20 && x_effect>-20 && y_effect<GetStgFrameHeight+20 && y_effect>-20) {
+						BulletBreak(x_effect,y_effect,1.0,DelayColor[0],DelayColor[1],DelayColor[2]);
+						//NotifyEventAll(EV_DELETE_ITEM,[x_effect,y_effect]);
+					}
+				}
+			}
+		}
+	}
+}
+
+function BulletDeleteEffect(xpos,ypos,graphic,objShot) {
+	if(!GetAreaCommonData("Options","BulletDelete",true)) {
+		if(!Obj_GetValueD(objShot,"Fade Effect",false)) { 
+			// SimpleDelete(xpos,ypos,graphic,objShot); 
+		
+			ObjMove_SetSpeed(objShot, 0);
+			ObjMove_SetMaxSpeed(objShot, 0);
+			ObjMove_SetAcceleration(objShot, 0);
+			ObjShot_FadeDelete(objShot);
+		
+		}
+		return;
+	}
+	let DelayColor = GetShotDataInfoA1(graphic,TARGET_ENEMY,INFO_DELAY_COLOR);
+	let Collision = GetShotDataInfoA1(graphic,TARGET_ENEMY,INFO_COLLISION);
+	let Scale = ObjRender_GetScaleX(objShot);
+	if(Obj_IsValueExists(objShot,"Hue")) {
+		let Hue = Obj_GetValue(objShot,"Hue");
+		DelayColor = HSVToRGB(Hue,62,100);
+	}
+	if(xpos<GetStgFrameWidth+20 && xpos>-20 && ypos<GetStgFrameHeight+20 && ypos>-20) {
+		if(Obj_GetType(objShot) == OBJ_STRAIGHT_LASER) {
+			Collision = 1;
+			Scale = Obj_GetValueD(objShot,"Width",0)/(64*0.6)*2.5;
+		}
+		if(Collision<=3) {
+			BulletBreak(xpos,ypos,1.0*Scale,DelayColor[0],DelayColor[1],DelayColor[2]);
+		}
+		if(Collision>3 && Collision<=10) {
+			BulletBreak(xpos,ypos,1.3*Scale,DelayColor[0],DelayColor[1],DelayColor[2]);
+		}
+		if(Collision>10 && Collision<=18) {
+			BulletBreak(xpos,ypos,2.0*Scale,DelayColor[0],DelayColor[1],DelayColor[2]);
+		}
+		if(Collision>18) {
+			BulletBreak(xpos,ypos,2.5*Scale,DelayColor[0],DelayColor[1],DelayColor[2]);
+		}
+	}
+}
+
+task BulletBreak(xpos,ypos,scale,RED,GREEN,BLUE) {
+	//let objbreak = ObjPrim_Create(OBJ_SPRITE_2D);
+	let w = 3;
+	// let count = 0;
+	//let speed = randEff(1.3,2);
+	//let dir = randEff(0,360);
+	//let maxscale = scale;
+	
+	/*
+	Obj_SetRenderPriorityI(objbreak,49);
+	ObjPrim_SetTexture(objbreak, MD ~ "System/IMG/Effect/BulletBreak.png");
+	if(!GetCommonData("Discord",false)) { ObjRender_SetBlendType(objbreak,BLEND_ADD_ARGB); }
+	else { ObjRender_SetBlendType(objbreak,BLEND_ALPHA); }
+	ObjRender_SetPosition(objbreak,xpos,ypos,0);
+	ObjRender_SetAngleXYZ(objbreak,0,0,randEff(0,360));
+	ObjRender_SetColor(objbreak,RED,GREEN,BLUE);
+	ObjRender_SetScaleXYZ(objbreak,scale*0.6,scale*0.6,scale*0.6);
+	
+	
+	ObjSprite2D_SetDestRect(objbreak, -32, -32, 32, 32);
+	ascent(i in 0..8){
+		ObjSprite2D_SetSourceRect(objbreak,64*i,0,64*(i+1),64);
+		loop(w){yield;}
+	}
+	Obj_Delete(objbreak);
+	*/
+	
+	let bnang = randEff(0, 360);
+	let bscl = scale*0.6;
+	
+	ascent(i in 0..8*w-1){
+		let amod = round(i/w);
+		ObjSpriteList2D_SetSourceRect(BreakRender, 64*amod, 0, 64+64*amod, 64);
+		ObjRender_SetColor(BreakRender, RED, GREEN, BLUE);
+		ObjRender_SetPosition(BreakRender, xpos, ypos, 0);
+		ObjRender_SetAngleZ(BreakRender, bnang);
+		ObjRender_SetScaleXYZ(BreakRender, bscl, bscl, 0);
+		ObjSpriteList2D_AddVertex(BreakRender);
+		yield;
+	}
+	
+	
+	
+	/*
+	loop(24) {
+		if(count>=w*0) { ObjSprite2D_SetSourceRect(objbreak,0,0,64,64); }
+		if(count>=w*1) { ObjSprite2D_SetSourceRect(objbreak,64,0,128,64); }
+		if(count>=w*2) { ObjSprite2D_SetSourceRect(objbreak,128,0,192,64); }
+		if(count>=w*3) { ObjSprite2D_SetSourceRect(objbreak,192,0,256,64); }
+		if(count>=w*4) { ObjSprite2D_SetSourceRect(objbreak,256,0,320,64); }
+		if(count>=w*5) { ObjSprite2D_SetSourceRect(objbreak,320,0,384,64); }
+		if(count>=w*6) { ObjSprite2D_SetSourceRect(objbreak,384,0,448,64); }
+		if(count>=w*7) { ObjSprite2D_SetSourceRect(objbreak,448,0,512,64); }
+		ObjSprite2D_SetDestCenter(objbreak);
+	
+		// ObjRender_SetPosition(objbreak,xpos,ypos,0);
+		// ObjRender_SetAlpha(objbreak,255-count*3);
+		// if(speed>0) { speed-=0.10; }
+		// xpos+=speed*cos(dir);
+		// ypos+=speed*sin(dir);
+		// scale-=0.02*maxscale;
+		count++;
+		yield;
+	}
+	Obj_Delete(objbreak);
+	*/
+}
+
+function HSVToRGB(hue,saturation,value) {
+	let R = 0;
+	let G = 0;
+	let B = 0;
+	if(hue<60) {
+		R = 255;
+		G = 255*(hue-0)/60;
+		B = 0;
+	}
+	if(hue>=60 && hue<120) {
+		R = 255-255*(hue-60)/60;
+		G = 255;
+		B = 0;
+	}
+	if(hue>=120 && hue<180) {
+		R = 0;
+		G = 255;
+		B = 255*(hue-120)/60;
+	}
+	if(hue>=180 && hue<240) {
+		R = 0;
+		G = 255-255*(hue-180)/60;
+		B = 255;
+	}
+	if(hue>=240 && hue<300) {
+		R = 255*(hue-240)/60;
+		G = 0;
+		B = 255;
+	}
+	if(hue>=300 && hue<360) {
+		R = 255;
+		G = 0;
+		B = 255-255*(hue-300)/60;
+	}
+	
+	R = R*(value/100);
+	G = G*(value/100);
+	B = B*(value/100);
+	
+	let high = R;
+	if(G>high) { high = G; }
+	if(B>high) { high = B; }
+	R = floor(high-(high-R)*(saturation/100));
+	G = floor(high-(high-G)*(saturation/100));
+	B = floor(high-(high-B)*(saturation/100));
+	return [R,G,B];
+}
+
+
+function InitRender(obj, pri, image){
+	obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
+	Obj_SetRenderPriority(obj, pri);
+	ObjPrim_SetTexture(obj, image);
+	
+	DoStuff;
+	return obj;
+	
+	
+	task DoStuff{
+		while(!Obj_IsDeleted(obj)){
+			ObjSpriteList2D_ClearVertexCount(obj);
+			yield;
+		}
+	}
+}
+

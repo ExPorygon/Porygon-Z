@@ -1,0 +1,217 @@
+let CSD = GetCurrentScriptDirectory;
+let MD = GetModuleDirectory;
+
+
+
+let stgtime = 0;
+let stgspeed = 0;
+
+let ResetStage = false;
+
+let brush_frequency = 0;
+let brush_groups = 0;
+let brush_organization = 0;
+let brush_distance = 0;
+
+let SpellActive = false;
+let GetCenterX = GetStgFrameWidth/2;
+let GetCenterY = GetStgFrameHeight/2;
+
+let slide = 0;
+
+@Loading {
+}
+
+@Event {
+	alternative(GetEventType)
+	case(EV_START_BOSS_SPELL){ slide = 0; }
+}
+
+@Initialize {
+	SetAutoDeleteObject(true);
+	
+	StageBG;
+	SpellBG;
+}
+@MainLoop {
+	let objScene = GetEnemyBossSceneObjectID();
+	if(objScene != ID_INVALID && ObjEnemyBossScene_GetInfo(objScene, INFO_IS_SPELL)) {
+		SpellActive = true;
+	}
+	else {
+		SpellActive = false;
+	}
+	if(GetCommonData("Credits",false)) { CloseScript(GetOwnScriptID); }
+	yield;
+}
+task SpellBG {
+	let alpha = 0;
+	let spin = 0;
+
+	let path1 = MD ~ "img/Background/SpellBG1.png";
+	let obj1 = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjRender_SetBlendType(obj1, BLEND_ADD_RGB);
+	Obj_SetRenderPriority(obj1, 0.21);
+	ObjPrim_SetTexture(obj1, path1);
+	ObjSprite2D_SetSourceRect(obj1, 0, 0, 374, 640);
+	ObjSprite2D_SetDestCenter(obj1);
+	ObjRender_SetScaleXYZ(obj1,1.1,1.1,1.1);
+
+	let path2 = MD ~ "img/Background/SpellBG2.png";
+	let obj2 = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjRender_SetBlendType(obj2, BLEND_ADD_RGB);
+	Obj_SetRenderPriority(obj2, 0.21);
+	ObjPrim_SetTexture(obj2, path2);
+	ObjSprite2D_SetSourceRect(obj2, 0, 0, 256*2, 256*50);
+	ObjSprite2D_SetDestCenter(obj2);
+	ObjRender_SetScaleXYZ(obj2,2,2,2);
+	
+	ObjRender_SetPosition(obj1, GetCenterX, GetCenterY, 0);
+	loop {
+		//ObjRender_SetAngleXYZ(obj1, 0, 0, spin);
+		ObjRender_SetPosition(obj2, GetCenterX, GetCenterY+slide, 0);
+		ObjRender_SetColor(obj1, alpha, alpha, alpha);
+		ObjRender_SetColor(obj2, alpha, alpha, alpha);
+		slide+=0.7;
+		spin++;
+		if(SpellActive) {
+			Obj_SetVisible(obj1, true);
+			Obj_SetVisible(obj2, true);
+			alpha+=4;
+		}
+		else {
+			Obj_SetVisible(obj1, false);
+			Obj_SetVisible(obj2, false);
+			alpha = 0;
+		}
+		yield;
+	}
+}
+task StageBG {
+	let StageBG1;	
+	let StageBGSky;
+	let dir = 0;
+	let dir2 = 0;
+	
+	SetCameraFocusX(0);
+	SetCameraFocusY(0);
+	SetCameraFocusZ(100);
+	SetCameraRadius(300);
+	SetCameraElevationAngle(272);
+	SetCameraAzimuthAngle(90);
+	
+	StageBG1 = ObjPrim_Create(OBJ_SPRITE_3D);
+	ObjRender_SetBlendType(StageBG1, BLEND_ADD_RGB);
+	ObjPrim_SetTexture(StageBG1, MD ~ "img/Background/Circle.png");
+	ObjSprite3D_SetSourceRect(StageBG1, 0, 0, 720, 720);
+	ObjSprite3D_SetDestRect(StageBG1, -360, -360, 360, 360);
+	ObjRender_SetZWrite(StageBG1, true);
+	ObjRender_SetZTest(StageBG1, true);
+	
+	StageBGSky = ObjPrim_Create(OBJ_SPRITE_3D);
+	ObjRender_SetBlendType(StageBGSky, BLEND_ALPHA);
+	ObjRender_SetAlpha(StageBGSky, 255);
+	ObjPrim_SetTexture(StageBGSky, MD ~ "img/Background/Sky.png");
+	ObjSprite3D_SetSourceRect(StageBGSky, 0, 0, 512, 512);
+	ObjSprite3D_SetDestRect(StageBGSky, -256, -256, 256, 256);
+	//ObjRender_SetZWrite(StageBGSky, true);
+	//ObjRender_SetZTest(StageBGSky, true);
+	
+	ObjRender_SetPosition(StageBG1, 0, 420, -150);
+	ObjRender_SetScaleXYZ(StageBG1, 0.8, 0.8, 0.8);
+	ObjRender_SetColor(StageBG1, 200, 200, 200);
+	Obj_SetRenderPriority(StageBG1, 0.23);
+	
+	
+	ObjRender_SetPosition(StageBGSky, 0, 100, 100);
+	ObjRender_SetAngleXYZ(StageBGSky, 90, 90, 0);
+	Obj_SetRenderPriority(StageBGSky, 0.22);
+	
+	//SetFogEnable(true);
+	//SetFogParam(1200, 1500, 0, 0, 0);
+	
+	//CameraFlight;
+	yield;
+	BinaryRain;
+	while(!ResetStage){
+		
+		if(SpellActive) {
+			Obj_SetVisible(StageBG1,false);
+			Obj_SetVisible(StageBGSky,false);
+		}
+		else {
+			Obj_SetVisible(StageBG1,true);
+			Obj_SetVisible(StageBGSky,true);
+		}
+		ObjRender_SetAngleZ(StageBG1,dir);
+		ObjRender_SetAngleZ(StageBGSky,dir2);
+		dir-=0.3;
+		dir2+=0.2;
+		yield;
+	}
+	Obj_Delete(StageBG1);
+	Obj_Delete(StageBGSky);
+	
+	task BinaryRain {
+		let scale = 0;
+		while(!ResetStage) {
+			scale = rand(-50,600);
+			Binary(0,rand(-180,-120),scale,scale+300);
+			scale = rand(-50,600);
+			Binary(1,rand(-120,-60),scale,scale+300);
+			scale = rand(-50,600);
+			Binary(0,rand(-60,0),scale,scale+300);
+			scale = rand(-50,600);
+			Binary(1,rand(0,60),scale,scale+300);
+			scale = rand(-50,600);
+			Binary(0,rand(60,120),scale,scale+300);
+			scale = rand(-50,600);
+			Binary(1,rand(120,180),scale,scale+300);
+			loop(30) { yield; }
+			scale = rand(-50,600);
+			Binary(1,rand(-180,-120),scale,scale+300);
+			scale = rand(-50,600);
+			Binary(0,rand(-120,-60),scale,scale+300);
+			scale = rand(-50,600);
+			Binary(1,rand(-60,0),scale,scale+300);
+			scale = rand(-50,600);
+			Binary(0,rand(0,60),scale,scale+300);
+			scale = rand(-50,600);
+			Binary(1,rand(60,120),scale,scale+300);
+			scale = rand(-50,600);
+			Binary(0,rand(120,180),scale,scale+300);
+			loop(30) { yield; }
+		}
+	}
+}
+task Binary(type,x,y,z) {
+	let obj = ObjPrim_Create(OBJ_SPRITE_3D);
+	let speed = rand(1.4,2.2);
+	
+	ObjRender_SetBlendType(obj, BLEND_ADD_RGB);
+	if(type==0) { ObjPrim_SetTexture(obj, MD ~ "img/Background/zero.png"); }
+	if(type==1) { ObjPrim_SetTexture(obj, MD ~ "img/Background/one.png"); }
+	ObjSprite3D_SetSourceRect(obj, 0, 0, 128, 128);
+	ObjSprite3D_SetDestRect(obj, -64, -64, 64, 64);
+	// ObjRender_SetZWrite(obj, true);
+	// ObjRender_SetZTest(obj, true);
+	
+	Obj_SetRenderPriority(obj, 0.22);
+	ObjRender_SetAngleXYZ(obj,90,0,180);
+	let scale = rand(0.15,0.35);
+	ObjRender_SetScaleXYZ(obj,scale,scale,scale);
+	ObjRender_SetColor(obj,200,200,200);
+	
+	loop(1200) {
+		if(SpellActive) {
+			Obj_SetVisible(obj,false);
+		}
+		else {
+			Obj_SetVisible(obj,true);
+		}
+		ObjRender_SetPosition(obj,x,y,z);
+		z-=speed;
+		yield;
+	}
+	Obj_Delete(obj);
+}

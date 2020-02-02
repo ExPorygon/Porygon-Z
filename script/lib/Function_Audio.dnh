@@ -1,0 +1,44 @@
+
+
+task PlayEnemyHitSound(objEnemy, type){
+	let bosshp = ObjEnemy_GetInfo(objEnemy, INFO_LIFE);
+	let initbosshp = ObjEnemy_GetInfo(objEnemy, INFO_LIFE);
+	let id = Obj_GetValueD(objEnemy,"Hit Sound",0)+1;
+	Obj_SetValue(objEnemy,"Hit Sound",Obj_GetValueD(objEnemy,"Hit Sound",0)+1);
+	
+	while(!Obj_IsDeleted(objEnemy)){
+		if(bosshp != ObjEnemy_GetInfo(objEnemy, INFO_LIFE) && type == 1){
+			if(ObjEnemy_GetInfo(objEnemy, INFO_LIFE) > initbosshp/10){ PlaySoundEffect("damage1",90); }
+			if(ObjEnemy_GetInfo(objEnemy, INFO_LIFE) < initbosshp/10){ PlaySoundEffect("damage2",90); }
+		}
+		if(bosshp != ObjEnemy_GetInfo(objEnemy, INFO_LIFE) && type == 2){
+			if(ObjEnemy_GetInfo(objEnemy, INFO_LIFE) > initbosshp/10){ PlaySoundEffect("damage1",90); }
+			if(ObjEnemy_GetInfo(objEnemy, INFO_LIFE) < initbosshp/10){ PlaySoundEffect("damage2",90); }
+		}
+		if(bosshp != ObjEnemy_GetInfo(objEnemy, INFO_LIFE) && type == 3){
+			if(ObjEnemy_GetInfo(objEnemy, INFO_LIFE) > initbosshp/10){ PlaySoundEffect("damage1",90); }
+			if(ObjEnemy_GetInfo(objEnemy, INFO_LIFE) < initbosshp/10){ PlaySoundEffect("damage2",90); }
+		}
+		else if(ObjEnemy_GetInfo(objEnemy,INFO_SHOT_HIT_COUNT)>0 && type == 3){ PlaySoundEffect("damage3",85); }
+		
+		bosshp = ObjEnemy_GetInfo(objEnemy, INFO_LIFE);
+		if(Obj_GetValueD(objEnemy,"Hit Sound",0) != id) { break; }
+		loop(6) { yield; }
+	}
+}
+function CreateLocalSoundObject(name,path,scriptID) {
+	SetCommonData("ActiveScript",scriptID);
+	NotifyEventAll(EV_LOAD_SOUND,[name,path]);
+}
+function DeleteAllLocalSoundObject {
+	NotifyEventAll(EV_DELETE_SOUND,0);
+}
+function PlaySoundEffect(name,volume) {
+	NotifyEventAll(EV_SOUND,[name,IntToString(volume)]);
+}
+function PlayMusic(id) {
+	NotifyEventAll(EV_MUSIC_START,id);
+}
+function FadeOutMusic(frames) {
+	NotifyEventAll(EV_MUSIC_FADE,frames);
+}

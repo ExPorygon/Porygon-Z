@@ -1,0 +1,115 @@
+function WaitIfEnemiesOnScreen(w){
+	loop(w){ if(length(GetAllEnemyID)>0){ yield; } }
+}
+
+task DisplayTitle(num) {
+	let lang = GetAreaCommonData("Options","Language",1);
+	let path1 = "";
+	let path2 = "";
+	if(lang==0) { path1 = MD ~ "IMG/Title/Logo/Logo_Title.png"; }
+	if(lang==1) { path1 = MD ~ "IMG/Title/Logo/Logo_Title_JP.png"; }
+	if(lang==2) { path1 = MD ~ "IMG/Title/Logo/Logo_Title_SC.png"; }
+	//if(lang==2) { path1 = MD ~ "IMG/Title/Logo/Logo_Title.png"; }
+	if(lang==0) { path2 = MD ~ "IMG/Title/Logo/Logo_Text.png"; }
+	if(lang==1) { path2 = MD ~ "IMG/Title/Logo/Logo_Text_JP.png"; }
+	if(lang==2) { path2 = MD ~ "IMG/Title/Logo/Logo_Text_SC.png"; }
+	//if(lang==2) { path2 = MD ~ "IMG/Title/Logo/Logo_Text.png"; }
+	num = num-1;
+
+	let objOrb1 = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjRender_SetBlendType(objOrb1,BLEND_ALPHA);
+	Obj_SetRenderPriorityI(objOrb1,71);
+	ObjPrim_SetTexture(objOrb1, MD ~ "IMG/Title/Logo/Logo_Symbol.png");
+	ObjSprite2D_SetSourceRect(objOrb1,0+128*num,0,128+128*num,128);
+	ObjSprite2D_SetDestCenter(objOrb1);
+
+	let objOrb2 = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjRender_SetBlendType(objOrb2,BLEND_ALPHA);
+	Obj_SetRenderPriorityI(objOrb2,71);
+	ObjPrim_SetTexture(objOrb2, MD ~ "IMG/Title/Logo/Logo_Symbol.png");
+	ObjSprite2D_SetSourceRect(objOrb2,0+128*num,128,128+128*num,256);
+	ObjSprite2D_SetDestCenter(objOrb2);
+	
+	let objStage = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjRender_SetBlendType(objStage,BLEND_ALPHA);
+	Obj_SetRenderPriorityI(objStage,71);
+	ObjPrim_SetTexture(objStage, MD ~ "IMG/Title/Logo/Logo_Num.png");
+	ObjSprite2D_SetSourceRect(objStage,0,0+64*num,256,64+64*num);
+	ObjSprite2D_SetDestCenter(objStage);
+	
+	let objTitle = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjRender_SetBlendType(objTitle,BLEND_ALPHA);
+	Obj_SetRenderPriorityI(objTitle,71);
+	ObjPrim_SetTexture(objTitle, path1);
+	ObjSprite2D_SetSourceRect(objTitle,0,0+64*num,512,64+64*num);
+	ObjSprite2D_SetDestCenter(objTitle);
+	
+	let objText = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjRender_SetBlendType(objText,BLEND_ALPHA);
+	Obj_SetRenderPriorityI(objText,71);
+	ObjPrim_SetTexture(objText, path2);
+	ObjSprite2D_SetSourceRect(objText,0,0+64*num,512,64+64*num);
+	ObjSprite2D_SetDestCenter(objText);
+	
+	let alphaOrb = 0;
+	let alphaText = 0;
+	let spin = 0;
+	
+	ObjRender_SetPosition(objTitle,GetCenterX,70,0);
+	ObjRender_SetPosition(objStage,GetCenterX,120,0);
+	if(num==4 || num==5) { ObjRender_SetPosition(objText,GetCenterX,192,0); }
+	else { ObjRender_SetPosition(objText,GetCenterX,178,0); }
+
+	ObjRender_SetPosition(objOrb1,GetCenterX-220,120,0);
+	ObjRender_SetPosition(objOrb2,GetCenterX+220,120,0);
+	SetMovePosition02(objOrb1,GetCenterX,120,8,6);
+	SetMovePosition02(objOrb2,GetCenterX,120,8,6);
+	
+	loop(300) {
+		if(alphaText<255){ alphaText+=255/60; }
+		if(alphaOrb<255){ alphaOrb+=255/60; }
+		ObjRender_SetAlpha(objOrb1,alphaOrb);
+		ObjRender_SetAlpha(objOrb2,alphaOrb);
+		ObjRender_SetAlpha(objStage,alphaText);
+		ObjRender_SetAlpha(objTitle,alphaText);
+		ObjRender_SetAlpha(objText,alphaText);
+
+		if(ObjRender_GetX(objOrb1)==GetCenterX) { spin+=1.6; }
+
+		ObjRender_SetAngleZ(objOrb1,spin);
+		ObjRender_SetAngleZ(objOrb2,spin);
+		yield;
+	}
+	SetMovePosition02(objOrb1,GetCenterX-220,120,8,6);
+	SetMovePosition02(objOrb2,GetCenterX+220,120,8,6);
+	loop(60) {
+		ObjRender_SetAlpha(objOrb1,alphaOrb);
+		ObjRender_SetAlpha(objOrb2,alphaOrb);
+		ObjRender_SetAlpha(objStage,alphaText);
+		ObjRender_SetAlpha(objTitle,alphaText);
+		ObjRender_SetAlpha(objText,alphaText);
+		alphaOrb-=255/60;
+		alphaText-=255/60;
+		yield;
+	}
+	Obj_Delete(objOrb1);
+	Obj_Delete(objOrb2);
+	Obj_Delete(objStage);
+	Obj_Delete(objTitle);
+	Obj_Delete(objText);
+
+
+	task SetMovePosition02(obj,x,y,weight,max_speed) {
+		let distance = GetDistance(ObjRender_GetX(obj),ObjRender_GetY(obj),x,y);
+		let angle = atan2(y-ObjRender_GetY(obj), x-ObjRender_GetX(obj));
+		while(distance > 0.4){
+			let speed = distance/weight;
+			if(speed > max_speed) { speed = max_speed; }
+			ObjRender_SetX(obj, ObjRender_GetX(obj) + cos(angle)*speed);
+			ObjRender_SetY(obj, ObjRender_GetY(obj) + sin(angle)*speed);
+			distance = GetDistance(ObjRender_GetX(obj),ObjRender_GetY(obj),x,y);
+			yield;
+		}
+		ObjRender_SetPosition(obj,x,y,0);
+	}
+}

@@ -1,0 +1,11 @@
+# Below are EUB files/directories to ignore
+SYSTEM/logs/
+Snapshot/
+Script/Test/
+old/
+__*
+*.psd
+*.pdn
+*.xcf
+*.dropbox
+SCRIPT/Test.dnh

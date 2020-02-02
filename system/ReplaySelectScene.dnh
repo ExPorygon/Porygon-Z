@@ -1,0 +1,325 @@
+let MD = GetModuleDirectory;
+#include"Script/LIB/Function_Rand.dnh"
+@Initialize {
+	SetAutoDeleteObject(true);
+	TBackground;
+	TReplaySelectScene;
+	
+	SetScriptResult("");
+}
+
+
+@MainLoop {
+
+	yield;
+}
+
+@Finalize {
+}
+
+task TBackground {
+	let pathBG = MD ~ "IMG/Title/title_bg.png";
+	let pathTitle = MD ~ "IMG/Title/title_replays.png";
+
+	let objImage = ObjPrim_Create(OBJ_SPRITE_2D);
+	//Obj_SetRenderPriorityI(objImage, 20);
+	//ObjPrim_SetTexture(objImage, pathBG);
+	//ObjSprite2D_SetSourceRect(objImage, 0, 0, 640, 480);
+	//ObjSprite2D_SetDestRect(objImage, 0, 0, 640, 480);
+	//ObjRender_SetAlpha(objImage, 255);
+
+	let objTitle = ObjPrim_Create(OBJ_SPRITE_2D);
+	Obj_SetRenderPriorityI(objTitle, 20);
+	ObjPrim_SetTexture(objTitle, pathTitle);
+	ObjSprite2D_SetSourceRect(objTitle, 0, 0, 256, 64);
+	ObjSprite2D_SetDestCenter(objTitle);
+	
+	ObjRender_SetPosition(objTitle,320,22,0);
+
+	// let objText = ObjText_Create();
+	// ObjText_SetText(objText, "Replays");
+	// ObjText_SetFontSize(objText, 48);
+	// ObjText_SetFontType(objText, "Chiller");
+	// ObjText_SetFontBold(objText, false);
+	// ObjText_SetFontColorTop(objText, 150, 150, 255);
+	// ObjText_SetFontColorBottom(objText, 80, 80, 255);
+	// ObjText_SetFontBorderType(objText, BORDER_FULL);
+	// ObjText_SetFontBorderColor(objText,0, 0, 0);
+	// ObjText_SetFontBorderWidth(objText, 2);
+	// Obj_SetRenderPriorityI(objText, 30);
+	// ObjRender_SetX(objText, 32);
+	// ObjRender_SetY(objText, 12);
+}
+
+
+task TReplaySelectScene {
+	LoadReplayList;
+	let listValidReplayIndex = GetValidReplayIndices;
+
+	let cursorY = 0;
+	let page = 0;
+	//let countMaxItem = length(listValidReplayIndex);
+	let countMaxItem = 100;
+	let countItemPerPage = 20;
+	let pageMax = trunc((countMaxItem - 1) / countItemPerPage);
+	pageMax = max(pageMax, 0);
+	let lastPageMaxCursorY = trunc(countMaxItem % countItemPerPage);
+	if(countMaxItem % countItemPerPage == 0) {
+		lastPageMaxCursorY = countItemPerPage;
+	}
+
+	task TMenuItem(let itemY) {
+		let objText = CreateTextObject(8, 40 + 22 * itemY, 8, "", 255, 255, 255);
+		let objSelect = CreateTextObject(8, 40 + 22 * itemY, 8, "", 255, 80, 255);
+		ObjRender_SetBlendType(objSelect, BLEND_ALPHA);
+
+		let color = 100;
+		let colorset = 0;
+		let move = 0;
+		let selection = itemY;
+		let oldPage = -1;
+		let mx = ObjRender_GetX(objText);
+		let my = ObjRender_GetY(objText);
+		
+		loop {
+			if(page != oldPage) {
+				let text = "";
+				let indexList = page * countItemPerPage + itemY;
+				let ind = GetReplayIndex(indexList+1);
+				if(ind>-1) {
+					let indexReplay = listValidReplayIndex[ind];
+					let infoReplay = SplitString(GetReplayInfo(indexReplay,REPLAY_COMMENT),"/");
+					text = rtos("00", indexReplay) ~ " ";
+					text = text ~ vtos("-10s", GetReplayInfo(indexReplay, REPLAY_USER_NAME))[0..10] ~ " ";
+					text = text ~ rtos("0000000000", GetReplayInfo(indexReplay, REPLAY_TOTAL_SCORE)) ~ " ";
+					text = text ~ vtos("-5s", GetReplayInfo(indexReplay, REPLAY_DATE_TIME)[5..10]) ~ "/" ~ vtos("-2s", GetReplayInfo(indexReplay, REPLAY_DATE_TIME)[2..4]) ~ " ";
+					text = text ~ vtos("03.f", GetReplayInfo(indexReplay, REPLAY_FPS_AVERAGE)) ~ "fps ";
+					text = text ~ vtos("-6s", GetReplayInfo(indexReplay, REPLAY_PLAYER_NAME)) ~ " ";
+					
+					if(infoReplay[1]=="Extra" || infoReplay[1]=="Elite Extra") { text = text ~ vtos("-2s",infoReplay[1][0..2]) ~ " "; }
+					else{ text = text ~ vtos("-1s",infoReplay[1][0]) ~ " "; }
+					if(infoReplay[4] == "true") { text = text ~ vtos("-3s","DIS") ~ " "; }
+					if(infoReplay[4] == "false") { text = text ~ vtos("-3s","STD") ~ " "; }
+					if(atoi(infoReplay[5])==0) { text = text ~ vtos("-5s",infoReplay[2])[0..5] ~ " "; }
+					else { text = text ~ vtos("-5s","SPL" ~ " #") ~ IntToString(atoi(infoReplay[5][0..3])); }
+				}
+				else {
+					text = rtos("00", itemY+1+page*20) ~ " ";
+					text = text ~ "---------- ";
+					text = text ~ "---------- ";
+					text = text ~ "--/--/-- ";
+					text = text ~ "------ ";
+					text = text ~ "------ ";
+					text = text ~ "- ";
+					text = text ~ "--- ";
+					text = text ~ "-------- ";
+				}
+
+				ObjText_SetText(objText, text);
+				ObjText_SetText(objSelect, text);
+				oldPage = page;
+			}
+			
+			//if(page == pageMax && itemY >= lastPageMaxCursorY) {
+			//	Obj_SetVisible(objText, false);
+			//	Obj_SetVisible(objSelect, false);
+			//}
+			//else
+			//{
+				//Obj_SetVisible(objText, true);
+				//Obj_SetVisible(objSelect, itemY == cursorY);
+			//}
+
+			Obj_SetVisible(objText, true);
+			Obj_SetVisible(objSelect, itemY == cursorY);
+			
+			if(colorset == 0){color+=5}
+			if(colorset == 1){color-=5}
+			if(color>=255){colorset = 1}
+			if(color<=45){colorset = 0}
+			ObjRender_SetAlpha(objSelect, color);
+			yield;
+		}
+		Obj_Delete(objText);
+		Obj_Delete(objSelect);
+
+		function GetReplayIndex(index) {
+			let value = -1;
+			ascent(i in 0..length(listValidReplayIndex)) {
+				if(listValidReplayIndex[i]==index) {
+					value = i;
+					break;
+				}
+			}
+			return value;
+		}
+	}
+
+	ascent(let iItem in 0 .. countItemPerPage) {
+		TMenuItem(iItem);
+	}
+
+	while(GetVirtualKeyState(VK_OK) != KEY_FREE){ yield; }
+
+	let frameKeyHold = 0;
+	loop {
+		if(GetVirtualKeyState(VK_OK) == KEY_PULL) {
+			PlaySoundEffect("confirm",100);
+			let indexList = page * countItemPerPage + cursorY;
+			let ind = GetReplayIndex(indexList+1);
+			if(ind>-1) {
+				let indexReplay = listValidReplayIndex[ind];
+				let pathReplay = GetReplayInfo(indexReplay, REPLAY_FILE_PATH);
+				let infoReplay = SplitString(GetReplayInfo(indexReplay,REPLAY_COMMENT),"/");
+				let stringReplayTime = SplitString(infoReplay[0],",");
+				
+				ascent(i in 0..length(stringReplayTime)) {
+					SetCommonData("ReplayTime_" ~ IntToString(i+1),atoi(stringReplayTime[i]));
+				}
+				
+				if(infoReplay[1]=="Easy") { SetAreaCommonData("PlayState","Difficulty",0); }
+				if(infoReplay[1]=="Normal") { SetAreaCommonData("PlayState","Difficulty",1); }
+				if(infoReplay[1]=="Hard") { SetAreaCommonData("PlayState","Difficulty",2); }
+				if(infoReplay[1]=="Lunatic") { SetAreaCommonData("PlayState","Difficulty",3); }
+				if(infoReplay[1]=="Extra") { SetAreaCommonData("PlayState","Difficulty",0); }
+				if(infoReplay[1]=="Elite Extra") { SetAreaCommonData("PlayState","Difficulty",1); }
+				SetAreaCommonData("PlayState","Mode",infoReplay[2]);
+				SetAreaCommonData("Options","Lives",atoi(infoReplay[3]));
+				if(infoReplay[4] == "true") { SetAreaCommonData("PlayState","Infinite Discord",true); }
+				if(infoReplay[4] == "false") { SetAreaCommonData("PlayState","Infinite Discord",false); }
+				SetAreaCommonData("PlayState","Spell",atoi(infoReplay[5]));
+				if(infoReplay[6] == "true") { SetAreaCommonData("Options","Dialogue",true); }
+				if(infoReplay[6] == "false") { SetAreaCommonData("Options","Dialogue",false); }
+				if(infoReplay[7] == "true") { SetCommonData("Rinnosuke Event",true); }
+				if(infoReplay[7] == "false") { SetCommonData("Rinnosuke Event",false); }
+				SetScriptResult([pathReplay,GetReplayInfo(indexReplay, REPLAY_PLAYER_NAME),ToString(GetReplayInfo(indexReplay,REPLAY_STAGE_INDEX_LIST)[0])]);
+				loop(15) { yield; } //possibly change the logic to have it signal an audio script to remove the need for this delay
+				CloseScript(GetOwnScriptID);
+				break;
+			}
+		}
+
+		if(GetVirtualKeyState(VK_CANCEL) == KEY_PULL) {
+			PlaySoundEffect("cancel",100);
+			loop(15) { yield; } //possibly change the logic to have it signal an audio script to remove the need for this delay
+			CloseScript(GetOwnScriptID);
+			break;
+		}
+
+		if(GetVirtualKeyState(VK_UP) == KEY_PUSH || GetVirtualKeyState(VK_UP) == KEY_HOLD) {
+			frameKeyHold++;
+			if(GetVirtualKeyState(VK_UP) == KEY_PUSH ||
+				frameKeyHold == 20 ||
+				 (frameKeyHold > 20 && (frameKeyHold % 5 == 0))) {
+				PlaySoundEffect("select",100);
+				cursorY--;
+			}
+		}
+		else if(GetVirtualKeyState(VK_DOWN) == KEY_PUSH || GetVirtualKeyState(VK_DOWN) == KEY_HOLD)
+		{
+			frameKeyHold++;
+			if(GetVirtualKeyState(VK_DOWN) == KEY_PUSH ||
+				frameKeyHold == 20 ||
+				 (frameKeyHold > 20 && (frameKeyHold % 5 == 0))) {
+				PlaySoundEffect("select",100);
+				cursorY++;
+			}
+		}
+		else if(GetVirtualKeyState(VK_LEFT) == KEY_PUSH || GetVirtualKeyState(VK_LEFT) == KEY_HOLD)
+		{
+			frameKeyHold++;
+			if(GetVirtualKeyState(VK_LEFT) == KEY_PUSH ||
+				frameKeyHold == 20 ||
+				 (frameKeyHold > 20 && (frameKeyHold % 5 == 0))) {
+				PlaySoundEffect("select",100);
+				page--;
+			}
+		}
+		else if(GetVirtualKeyState(VK_RIGHT) == KEY_PUSH || GetVirtualKeyState(VK_RIGHT) == KEY_HOLD)
+		{
+			frameKeyHold++;
+			if(GetVirtualKeyState(VK_RIGHT) == KEY_PUSH ||
+				frameKeyHold == 20 ||
+				 (frameKeyHold > 20 && (frameKeyHold % 5 == 0))) {
+				PlaySoundEffect("select",100);
+				page++;
+			}
+		}
+		else
+		{
+			frameKeyHold = 0;
+		}
+
+		if(page < 0)
+		{
+			page = pageMax;
+		}
+		else if(page > pageMax)
+		{
+			page = 0;
+		}
+
+		if(page != pageMax)
+		{
+			if(cursorY < 0)
+			{
+				cursorY = countItemPerPage - 1;
+			}
+			else if(cursorY >= countItemPerPage)
+			{
+				cursorY = 0;
+			}
+		}
+		else
+		{
+			if(cursorY < 0)
+			{
+				cursorY = lastPageMaxCursorY - 1;
+			}
+			else if(cursorY >= lastPageMaxCursorY)
+			{
+				cursorY = 0;
+			}
+		}
+
+		yield;
+	}
+	function GetReplayIndex(index) {
+		let value = -1;
+		ascent(i in 0..length(listValidReplayIndex)) {
+			if(listValidReplayIndex[i]==index) {
+				value = i;
+				break;
+			}
+		}
+		return value;
+	}
+}
+
+
+
+function PlaySoundEffect(name,volume) {
+	//let obj = ObjSound_Create;
+	//ObjSound_SetSoundDivision(obj,SOUND_SE);
+	//ObjSound_Load(obj,GetModuleDirectory ~ "SE/" ~name~ ".wav");
+	//ObjSound_SetRestartEnable(obj, true);
+	//ObjSound_SetVolumeRate(obj,volume*GetAreaCommonData("Options","SFX",100)/100);
+	//ObjSound_Play(obj);
+	NotifyEventAll(EV_USER + 20,[name,IntToString(volume)]);
+}
+function CreateTextObject(mx, my, size, text, r, g, b){
+	let obj = ObjText_Create;
+	ObjText_SetText(obj, text);
+	ObjText_SetFontSize(obj, 14);
+	ObjText_SetFontType(obj, "Fira Mono Medium");
+	ObjText_SetFontBold(obj, true);
+	ObjText_SetFontColorTop(obj, r, g, b);
+	ObjText_SetFontColorBottom(obj, r, g, b);
+	ObjText_SetFontBorderColor(obj, 0, 0, 0);
+	ObjText_SetFontBorderType(obj, BORDER_FULL);
+	ObjText_SetFontBorderWidth(obj, 2);
+	Obj_SetRenderPriorityI(obj, 21);
+	ObjRender_SetX(obj, mx);
+	ObjRender_SetY(obj, my);
+	return obj;
+}

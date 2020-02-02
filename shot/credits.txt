@@ -1,0 +1,39 @@
+darkwalker247
+
+v2: Fixed delay graphic and added optional improved ones for each color at the bottom of the texture for use in custom delay effect code (top left is at x=0,y=2013 and their dimensions are 33x33). Improved the graphics of butterflies and notes.
+
+A shot sheet that imitates ZUN's (with some little extra animation and changes) but they're all handmade by me so feel free to use them.
+
+This one improves over my previous by being clearer, having slightly larger shots, and eliminating the weird lines that showed up around some shots.
+
+To use, simply copy all the files somewhere and then include the Shotconstants.dnh when you need it.
+
+Constants for the shots are formatted like this: TYPE_COLOR (for example, KNIFE_RED).
+
+Valid colors:
+GRAY RED MAGENTA BLUE CYAN GREEN YELLOW WHITE
+
+Valid types:
+SCALE
+CIRCLE
+CIRCLE_RINGED
+RICE
+KUNAI
+ICE
+AMULET
+BULLET
+STAR
+COIN
+DROPLET
+ARROWHEAD
+STAR_LARGE
+CIRCLE_LARGE
+KNIFE
+RICE
+BUTTERFLY
+NOTE
+REST
+VORTEX
+MIKO_ORB
+FIREBALL
+LASER

@@ -1,0 +1,111 @@
+let Rin1 = MD ~ "IMG/Event/Player/Rin/Rin1.png";
+let Rin2 = MD ~ "IMG/Event/Player/Rin/Rin2.png";
+let Rin3 = MD ~ "IMG/Event/Player/Rin/Rin3.png";
+let Rin4 = MD ~ "IMG/Event/Player/Rin/Rin4.png";
+let Rin5 = MD ~ "IMG/Event/Player/Rin/Rin5.png";
+let Rin6 = MD ~ "IMG/Event/Player/Rin/Rin6.png";
+
+let Kasen1 = MD ~ "IMG/Event/Player/Kasen/Kasen1.png";
+let Kasen2 = MD ~ "IMG/Event/Player/Kasen/Kasen2.png";
+let Kasen3 = MD ~ "IMG/Event/Player/Kasen/Kasen3.png";
+let Kasen4 = MD ~ "IMG/Event/Player/Kasen/Kasen4.png";
+let Kasen5 = MD ~ "IMG/Event/Player/Kasen/Kasen5.png";
+let Kasen6 = MD ~ "IMG/Event/Player/Kasen/Kasen6.png";
+
+let Tokiko1 = MD ~ "IMG/Event/Player/Tokiko/Tokiko1.png";
+let Tokiko2 = MD ~ "IMG/Event/Player/Tokiko/Tokiko2.png";
+let Tokiko3 = MD ~ "IMG/Event/Player/Tokiko/Tokiko3.png";
+let Tokiko4 = MD ~ "IMG/Event/Player/Tokiko/Tokiko4.png";
+let Tokiko5 = MD ~ "IMG/Event/Player/Tokiko/Tokiko5.png";
+let Tokiko6 = MD ~ "IMG/Event/Player/Tokiko/Tokiko6.png";
+
+let Rinno1_P = MD ~ "IMG/Event/Player/Rinnosuke/Rinno1p.png";
+let Rinno2_P = MD ~ "IMG/Event/Player/Rinnosuke/Rinno2p.png";
+let Rinno3_P = MD ~ "IMG/Event/Player/Rinnosuke/Rinno3p.png";
+
+let Futo1 = MD ~ "IMG/Event/Stage 1/Futo1.png";
+let Futo2 = MD ~ "IMG/Event/Stage 1/Futo2.png";
+let Futo3 = MD ~ "IMG/Event/Stage 1/Futo3.png";
+
+let Tojiko1 = MD ~ "IMG/Event/Stage 1/Tojiko1.png";
+let Tojiko2 = MD ~ "IMG/Event/Stage 1/Tojiko2.png";
+let Tojiko3 = MD ~ "IMG/Event/Stage 1/Tojiko3.png";
+let Tojiko4 = MD ~ "IMG/Event/Stage 1/Tojiko4.png";
+let Tojiko5 = MD ~ "IMG/Event/Stage 1/Tojiko5.png";
+let Tojiko6 = MD ~ "IMG/Event/Stage 1/Tojiko6.png";
+
+let Minoriko1 = MD ~ "IMG/Event/Stage 2/Minoriko1.png";
+let Minoriko2 = MD ~ "IMG/Event/Stage 2/Minoriko2.png";
+let Minoriko3 = MD ~ "IMG/Event/Stage 2/Minoriko3.png";
+
+let Shizuha1 = MD ~ "IMG/Event/Stage 2/Shizuha1.png";
+let Shizuha2 = MD ~ "IMG/Event/Stage 2/Shizuha2.png";
+let Shizuha3 = MD ~ "IMG/Event/Stage 2/Shizuha3.png";
+let Shizuha4 = MD ~ "IMG/Event/Stage 2/Shizuha4.png";
+let Shizuha5 = MD ~ "IMG/Event/Stage 2/Shizuha5.png";
+let Shizuha6 = MD ~ "IMG/Event/Stage 2/Shizuha6.png";
+
+let Aya1 = MD ~ "IMG/Event/Stage 3/Aya1.png";
+let Aya2 = MD ~ "IMG/Event/Stage 3/Aya2.png";
+let Aya3 = MD ~ "IMG/Event/Stage 3/Aya3.png";
+
+let Momiji1 = MD ~ "IMG/Event/Stage 3/Momiji1.png";
+let Momiji2 = MD ~ "IMG/Event/Stage 3/Momiji2.png";
+let Momiji3 = MD ~ "IMG/Event/Stage 3/Momiji3.png";
+let Momiji4 = MD ~ "IMG/Event/Stage 3/Momiji4.png";
+let Momiji5 = MD ~ "IMG/Event/Stage 3/Momiji5.png";
+let Momiji6 = MD ~ "IMG/Event/Stage 3/Momiji6.png";
+
+let Dai1 = MD ~ "IMG/Event/Stage 4/Dai1.png";
+let Dai2 = MD ~ "IMG/Event/Stage 4/Dai2.png";
+let Dai3 = MD ~ "IMG/Event/Stage 4/Dai3.png";
+
+let Cirno1 = MD ~ "IMG/Event/Stage 4/Cirno1.png";
+let Cirno2 = MD ~ "IMG/Event/Stage 4/Cirno2.png";
+let Cirno3 = MD ~ "IMG/Event/Stage 4/Cirno3.png";
+let Cirno4 = MD ~ "IMG/Event/Stage 4/Cirno4.png";
+let Cirno5 = MD ~ "IMG/Event/Stage 4/Cirno5.png";
+let Cirno6 = MD ~ "IMG/Event/Stage 4/Cirno6.png";
+
+let Yamame1 = MD ~ "IMG/Event/Stage 5/Yamame1.png";
+let Yamame2 = MD ~ "IMG/Event/Stage 5/Yamame2.png";
+let Yamame3 = MD ~ "IMG/Event/Stage 5/Yamame3.png";
+
+let Kisume1 = MD ~ "IMG/Event/Stage 5/Kisume1.png";
+let Kisume2 = MD ~ "IMG/Event/Stage 5/Kisume2.png";
+let Kisume3 = MD ~ "IMG/Event/Stage 5/Kisume3.png";
+let Kisume4 = MD ~ "IMG/Event/Stage 5/Kisume4.png";
+let Kisume5 = MD ~ "IMG/Event/Stage 5/Kisume5.png";
+let Kisume6 = MD ~ "IMG/Event/Stage 5/Kisume6.png";
+
+let Lunasa = MD ~ "IMG/Event/Stage 6/Lunasa.png";
+let Merlin = MD ~ "IMG/Event/Stage 6/Merlin.png";
+let Lyrica = MD ~ "IMG/Event/Stage 6/Lyrica.png";
+
+let Lily1 = MD ~ "IMG/Event/Stage 6/Lily1.png";
+let Lily2 = MD ~ "IMG/Event/Stage 6/Lily2.png";
+let Lily3 = MD ~ "IMG/Event/Stage 6/Lily3.png";
+let Lily4 = MD ~ "IMG/Event/Stage 6/Lily4.png";
+let Lily5 = MD ~ "IMG/Event/Stage 6/Lily5.png";
+let Lily6 = MD ~ "IMG/Event/Stage 6/Lily6.png";
+
+let Patchy1 = MD ~ "IMG/Event/Stage EX/Patchy1.png";
+let Patchy2 = MD ~ "IMG/Event/Stage EX/Patchy2.png";
+let Patchy3 = MD ~ "IMG/Event/Stage EX/Patchy3.png";
+
+let Rinno1 = MD ~ "IMG/Event/Stage EX/Rinno1.png";
+let Rinno2 = MD ~ "IMG/Event/Stage EX/Rinno2.png";
+let Rinno3 = MD ~ "IMG/Event/Stage EX/Rinno3.png";
+let Rinno4 = MD ~ "IMG/Event/Stage EX/Rinno4.png";
+let Rinno5 = MD ~ "IMG/Event/Stage EX/Rinno5.png";
+
+let Koa1 = MD ~ "IMG/Event/Stage EX/Koa1.png";
+let Koa2 = MD ~ "IMG/Event/Stage EX/Koa2.png";
+let Koa3 = MD ~ "IMG/Event/Stage EX/Koa3.png";
+let Koa4 = MD ~ "IMG/Event/Stage EX/Koa4.png";
+let Koa5 = MD ~ "IMG/Event/Stage EX/Koa5.png";
+let Koa6 = MD ~ "IMG/Event/Stage EX/Koa6.png";
+let Koa7 = MD ~ "IMG/Event/Stage EX/Koa7.png";
+let Koa8 = MD ~ "IMG/Event/Stage EX/Koa8.png";
+let Koa9 = MD ~ "IMG/Event/Stage EX/Koa9.png";
+let Koa10 = MD ~ "IMG/Event/Stage EX/Koa10.png";

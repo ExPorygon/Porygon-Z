@@ -1,0 +1,26 @@
+function extraRand(min, max){
+    let thing = rand(min, max);
+    //WriteLog("SCRIPT: "~IntToString(GetOwnScriptID)~"  RAND: "~ToString(thing));
+    SetCommonData("Rand Calls",GetCommonData("Rand Calls",0)+1);
+    return thing;
+}
+
+function randInt(min, max){
+	return floor(rand(min, max + 1));
+}
+
+function randEff ( let min, let max ) {
+    let temp = GetCommonData("randEff", 1);
+    temp = (temp*214013+2531011)%4294967296;
+    SetCommonData("randEff", temp);
+    if (max==min) { return min; }
+    else { return min+trunc(temp/256)/16777216*(max-min); }
+}
+
+function randEffItem ( let min, let max ) {
+    let temp = GetCommonData("randEffItem", 100);
+    temp = (temp*214013+2531011)%4294967296;
+    SetCommonData("randEffItem", temp);
+    if (max==min) { return min; }
+    else { return min+trunc(temp/256)/16777216*(max-min); }
+}

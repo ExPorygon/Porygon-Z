@@ -1,0 +1,79 @@
+//Custom Delay Clouds
+//Credit to Infinite Ultima Wave
+
+function CreateShotFA1(x,y,s,a,g,d,holdspeed){
+	let obj = CreateShotA1(x,y,s,a,g,0);
+	if(holdspeed){
+		ObjMove_SetSpeed(obj,0);
+	}
+    ObjShot_SetIntersectionEnable(obj,false);
+    if(d>0) { fadeinshot(d,obj,s,holdspeed); }
+	else { ObjShot_SetIntersectionEnable(obj,true); }
+    return obj
+}
+task fadeinshot(d,obj,s,holdspeed){
+	let alpha = 0;
+	let scale = 2.4;
+	let a = 255/d;
+	let b = 1/d;
+	let done = false;
+	while(!done){
+		alpha+=a;
+		scale-=b;
+		ObjRender_SetScaleXYZ(obj,scale,scale,1);
+		if(scale <1){
+			ObjRender_SetScaleXYZ(obj,1,1,1);
+			scale = 1;
+		}
+		if(scale <=1&&alpha>=255){
+			done = true;
+		}
+		// ObjRender_SetScaleXYZ(obj,1,1,1);
+		ObjRender_SetAlpha(obj,alpha);
+		yield;
+	}
+	if(holdspeed){
+		ObjMove_SetSpeed(obj,s);
+	}
+    ObjShot_SetIntersectionEnable(obj,true);
+}
+function CreateShotFA2(x,y,s,a,acc,ms,g,d,holdspeed){
+	let obj = CreateShotA2(x,y,s,a,acc,ms,g,0);
+	if(holdspeed){
+		ObjMove_SetSpeed(obj,0);
+		ObjMove_SetAcceleration(obj,0);
+		ObjMove_SetMaxSpeed(obj,0);
+	}
+	ObjShot_SetIntersectionEnable(obj,false);
+	if(d>0) { fadeinshot2(d,obj,s,acc,ms,holdspeed); }
+	return obj
+}
+task fadeinshot2(d,obj,s,acc,ms,holdspeed){
+	let alpha = 00;
+	let scale = 2.4;
+	let a = 255/d;
+	let b = 1/d;
+	let done = false;
+	while(!done){
+		alpha+=a;
+		scale-=b;
+		ObjRender_SetScaleXYZ(obj,scale,scale,1);
+		if(scale <1){
+			ObjRender_SetScaleXYZ(obj,1,1,1);
+			scale = 1;
+		}
+		if(scale <=1&&alpha>=255){
+			done = true;
+		}
+     
+		// ObjRender_SetScaleXYZ(obj,1,1,1);
+		ObjRender_SetAlpha(obj,alpha);
+		yield;
+	}
+	if(holdspeed){
+		ObjMove_SetSpeed(obj,s);
+		ObjMove_SetAcceleration(obj,acc);
+		ObjMove_SetMaxSpeed(obj,ms);
+	}
+	ObjShot_SetIntersectionEnable(obj,true);
+}

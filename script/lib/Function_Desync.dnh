@@ -1,0 +1,119 @@
+// The below functions are an attempt to quash potential replay desyncs by rogue task loops acting on objects that have been reassigned
+let uniqueID = 0;
+
+function SetID(obj,id) {
+	Obj_SetValue(obj,"Unique ID",id);
+	uniqueID++;
+	if(uniqueID>1000) { uniqueID = 0; }
+}
+function CheckID(obj) {
+	return Obj_GetValueD(obj,"Unique ID",-1);
+}
+
+//The below functions work to ensure the synchronization of all enemy deaths between replays and their live runs
+function CreateEnemyObject {
+	let obj = ObjEnemy_Create(OBJ_ENEMY);
+	let id = GetNewSyncIndex;
+	Obj_SetValue(obj,"Sync ID",id);
+	return obj;
+}
+
+function CreateEnemyBossObject {
+	let obj = ObjEnemy_Create(OBJ_ENEMY_BOSS);
+	let id = GetNewSyncIndex;
+	Obj_SetValue(obj,"Sync ID",id);
+	return obj;
+}
+
+function GetSyncIndex(obj) {
+	let id = Obj_GetValueD(obj,"Sync ID",-1);
+	if(id<0) { RaiseError("Invalid or missing enemy sync ID."); }
+	return id;
+}
+
+function SetDeathFrame(id) {
+	if(IsReplay) { return; }
+	let stage = GetCommonData("Stage","NULL");
+	let list = GetAreaCommonData("ReplayData",stage,[]);
+	let frame = GetCommonData("Enemy Sync Frame",0);
+	if(id>length(list)-1) { RaiseError("Index number "~IntToString(id)~" is not a valid element of the "~stage~" replay data array."); }
+	list[id] = frame;
+	SetAreaCommonData("ReplayData",stage,list);
+}
+
+function GetDeathFrame(id) {
+	let stage = GetCommonData("Stage","NULL");
+	let list = GetAreaCommonData("ReplayData",stage,[]);
+	if(id>length(list)-1) { RaiseError("Index number "~IntToString(id)~" is not a valid element of the "~stage~" replay data array."); }
+	return list[id];
+}
+
+function GetNewSyncIndex {
+	let id = GetCommonData("Enemy Sync ID",0);
+	SetCommonData("Enemy Sync ID",id+1);
+	return id;
+}
+
+function CheckDeathFrame(obj) {
+	if(!IsReplay) { return false; }
+	let id = GetSyncIndex(obj);
+	let deathFrame = GetDeathFrame(id);
+	let currentFrame = GetCommonData("Enemy Sync Frame",0);
+	return (deathFrame == currentFrame);
+}
+
+
+function SaveDataToText01(array) {
+	let obj = ObjFile_Create(OBJ_FILE_TEXT);
+	let stage = GetCommonData("Stage","Undefined");
+	ObjFile_OpenNW(obj,GetModuleDirectory ~ "System/logs/ReplayData_"~stage~".txt");
+
+	ascent(i in 0..length(array)) {
+		ObjFileT_AddLine(obj,IntToString(i)~": "~IntToString(array[i]));
+	}
+	ObjFile_Store(obj);
+}
+
+function SaveDataToText02(array,stage) {
+	let obj = ObjFile_Create(OBJ_FILE_TEXT);
+	let stage2 = GetCommonData("Stage","Undefined");
+	ObjFile_OpenNW(obj,GetModuleDirectory ~ "System/logs/ReplayData_"~stage~"_"~stage2~".txt");
+
+	ascent(i in 0..length(array)) {
+		ObjFileT_AddLine(obj,IntToString(i)~": "~IntToString(array[i]));
+	}
+	ObjFile_Store(obj);
+}
+
+function SaveDataToText03(array,stage) {
+	let obj = ObjFile_Create(OBJ_FILE_TEXT);
+	let stage2 = GetCommonData("Stage","Undefined");
+	ObjFile_OpenNW(obj,GetModuleDirectory ~ "System/logs/ReplayData_"~stage~"_"~stage2~"_Replay.txt");
+
+	ascent(i in 0..length(array)) {
+		ObjFileT_AddLine(obj,IntToString(i)~": "~IntToString(array[i]));
+	}
+	ObjFile_Store(obj);
+}
+
+function SaveAllReplayDataToText() {
+	if(!IsReplay) { SaveCommonDataAreaToReplayFile("ReplayData"); }
+	if(!GetCommonData("Debug",false)) { return; }
+	SaveDataToText02(GetAreaCommonData("ReplayData","Stage 1",[-500]),"Stage 1");
+	SaveDataToText02(GetAreaCommonData("ReplayData","Stage 2",[-500]),"Stage 2");
+	SaveDataToText02(GetAreaCommonData("ReplayData","Stage 3",[-500]),"Stage 3");
+	SaveDataToText02(GetAreaCommonData("ReplayData","Stage 4",[-500]),"Stage 4");
+	SaveDataToText02(GetAreaCommonData("ReplayData","Stage 5",[-500]),"Stage 5");
+	SaveDataToText02(GetAreaCommonData("ReplayData","Stage 6",[-500]),"Stage 6");
+}
+
+function SaveAllReplayDataToText02() {
+	if(!IsReplay) { SaveCommonDataAreaToReplayFile("ReplayData"); }
+	if(!GetCommonData("Debug",false)) { return; }
+	SaveDataToText03(GetAreaCommonData("ReplayData","Stage 1",[-500]),"Stage 1");
+	SaveDataToText03(GetAreaCommonData("ReplayData","Stage 2",[-500]),"Stage 2");
+	SaveDataToText03(GetAreaCommonData("ReplayData","Stage 3",[-500]),"Stage 3");
+	SaveDataToText03(GetAreaCommonData("ReplayData","Stage 4",[-500]),"Stage 4");
+	SaveDataToText03(GetAreaCommonData("ReplayData","Stage 5",[-500]),"Stage 5");
+	SaveDataToText03(GetAreaCommonData("ReplayData","Stage 6",[-500]),"Stage 6");
+}

@@ -1,0 +1,423 @@
+#include"System/LIB/Event_Const.dnh"
+
+let EffectList_Enemy = [];
+
+function GetDiscord {
+	return (GetAreaCommonData("PlayState","Infinite Discord",false) || GetCommonData("Discord",false) || GetCommonData("Simple Discord",false))
+}
+function SetPowerBaseline(base) {
+	SetCommonData("Power Baseline",base);
+}
+function GetPowerBaseline {
+	return GetCommonData("Power Baseline",1.0);
+}
+function SetMovePositionRandom(obj,xdist,ydist,weight,maxspeed,left,right,top,bottom) {
+	let destangle = rand(0,360);
+	let destx = ObjMove_GetX(obj)+xdist*RandNumber;
+	let desty = ObjMove_GetY(obj)+ydist*RandNumber;
+	
+	loop(200) {
+		if(destx<left || destx>right || desty<top || desty>bottom) {
+			destx = ObjMove_GetX(obj)+xdist*RandNumber;
+			desty = ObjMove_GetY(obj)+ydist*RandNumber;
+		}
+		else {
+			break;
+		}
+	}
+	ObjMove_SetDestAtWeight(obj, destx, desty, weight, maxspeed);
+	function RandNumber {
+		let num = 0;
+		while(num==0) {
+			num = round(rand(-1,1));
+		}
+		return num;
+	}
+}
+
+function ExMove(objEnemy, height, ud, length) { //Thanks to Trickysticks and Miransu
+	if(GetPlayerX < ObjMove_GetX(objEnemy)) {
+		if(ObjMove_GetX(objEnemy) - length <= 0) {
+			ObjMove_SetDestAtWeight(objEnemy, ObjMove_GetX(objEnemy) + length+20, rand(height+4 - ud, height + ud), 10, 4);
+		} else {
+			ObjMove_SetDestAtWeight(objEnemy, ObjMove_GetX(objEnemy) - length-20, rand(height - ud, height + ud), 10, 4);
+		}
+	} else {
+		if(ObjMove_GetX(objEnemy) + length >= GetStgFrameWidth) {
+			ObjMove_SetDestAtWeight(objEnemy, ObjMove_GetX(objEnemy) - length-20, rand(height - ud, height + ud), 10, 4);
+		} else {
+			ObjMove_SetDestAtWeight(objEnemy, ObjMove_GetX(objEnemy) + length+20, rand(height - ud, height + ud), 10, 4);
+		}
+	}
+}
+
+function ExMove2(obj, tarx, length, height, border, speed, weight) { //object moves towards target x coord, maintaining height and moving length distance, keeping border units from left/right
+	if(tarx < ObjMove_GetX(obj)) {
+			if(ObjMove_GetX(obj) - length <= 0+border) {
+				ObjMove_SetDestAtWeight(obj, ObjMove_GetX(obj)+length, height, weight, speed);
+			} else {
+				ObjMove_SetDestAtWeight(obj, ObjMove_GetX(obj)-length, height, weight, speed);
+			}
+		} else {
+			if(ObjMove_GetX(obj) + length >= 384-border) {
+				ObjMove_SetDestAtWeight(obj, ObjMove_GetX(obj)-length, height, weight, speed);
+			} else {
+				ObjMove_SetDestAtWeight(obj, ObjMove_GetX(obj)+length, height, weight, speed);
+			}
+		}
+}
+
+function CurvedMovement01(obj,frames,ang_init,ang_final,speed) {
+	let dist = 500;
+	let ang = ang_init;
+	loop(frames) {
+		ang+=(ang_final-ang_init)/frames;
+		ObjMove_SetSpeed(obj,speed);
+		ObjMove_SetAngle(obj,ang);
+		yield;
+	}
+}
+function CurvedMovement02(obj,frames,ang_init,ang_final,speed,travel_frames,decel_frames) {
+	let dist = 500;
+	let ang = ang_init;
+	loop(frames) {
+		ang+=(ang_final-ang_init)/frames;
+		ObjMove_SetSpeed(obj,speed);
+		ObjMove_SetAngle(obj,ang);
+		yield;
+	}
+	wait(travel_frames);
+	ascent (i in 0..decel_frames) {
+		ObjMove_SetSpeed(obj,speed-speed*sin(90*i/decel_frames));
+		ObjMove_SetAngle(obj,ang);
+		yield;
+	}
+	ObjMove_SetSpeed(obj,0);
+}
+function CurvedMovement03(obj,frames,ang_init,ang_final,speed,acc_frames,travel_frames,decel_frames) {
+	let dist = 500;
+	let ang = ang_init;
+	ascent (i in 0..acc_frames) {
+		ObjMove_SetSpeed(obj,0+speed*sin(90*i/acc_frames));
+		ObjMove_SetAngle(obj,ang);
+		yield;
+	}
+	loop(frames) {
+		ang+=(ang_final-ang_init)/frames;
+		ObjMove_SetSpeed(obj,speed);
+		ObjMove_SetAngle(obj,ang);
+		yield;
+	}
+	wait(travel_frames);
+	ascent (i in 0..decel_frames) {
+		ObjMove_SetSpeed(obj,speed-speed*sin(90*i/decel_frames));
+		ObjMove_SetAngle(obj,ang);
+		yield;
+	}
+	ObjMove_SetSpeed(obj,0);
+}
+task DeleteAllShot {
+	loop(45) {
+		DeleteShotWave(2,GetStgFrameWidth/2,GetStgFrameHeight/2,400);
+		yield;
+	}
+}
+task SetInvincibilityDamageRate(obj,frames,ShotRate,BombRate) {
+	loop(frames) {
+		ObjEnemy_SetDamageRate(obj,0,0);
+		yield;
+	}
+	ObjEnemy_SetDamageRate(obj,ShotRate,BombRate);
+}
+function ShieldHitbox(objEnemy,hitboxA,hitboxB) {
+	if(Obj_GetValueD(objEnemy,"Shield End",false)) {
+		ObjEnemy_SetIntersectionCircleToShot(objEnemy, ObjMove_GetX(objEnemy), ObjMove_GetY(objEnemy), hitboxA);
+		ObjEnemy_SetIntersectionCircleToPlayer(objEnemy, ObjMove_GetX(objEnemy), ObjMove_GetY(objEnemy), hitboxB);
+	}
+	else {
+		ObjEnemy_SetIntersectionCircleToShot(objEnemy, ObjMove_GetX(objEnemy), ObjMove_GetY(objEnemy), Obj_GetValueD(objEnemy,"Shield Scale",0)*105);
+		ObjEnemy_SetIntersectionCircleToPlayer(objEnemy, ObjMove_GetX(objEnemy), ObjMove_GetY(objEnemy), Obj_GetValueD(objEnemy,"Shield Scale",0)*105);
+	}
+}
+task CreateItems01(num,type,x,y,disperse) {
+	let objEnemy = ID_INVALID;
+	loop(num) {
+		NotifyEventAll(EV_CREATE_ITEM,[objEnemy,type,x,y,disperse]);
+	}
+}
+task CreateItems02(objEnemy,num,type,x,y,disperse) {
+	loop(num) {
+		NotifyEventAll(EV_CREATE_ITEM,[objEnemy,type,x,y,disperse]);
+	}
+}
+function SpellPieces01(objScene,objEnemy,x,y) {
+	let pieces = 1;
+	if(ObjEnemyBossScene_GetInfo(objScene,INFO_PLAYER_SPELL_COUNT)>0) { pieces-=1; }
+	if(ObjEnemyBossScene_GetInfo(objScene,INFO_PLAYER_SHOOTDOWN_COUNT)>0) { pieces-=1; }
+	if(pieces==1) {
+		PlaySoundEffect("bonus",100);
+		CreateItems01(1,8,x,y,0);
+	}
+}
+function SpellPieces02(objScene,objEnemy) {
+	let pieces = 1;
+	if(ObjEnemyBossScene_GetInfo(objScene,INFO_PLAYER_SPELL_COUNT)>0) { pieces-=1; }
+	if(ObjEnemyBossScene_GetInfo(objScene,INFO_PLAYER_SHOOTDOWN_COUNT)>0) { pieces-=1; }
+	if(pieces==1) {
+		CreateItems02(objEnemy,1,8,0,0,0);
+	}
+}
+function LifePieces01(objScene,objEnemy,x,y) {
+	let pieces = 1;
+	if(ObjEnemyBossScene_GetInfo(objScene,INFO_IS_LAST_SPELL)) { pieces=2; }
+	if(ObjEnemyBossScene_GetInfo(objScene,INFO_PLAYER_SPELL_COUNT)>0) { pieces-=1; }
+	if(ObjEnemyBossScene_GetInfo(objScene,INFO_PLAYER_SHOOTDOWN_COUNT)>0) { pieces-=1; }
+	if(ObjEnemyBossScene_GetInfo(objScene,INFO_TIMERF)<=0 && ObjEnemyBossScene_GetInfo(objScene,INFO_IS_LAST_SPELL) && !ObjEnemyBossScene_GetInfo(objScene,INFO_IS_DURABLE_SPELL)) { pieces-=2; }
+	if(Obj_GetValueD(objScene,"Discord Last Spell",false) || GetAreaCommonData("PlayState","Mode","")=="Spell Practice") { pieces = 0; }
+
+	if(pieces==1) {
+		PlaySoundEffect("bonus",100);
+		CreateItems01(1,7,x,y,0);
+	}
+	if(pieces==2) {
+		PlaySoundEffect("bonus",100);
+		CreateItems01(1,7,x+20,y,0);
+		CreateItems01(1,7,x-20,y,0);
+	}
+	if(Obj_GetValueD(objScene,"Discord Last Spell",false) && ObjEnemyBossScene_GetInfo(objScene,INFO_PLAYER_SHOOTDOWN_COUNT)<=0) {
+		PlaySoundEffect("bonus",100);
+		CreateItems01(1,7,x+20,y+20,0);
+		CreateItems01(1,7,x-20,y+20,0);
+		CreateItems01(1,7,x+20,y-20,0);
+		CreateItems01(1,7,x-20,y-20,0);
+	}
+}
+function LifePieces02(objScene,objEnemy) {
+	let pieces = 1;
+	if(ObjEnemyBossScene_GetInfo(objScene,INFO_IS_LAST_SPELL)) { pieces=2; }
+	if(ObjEnemyBossScene_GetInfo(objScene,INFO_PLAYER_SPELL_COUNT)>0) { pieces-=1; }
+	if(ObjEnemyBossScene_GetInfo(objScene,INFO_PLAYER_SHOOTDOWN_COUNT)>0) { pieces-=1; }
+	if(ObjEnemyBossScene_GetInfo(objScene,INFO_TIMERF)<=0 && ObjEnemyBossScene_GetInfo(objScene,INFO_IS_LAST_SPELL) && !ObjEnemyBossScene_GetInfo(objScene,INFO_IS_DURABLE_SPELL)) { pieces-=2; }
+	if(Obj_GetValueD(objScene,"Discord Last Spell",false) || GetAreaCommonData("PlayState","Mode","")=="Spell Practice") { pieces = 0; }
+
+	if(pieces==1) {
+		CreateItems02(objEnemy,1,7,0,0,0);
+	}
+	if(pieces==2) {
+		CreateItems02(objEnemy,1,7,20,0,0);
+		CreateItems02(objEnemy,1,7,-20,0,0);
+	}
+	if(Obj_GetValueD(objScene,"Discord Last Spell",false) && ObjEnemyBossScene_GetInfo(objScene,INFO_PLAYER_SHOOTDOWN_COUNT)<=0) {
+		CreateItems02(objEnemy,1,7,20,20,0);
+		CreateItems02(objEnemy,1,7,-20,20,0);
+		CreateItems02(objEnemy,1,7,20,-20,0);
+		CreateItems02(objEnemy,1,7,-20,-20,0);
+	}
+}
+function CheckPlayerPower(power) {
+	if(GetPlayerPower<power) { return true; }
+	else { return false; }
+}
+task AnimateFamiliarA1(objFam,color,scale,alpha,dspin,freq) {
+	
+	ObjPrim_SetTexture(objFam,MD ~ "IMG/Enemy/Fam_" ~color~ ".png");
+	ObjRender_SetBlendType(objFam,BLEND_ADD_ARGB);
+	ObjSprite2D_SetSourceRect(objFam,0,0,256,256);
+	ObjSprite2D_SetDestCenter(objFam);
+	ObjRender_SetScaleXYZ(objFam,scale,scale,scale);
+	ObjRender_SetColor(objFam,alpha,alpha,alpha);
+	
+	EffectList_Enemy = EffectList_Enemy ~ [objFam];
+	
+	let spin = 0;
+	let count = 0;
+	
+	while(!Obj_IsDeleted(objFam)) {
+		ObjRender_SetAngleZ(objFam,spin);
+		if(count==freq) {
+			PulseEffect(scale,alpha,spin);
+			count = 0;
+		}
+		count++;
+		spin+=dspin;
+		yield;
+	}
+	
+	task PulseEffect(scale2,alpha2,angle) {
+		let objEffect = ObjPrim_Create(OBJ_SPRITE_2D);
+		ObjPrim_SetTexture(objEffect,MD ~ "IMG/Enemy/Fam_" ~color~ ".png");
+		ObjRender_SetBlendType(objEffect,BLEND_ADD_ARGB);
+		ObjSprite2D_SetSourceRect(objEffect,0,0,256,256);
+		ObjSprite2D_SetDestCenter(objEffect);
+		
+		let initalpha = alpha2-110;
+		alpha2 = initalpha;
+		let maxscale = 2*scale2;
+		EffectList_Enemy = EffectList_Enemy ~ [objEffect];
+		
+		ascent(i in 0..20) {
+			scale2 = maxscale*sin(90*i/20);
+			alpha2 -= initalpha/20;
+			ObjRender_SetPosition(objEffect,ObjRender_GetX(objFam),ObjRender_GetY(objFam),0);
+			ObjRender_SetScaleXYZ(objEffect,scale2,scale2,scale2);
+			ObjRender_SetColor(objEffect,alpha2,alpha2,alpha2);
+			ObjRender_SetAngleZ(objEffect,angle);
+			if(Obj_IsDeleted(objFam)) { Obj_Delete(objEffect); }
+			yield;
+		}
+		Obj_Delete(objEffect);
+	}
+}
+task AnimateFamiliarA2(objFam,color,scale,alpha,dspin,freq) {
+	
+	ObjPrim_SetTexture(objFam,MD ~ "IMG/Enemy/Fam_" ~color~ ".png");
+	ObjRender_SetBlendType(objFam,BLEND_ADD_ARGB);
+	ObjSprite2D_SetSourceRect(objFam,0,0,256,256);
+	ObjSprite2D_SetDestCenter(objFam);
+	ObjRender_SetScaleXYZ(objFam,scale,scale,scale);
+	ObjRender_SetColor(objFam,alpha,alpha,alpha);
+	EffectList_Enemy = EffectList_Enemy ~ [objFam];
+	
+	let objFam2 = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjRender_SetPosition(objFam2,ObjRender_GetX(objFam),ObjRender_GetY(objFam),0);
+	AnimateFamiliarA1(objFam2,color,scale,alpha,-dspin,freq);
+	EffectList_Enemy = EffectList_Enemy ~ [objFam2];
+	
+	let spin = 0;
+	let count = 0;
+	
+	while(!Obj_IsDeleted(objFam)) {
+		ObjRender_SetPosition(objFam2,ObjRender_GetX(objFam),ObjRender_GetY(objFam),0);
+		ObjRender_SetAngleZ(objFam,spin);
+		if(count==freq) {
+			PulseEffect(scale,alpha,spin);
+			count = 0;
+		}
+		count++;
+		spin+=dspin;
+		yield;
+	}
+	Obj_Delete(objFam2);
+	task PulseEffect(scale2,alpha2,angle) {
+		let objEffect = ObjPrim_Create(OBJ_SPRITE_2D);
+		ObjPrim_SetTexture(objEffect,MD ~ "IMG/Enemy/Fam_" ~color~ ".png");
+		ObjRender_SetBlendType(objEffect,BLEND_ADD_ARGB);
+		ObjSprite2D_SetSourceRect(objEffect,0,0,256,256);
+		ObjSprite2D_SetDestCenter(objEffect);
+		
+		let initalpha = alpha2-110;
+		alpha2 = initalpha;
+		let maxscale = 2*scale2;
+		EffectList_Enemy = EffectList_Enemy ~ [objEffect];
+		
+		ascent(i in 0..20) {
+			scale2 = maxscale*sin(90*i/20);
+			alpha2 -= initalpha/20;
+			ObjRender_SetPosition(objEffect,ObjRender_GetX(objFam),ObjRender_GetY(objFam),0);
+			ObjRender_SetScaleXYZ(objEffect,scale2,scale2,scale2);
+			ObjRender_SetColor(objEffect,alpha2,alpha2,alpha2);
+			ObjRender_SetAngleZ(objEffect,angle);
+			if(Obj_IsDeleted(objFam)) { Obj_Delete(objEffect); }
+			yield;
+		}
+		Obj_Delete(objEffect);
+	}
+}
+function CreateShader_ShotObject(objShot,delay,left,top,right,bottom) {
+	if(!GetAreaCommonData("Options","Shader",true)) { return ID_INVALID; }
+	let objClone = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(objClone,MD ~ "Shot/RCFShot.png");
+	ObjSprite2D_SetSourceRect(objClone,left,top,right,bottom);
+	ObjSprite2D_SetDestCenter(objClone);
+	MatchBullet(objShot,objClone,delay);
+	return objClone;
+}
+task MatchBullet(objShot,objClone,delay) {
+	Obj_SetVisible(objClone,false);
+	wait(delay);
+	Obj_SetVisible(objShot,false);
+	Obj_SetVisible(objClone,true);
+	while(!Obj_IsDeleted(objShot)) {
+		ObjRender_SetPosition(objClone,ObjMove_GetX(objShot),ObjMove_GetY(objShot),0);
+		ObjRender_SetAngleZ(objClone,ObjMove_GetAngle(objShot)-270);
+		ObjRender_SetScaleXYZ(objClone,ObjRender_GetScaleX(objShot),ObjRender_GetScaleY(objShot),ObjRender_GetScaleZ(objShot));
+		yield;
+	}
+	Obj_Delete(objClone);
+}
+
+function SetHueSaturation(obj,hue,sat) {
+	let pathShader = MD ~ "Script/LIB/PS_HueShiftHLSL.dnh";
+	//let pathShader = MD ~ "Script/LIB/PS_HueShiftHLSL_AkariVersion.dnh";
+	ObjShader_SetShaderF(obj, pathShader);
+	ObjShader_SetTechnique(obj, "TecShift");
+	ObjShader_SetFloat(obj, "paramHue", hue);
+	ObjShader_SetFloat(obj, "paramSat", sat);
+}
+function BossEffectsEx(ID,aura,life,circle,shadow) { //Must use numbers, no booleans
+	NotifyEventAll(EV_BOSS_EFFECT,[ID,aura,life,circle,shadow]);
+}
+function BulletDeleteEffect(objShot) {
+	NotifyEventAll(EV_DELETE_SHOT,[ObjMove_GetX(objShot),ObjMove_GetY(objShot),ObjShot_GetImageID(objShot),objShot]);
+}
+task DeleteShotWave(type,x,y,speed) {
+	NotifyEventAll(EV_DELETE_WAVE,[type,x,y,speed]);
+}
+function DeleteEnemyEffects {
+	ascent(i in 0..length(EffectList_Enemy)) {
+		Obj_Delete(EffectList_Enemy[i]);
+	}
+	EffectList_Enemy = [];
+}
+function waitEx(obj,w) {
+	loop(w) {
+		yield;
+		if(Obj_IsDeleted(obj)) { break; }
+	}
+	if(Obj_IsDeleted(obj)) { break; }
+}
+
+function WithinPlayingField(tarobj, tolerance){
+	if(ObjMove_GetX(tarobj)<GetStgFrameWidth+tolerance && ObjMove_GetX(tarobj)>0-tolerance && ObjMove_GetY(tarobj)>0-tolerance && ObjMove_GetY(tarobj)<GetStgFrameHeight+tolerance){ return true; }
+	else{ return false; }
+}
+
+/*
+way: number of sides
+way2: bullets per side
+way_angle: integer only, 1 for normal polygons, more than 1 for polygrams
+*/
+
+function PolygonShot(x, y, speed, angle, way, way2, way_angle, graphic, delay){ 
+    let bpos_x = [];
+    let bpos_y = [];
+    ascent(i in 0..way){
+        let tmp_angle = 360 / way * i;
+        bpos_x = bpos_x ~ [cos(tmp_angle)];
+        bpos_y = bpos_y ~ [sin(tmp_angle)];
+    }
+
+    ascent(i in 0..way){
+        let from_x = x + bpos_x[i % way];
+        let from_y = y + bpos_y[i % way];
+        let to_x = x + bpos_x[(i + way_angle) % way];
+        let to_y = y + bpos_y[(i + way_angle) % way];
+
+        ascent(j in 0..way2){
+            let tmp = (j + 1) / way2;
+
+            let vx = GetLinePosition(from_x, to_x, tmp);
+            let vy = GetLinePosition(from_y, to_y, tmp);
+            let dx = vx - x;
+            let dy = vy - y;
+            let va = atan2(dy, dx) + angle;
+            let vs = (dx * dx + dy * dy) ^ 0.5;
+
+            CreateShotA1(x, y, vs * speed, va, graphic, delay);
+        }
+    }
+    
+    function GetLinePosition(from_pos, to_pos, pos_t){
+        return (from_pos + (to_pos - from_pos) * pos_t);
+    }
+}

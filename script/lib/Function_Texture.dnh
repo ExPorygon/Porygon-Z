@@ -1,0 +1,162 @@
+
+let GenerateTexturePathData = false;
+let GenerateObjFile = ID_INVALID;
+let GenNum = 0;
+
+local{
+	BeginFileGeneration;
+}
+
+//Credits
+let Credits_All = FilterFileList(GetFilePathListEx(MD ~ "IMG/Credits/"));
+
+//Event Graphics
+let Event_Rin = FilterFileList(GetFilePathListEx(MD ~ "IMG/Event/Player/Rin/"));
+let Event_Kasen = FilterFileList(GetFilePathListEx(MD ~ "IMG/Event/Player/Kasen/"));
+let Event_Tokiko = FilterFileList(GetFilePathListEx(MD ~ "IMG/Event/Player/Tokiko/"));
+let Event_1 = FilterFileList(GetFilePathListEx(MD ~ "IMG/Event/Stage 1/"));
+let Event_2 = FilterFileList(GetFilePathListEx(MD ~ "IMG/Event/Stage 2/"));
+let Event_3 = FilterFileList(GetFilePathListEx(MD ~ "IMG/Event/Stage 3/"));
+let Event_4 = FilterFileList(GetFilePathListEx(MD ~ "IMG/Event/Stage 4/"));
+let Event_5 = FilterFileList(GetFilePathListEx(MD ~ "IMG/Event/Stage 5/"));
+let Event_6 = FilterFileList(GetFilePathListEx(MD ~ "IMG/Event/Stage 6/")) ~ FilterFileList(GetFilePathListEx(MD ~ "IMG/Event/Stage 6/Tree/"));
+let Event_7 = FilterFileList(GetFilePathListEx(MD ~ "IMG/Event/Stage EX/"));
+
+//Title Graphics
+let Title_All = FilterFileList(GetFilePathListEx(MD ~ "IMG/Title/")) ~ FilterFileList(GetFilePathListEx(MD ~ "IMG/Title/Logo/"));
+
+//Effect Graphics
+let Effect_All = FilterFileList(GetFilePathListEx(MD ~ "System/IMG/Effect/"));
+
+//System Graphics
+let System_All = FilterFileList(GetFilePathListEx(MD ~ "System/IMG/"));
+
+//Background Graphics
+let Background_Spell = FilterFileList(GetFilePathListEx(MD ~ "IMG/Background/"));
+let Background_Common = FilterFileList(GetFilePathListEx(MD ~ "IMG/Background/Common/")) ~ FilterFileList(GetFilePathListEx(MD ~ "IMG/Background/Common/effect/")) ~ FilterFileList(GetFilePathListEx(MD ~ "IMG/Background/Common/Tree2/")) ~ FilterFileList(GetFilePathListEx(MD ~ "IMG/Background/Common/Tree3/"));
+let Background_1 = FilterFileList(GetFilePathListEx(MD ~ "IMG/Background/Stage 1/"));
+let Background_2 = FilterFileList(GetFilePathListEx(MD ~ "IMG/Background/Stage 2/"));
+let Background_3 = FilterFileList(GetFilePathListEx(MD ~ "IMG/Background/Stage 3/"));
+let Background_4 = FilterFileList(GetFilePathListEx(MD ~ "IMG/Background/Stage 4/"));
+let Background_5 = FilterFileList(GetFilePathListEx(MD ~ "IMG/Background/Stage 5/"));
+let Background_6 = FilterFileList(GetFilePathListEx(MD ~ "IMG/Background/Stage 6/") ~ FilterFileList(GetFilePathListEx(MD ~ "IMG/Background/Stage 6/Tree/")));
+let Background_7 = FilterFileList(GetFilePathListEx(MD ~ "IMG/Background/Stage EX/"));
+let Background_Static = FilterFileList(GetFilePathListEx(MD ~ "IMG/Background/Static/"));
+
+let Background_All = Background_Spell ~ Background_Common ~ Background_1 ~ Background_2 ~ Background_3 ~ Background_4 ~ Background_5 ~ Background_6 ~ Background_7 ~ Background_Static;
+	
+//Common Enemy Graphics
+let Enemy_Common = FilterFileList(GetFilePathListEx(MD ~ "IMG/Enemy/"));
+
+//Stage 1 Enemy Graphics
+let Enemy_1 = FilterFileList(GetFilePathListEx(MD ~ "IMG/Enemy/Stage 1/"));
+
+//Stage 2 Enemy Graphics
+let Enemy_2 = FilterFileList(GetFilePathListEx(MD ~ "IMG/Enemy/Stage 2/"));
+
+//Stage 3 Enemy Graphics
+let Enemy_3 = FilterFileList(GetFilePathListEx(MD ~ "IMG/Enemy/Stage 3/"));
+
+//Stage 4 Enemy Graphics
+let Enemy_4 = FilterFileList(GetFilePathListEx(MD ~ "IMG/Enemy/Stage 4/"));
+
+//Stage 5 Enemy Graphics
+let Enemy_5 = FilterFileList(GetFilePathListEx(MD ~ "IMG/Enemy/Stage 5/"));
+
+//Stage 6 Enemy Graphics
+let Enemy_6 = FilterFileList(GetFilePathListEx(MD ~ "IMG/Enemy/Stage 6/"));
+
+//Stage EX Enemy Graphics
+let Enemy_7 = FilterFileList(GetFilePathListEx(MD ~ "IMG/Enemy/Stage EX/"));
+
+//All Enemy Graphics
+let Enemy_All = Enemy_Common ~ Enemy_1 ~ Enemy_2 ~ Enemy_3 ~ Enemy_4 ~ Enemy_5 ~ Enemy_6 ~ Enemy_7;
+
+//Shot Graphics
+let Shot_All = GetFilePathListEx(MD ~ "Shot/");
+
+//Player Graphics
+let Player_All = FilterFileList(GetFilePathListEx(MD ~ "IMG/Player/"));
+
+
+function FilterFileList(array) {
+	descent(i in 0..length(array)) {
+		if(!CheckExtension(array[i],".png")) {
+			array = erase(array,i);
+		}
+	}
+	return array;
+}
+function LoadTextureSet(array) {
+	ascent(i in 0..length(array)) {
+		LoadTextureInLoadThread(array[i]);
+	}
+}
+function DeleteTextureSet(array) {
+	ascent(i in 0..length(array)) {
+		RemoveTexture(array[i]);
+	}
+}
+function CheckExtension(path,extension) {
+	return path[length(path)-length(extension)..length(path)] == extension;
+}
+
+task BeginFileGeneration{
+	GenerateObjFile = ObjFile_Create(OBJ_FILE_TEXT);
+	
+	if(GenerateTexturePathData){
+		ObjFile_OpenNW(GenerateObjFile, GetModuleDirectory~"Script/PathConst/Paths_Texture.txt");
+	}else{
+		ObjFile_Open(GenerateObjFile, GetModuleDirectory~"Script/PathConst/Paths_Texture.txt");
+	}
+	
+	yield;
+	yield;
+	
+	if(GenerateTexturePathData){
+		ObjFile_Store(GenerateObjFile);
+		WriteLog("Completed generating path list, set var back to false");
+	}else{
+		Obj_Delete(GenerateObjFile);
+	}
+
+}
+
+
+function GetFilePathListEx(path){
+	let data = [];
+	
+	if(GenerateTexturePathData){
+		data = GetFilePathList(path);
+		data = FilterFileList(data);
+		let ndata = "";
+		ascent(i in 0..length(data)){
+			ndata = ndata~GetFinalDirectoriesInPathEUB1(data[i], 3)~" |";
+		}
+		ObjFileT_AddLine(GenerateObjFile, ndata);
+	}else{
+		GenNum++;
+		data = ObjFileT_SplitLineText(GenerateObjFile, GenNum, "|");
+		ascent(i in 0..length(data)){
+			data[i] = MD~data[i];
+		}
+	}
+	
+	return data;
+}
+
+function GetFinalDirectoriesInPathEUB1(str, depth){
+	depth = max(0, depth-1);
+	let point = length(str);
+	descent(i in 0..length(str)){
+		if(str[i-7..i] == "Balance"){
+			// if(depth == 0){
+				return str[i+1..point];
+			// }else{
+				// depth--;
+			// }
+		}
+	}
+	RaiseError("GetFinalDirectoriesInPathA1 received an invalid path for the string.");
+}
+

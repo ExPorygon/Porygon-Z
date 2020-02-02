@@ -1,0 +1,904 @@
+task AnimateEnemyA1(objID, Color){
+	let count = 0;
+	let type = 0;
+	
+	let x = 32;
+	let y = 0;
+	
+	let idle = 10;
+	let move = 6;
+	let attack = 6;
+	
+	let r = idle;
+	let m = 0; 
+	
+	if(Color == "Blue") { y = 320; }
+	if(Color == "Red") { y = 352; }
+	if(Color == "Green") { y = 384; }
+	if(Color == "Yellow") { y = 416; }
+	if(Color == "Aqua") { y = 448; }
+	
+	ObjPrim_SetTexture(objID, MD ~ "IMG/Enemy/Enemy.png");
+	
+	while(!Obj_IsDeleted(objID)){
+		if(GetSpeedX(objID) >= 0.5 || GetSpeedX(objID) <= -0.5){
+			if(type == 0) {
+				count = 0;
+				type = 2;
+			}
+		}
+		else {
+			if(type == 1) {
+				count = 0;
+				type = 3;
+			}
+		}
+		if(GetSpeedX(objID) >= 0.5) { ObjRender_SetScaleXYZ(objID, 1, 1, 1); }
+		if(GetSpeedX(objID) <= -0.5){ ObjRender_SetScaleXYZ(objID, -1, 1, 1); }
+		
+		if(type==0){ //Idle
+			r = idle;
+			if(count >= 0){ ObjSprite2D_SetSourceRect(objID, x*0, y, x*1, y+32); }
+			if(count >= r){ ObjSprite2D_SetSourceRect(objID, x*1, y, x*2, y+32); }
+			if(count >= r*2){ ObjSprite2D_SetSourceRect(objID, x*2, y, x*3, y+32); }
+			if(count >= r*3){ ObjSprite2D_SetSourceRect(objID, x*3, y, x*4, y+32); }
+			if(count >= r*4){ count = 0; }
+		}
+		if(type==1){ //Moving
+			r = move;
+			if(count >= 0){ ObjSprite2D_SetSourceRect(objID, x*8, y, x*9, y+32); }
+			if(count >= r){ ObjSprite2D_SetSourceRect(objID, x*9, y, x*10, y+32); }
+			if(count >= r*2){ ObjSprite2D_SetSourceRect(objID, x*10, y, x*11, y+32); }
+			if(count >= r*3){ ObjSprite2D_SetSourceRect(objID, x*11, y, x*12, y+32); }
+			if(count >= r*4){ count = 0; }
+		}
+		if(type==2){ //Idle to moving
+			r = move;
+			if(count >= 0){ ObjSprite2D_SetSourceRect(objID, x*4, y, x*5, y+32); }
+			if(count >= r){ ObjSprite2D_SetSourceRect(objID, x*5, y, x*6, y+32); }
+			if(count >= r*2){ ObjSprite2D_SetSourceRect(objID, x*6, y, x*7, y+32); }
+			if(count >= r*3){ ObjSprite2D_SetSourceRect(objID, x*7, y, x*8, y+32); }
+			if(count >= r*3-r/2){ type=1; count=0; }
+			if(GetSpeedX(objID) < 0.5 && GetSpeedX(objID) > -0.5){ type=0; }
+		}
+		if(type==3){ //Moving to idle
+			r = move;
+			if(count >= 0){ ObjSprite2D_SetSourceRect(objID, x*7, y, x*8, y+32); }
+			if(count >= r){ ObjSprite2D_SetSourceRect(objID, x*6, y, x*7, y+32); }
+			if(count >= r*2){  ObjSprite2D_SetSourceRect(objID, x*5, y, x*6, y+32); }
+			if(count >= r*3-r/2){ type=0; count=0; }
+			if(GetSpeedX(objID) >= 0.5 || GetSpeedX(objID) <= -0.5){ type=1; }
+		}
+		m+=1;
+		count++;
+		//ObjSprite2D_SetDestRect(objID, -x/2, -y/2+(4*sin(m)), x/2, y/2+(4*sin(m)));
+		ObjSprite2D_SetDestCenter(objID);
+		//if(!IsTimeStopped){count++;}
+		yield;
+	}
+}
+task AnimateEnemyA2(objID, Color){
+	let count = 0;
+	let type = 0;
+	
+	let x = 48;
+	let y = 0;
+	
+	let idle = 10;
+	let move = 6;
+	let attack = 6;
+	
+	let r = idle;
+	let m = 0; 
+	
+	if(Color == "Blue") { y = 0; }
+	if(Color == "Red") { y = 96; }
+	if(Color == "Green") { y = 192; }
+	
+	ObjPrim_SetTexture(objID, MD ~ "IMG/Enemy/Enemy.png");
+	
+	while(!Obj_IsDeleted(objID)){
+		if(GetSpeedX(objID) >= 0.5 || GetSpeedX(objID) <= -0.5){
+			if(type == 0) {
+				count = 0;
+				type = 2;
+			}
+		}
+		else {
+			if(type == 1) {
+				count = 0;
+				type = 3;
+			}
+		}
+		if(GetSpeedX(objID) >= 0.5) { ObjRender_SetScaleXYZ(objID, 1, 1, 1); }
+		if(GetSpeedX(objID) <= -0.5){ ObjRender_SetScaleXYZ(objID, -1, 1, 1); }
+		
+		if(type==0){ //Idle
+			r = idle;
+			if(count >= 0){ ObjSprite2D_SetSourceRect(objID, x*0, y, x*1, y+32); }
+			if(count >= r){ ObjSprite2D_SetSourceRect(objID, x*1, y, x*2, y+32); }
+			if(count >= r*2){ ObjSprite2D_SetSourceRect(objID, x*2, y, x*3, y+32); }
+			if(count >= r*3){ ObjSprite2D_SetSourceRect(objID, x*3, y, x*4, y+32); }
+			if(count >= r*4){ count = 0; }
+		}
+		if(type==1){ //Moving
+			r = move;
+			if(count >= 0){ ObjSprite2D_SetSourceRect(objID, x*0, y+64, x*1, y+96); }
+			if(count >= r){ ObjSprite2D_SetSourceRect(objID, x*1, y+64, x*2, y+96); }
+			if(count >= r*2){ ObjSprite2D_SetSourceRect(objID, x*2, y+64, x*3, y+96); }
+			if(count >= r*3){ ObjSprite2D_SetSourceRect(objID, x*3, y+64, x*4, y+96); }
+			if(count >= r*4){ count = 0; }
+		}
+		if(type==2){ //Idle to moving
+			r = move;
+			if(count >= 0){ ObjSprite2D_SetSourceRect(objID, x*0, y+32, x*1, y+64); }
+			if(count >= r){ ObjSprite2D_SetSourceRect(objID, x*1, y+32, x*2, y+64); }
+			if(count >= r*2){ ObjSprite2D_SetSourceRect(objID, x*2, y+32, x*3, y+64); }
+			if(count >= r*3){ ObjSprite2D_SetSourceRect(objID, x*3, y+32, x*4, y+64); }
+			if(count >= r*4-r/2){ type=1; count=0; }
+		}
+		if(type==3){ //Moving to idle
+			r = move;
+			if(count >= 0){ ObjSprite2D_SetSourceRect(objID, x*3, y+32, x*4, y+64); }
+			if(count >= r){ ObjSprite2D_SetSourceRect(objID, x*2, y+32, x*3, y+64); }
+			if(count >= r*2){  ObjSprite2D_SetSourceRect(objID, x*1, y+32, x*2, y+64); }
+			if(count >= r*3-r/2){ type=0; count=0; }
+		}
+		m+=1;
+		count++;
+		//ObjSprite2D_SetDestRect(objID, -x/2, -y/2+(4*sin(m)), x/2, y/2+(4*sin(m)));
+		ObjSprite2D_SetDestCenter(objID);
+		//if(!IsTimeStopped){count++;}
+		yield;
+	}
+}
+task AnimateEnemyA3(objID, Color){
+	let count = 0;
+	let type = 0;
+	
+	let xinit = 192;
+	let x = 48;
+	let y = 0;
+	
+	let idle = 10;
+	let move = 6;
+	let attack = 6;
+	
+	let r = idle;
+	let m = 0; 
+	
+	if(Color == "Blue") { y = 144; }
+	if(Color == "Red") { y = 0; }
+	
+	ObjPrim_SetTexture(objID, MD ~ "IMG/Enemy/Enemy.png");
+	
+	while(!Obj_IsDeleted(objID)){
+		if(GetSpeedX(objID) >= 0.5 || GetSpeedX(objID) <= -0.5){
+			if(type == 0) {
+				count = 0;
+				type = 2;
+			}
+		}
+		else {
+			if(type == 1) {
+				count = 0;
+				type = 3;
+			}
+		}
+		if(GetSpeedX(objID) >= 0.5) { ObjRender_SetScaleXYZ(objID, 1, 1, 1); }
+		if(GetSpeedX(objID) <= -0.5){ ObjRender_SetScaleXYZ(objID, -1, 1, 1); }
+		
+		if(type==0){ //Idle
+			r = idle;
+			if(count >= 0){ ObjSprite2D_SetSourceRect(objID, xinit+x*0, y, xinit+x*1, y+48); }
+			if(count >= r){ ObjSprite2D_SetSourceRect(objID, xinit+x*1, y, xinit+x*2, y+48); }
+			if(count >= r*2){ ObjSprite2D_SetSourceRect(objID, xinit+x*2, y, xinit+x*3, y+48); }
+			if(count >= r*3){ ObjSprite2D_SetSourceRect(objID, xinit+x*3, y, xinit+x*4, y+48); }
+			if(count >= r*4){ count = 0; }
+		}
+		if(type==1){ //Moving
+			r = move;
+			if(count >= 0){ ObjSprite2D_SetSourceRect(objID, xinit+x*0, y+96, xinit+x*1, y+144); }
+			if(count >= r){ ObjSprite2D_SetSourceRect(objID, xinit+x*1, y+96, xinit+x*2, y+144); }
+			if(count >= r*2){ ObjSprite2D_SetSourceRect(objID, xinit+x*2, y+96, xinit+x*3, y+144); }
+			if(count >= r*3){ ObjSprite2D_SetSourceRect(objID, xinit+x*3, y+96, xinit+x*4, y+144); }
+			if(count >= r*4){ count = 0; }
+		}
+		if(type==2){ //Idle to moving
+			r = move;
+			if(count >= 0){ ObjSprite2D_SetSourceRect(objID, xinit+x*0, y+48, xinit+x*1, y+96); }
+			if(count >= r){ ObjSprite2D_SetSourceRect(objID, xinit+x*1, y+48, xinit+x*2, y+96); }
+			if(count >= r*2){ ObjSprite2D_SetSourceRect(objID, xinit+x*2, y+48, xinit+x*3, y+96); }
+			if(count >= r*3){ ObjSprite2D_SetSourceRect(objID, xinit+x*3, y+48, xinit+x*4, y+96); }
+			if(count >= r*4-r/2){ type=1; count=0; }
+		}
+		if(type==3){ //Moving to idle
+			r = move;
+			if(count >= 0){ ObjSprite2D_SetSourceRect(objID, xinit+x*3, y+48, xinit+x*4, y+96); }
+			if(count >= r){ ObjSprite2D_SetSourceRect(objID, xinit+x*2, y+48, xinit+x*3, y+96); }
+			if(count >= r*2){  ObjSprite2D_SetSourceRect(objID, xinit+x*1, y+48, xinit+x*2, y+96); }
+			if(count >= r*3-r/2){ type=0; count=0; }
+		}
+		m+=1;
+		count++;
+		//ObjSprite2D_SetDestRect(objID, -x/2, -y/2+(4*sin(m)), x/2, y/2+(4*sin(m)));
+		ObjSprite2D_SetDestCenter(objID);
+		//if(!IsTimeStopped){count++;}
+		yield;
+	}
+}
+task AnimateEnemyA4(objID, Color){
+	let count = 0;
+	let type = 0;
+	
+	let xinit = 398;
+	let x = 64;
+	let y = 0;
+	
+	let idle = 10;
+	let move = 6;
+	let attack = 6;
+	
+	let r = idle;
+	let m = 0; 
+	
+	if(Color == "Blue") { y = 192; }
+	if(Color == "Red") { y = 0; }
+	
+	ObjPrim_SetTexture(objID, MD ~ "IMG/Enemy/Enemy.png");
+	
+	while(!Obj_IsDeleted(objID)){
+		if(GetSpeedX(objID) >= 0.5 || GetSpeedX(objID) <= -0.5){
+			if(type == 0) {
+				count = 0;
+				type = 2;
+			}
+		}
+		else {
+			if(type == 1) {
+				count = 0;
+				type = 3;
+			}
+		}
+		if(GetSpeedX(objID) >= 0.5) { ObjRender_SetScaleXYZ(objID, 1, 1, 1); }
+		if(GetSpeedX(objID) <= -0.5){ ObjRender_SetScaleXYZ(objID, -1, 1, 1); }
+		
+		if(type==0){ //Idle
+			r = idle;
+			if(count >= 0){ ObjSprite2D_SetSourceRect(objID, xinit+x*0, y, xinit+x*1, y+64); }
+			if(count >= r){ ObjSprite2D_SetSourceRect(objID, xinit+x*1, y, xinit+x*2, y+64); }
+			if(count >= r*2){ ObjSprite2D_SetSourceRect(objID, xinit+x*2, y, xinit+x*3, y+64); }
+			if(count >= r*3){ ObjSprite2D_SetSourceRect(objID, xinit+x*3, y, xinit+x*4, y+64); }
+			if(count >= r*4){ count = 0; }
+		}
+		if(type==1){ //Moving
+			r = move;
+			if(count >= 0){ ObjSprite2D_SetSourceRect(objID, xinit+x*0, y+128, xinit+x*1, y+192); }
+			if(count >= r){ ObjSprite2D_SetSourceRect(objID, xinit+x*1, y+128, xinit+x*2, y+192); }
+			if(count >= r*2){ ObjSprite2D_SetSourceRect(objID, xinit+x*2, y+128, xinit+x*3, y+192); }
+			if(count >= r*3){ ObjSprite2D_SetSourceRect(objID, xinit+x*3, y+128, xinit+x*4, y+192); }
+			if(count >= r*4){ count = 0; }
+		}
+		if(type==2){ //Idle to moving
+			r = move;
+			if(count >= 0){ ObjSprite2D_SetSourceRect(objID, xinit+x*0, y+64, xinit+x*1, y+128); }
+			if(count >= r){ ObjSprite2D_SetSourceRect(objID, xinit+x*1, y+64, xinit+x*2, y+128); }
+			if(count >= r*2){ ObjSprite2D_SetSourceRect(objID, xinit+x*2, y+64, xinit+x*3, y+128); }
+			if(count >= r*3){ ObjSprite2D_SetSourceRect(objID, xinit+x*3, y+64, xinit+x*4, y+128); }
+			if(count >= r*4-r/2){ type=1; count=0; }
+		}
+		if(type==3){ //Moving to idle
+			r = move;
+			if(count >= 0){ ObjSprite2D_SetSourceRect(objID, xinit+x*3, y+64, xinit+x*4, y+128); }
+			if(count >= r){ ObjSprite2D_SetSourceRect(objID, xinit+x*2, y+64, xinit+x*3, y+128); }
+			if(count >= r*2){  ObjSprite2D_SetSourceRect(objID, xinit+x*1, y+64, xinit+x*2, y+128); }
+			if(count >= r*3-r/2){ type=0; count=0; }
+		}
+		m+=1;
+		count++;
+		//ObjSprite2D_SetDestRect(objID, -x/2, -y/2+(4*sin(m)), x/2, y/2+(4*sin(m)));
+		ObjSprite2D_SetDestCenter(objID);
+		//if(!IsTimeStopped){count++;}
+		yield;
+	}
+}
+task AnimateEnemyB1(objID, frames, initdir, Color){
+	let x = 0;
+	let y = 381;
+	
+	let spin = 0;
+	let scale = 0;
+	let maxscale = 1;
+	
+	if(Color == "Red") { x = 398; }
+	if(Color == "Green") { x = 430; }
+	if(Color == "Blue") { x = 462; }
+	if(Color == "Purple") { x = 494; }
+	if(Color == "Aqua") { x = 526; }
+	if(Color == "Yellow") { x = 558; }
+	
+	Animate(1,BLEND_ALPHA,5);
+	Animate(1.5,BLEND_ADD_ARGB,-5);
+	
+	ObjPrim_SetTexture(objID, MD ~ "IMG/Enemy/Enemy.png");
+	ObjSprite2D_SetSourceRect(objID, x, y, x+31, y+31);
+	ObjSprite2D_SetDestCenter(objID);
+	
+	let initX = ObjRender_GetX(objID);
+	let initY = ObjRender_GetY(objID);
+	let dispX = 35;
+	let dispY = 35;
+	let dir = 0;
+	let maxdir = dir+frames*4;
+	
+	ascent(i in 0..frames) {
+		scale = maxscale*sin(90*i/frames);
+		dispX-=35/frames;
+		dispY-=35/frames;
+		dir = maxdir*sin(90*i/frames)+initdir;
+		ObjRender_SetScaleXYZ(objID,scale,scale,scale);
+		ObjRender_SetPosition(objID,initX+dispX*cos(dir),initY+dispY*sin(dir),0);
+		yield;
+	}
+	scale = 1;
+	
+	task Animate(ringscale,blend,rot) {
+		let obj = ObjPrim_Create(OBJ_SPRITE_2D);
+		
+		ObjPrim_SetTexture(obj, MD ~ "IMG/Enemy/Enemy.png");
+		ObjRender_SetBlendType(obj, blend);
+		ObjSprite2D_SetSourceRect(obj, x, y+32, x+31, y+63);
+		ObjSprite2D_SetDestCenter(obj);
+		Obj_SetRenderPriorityI(obj,40);
+		
+		let spin = 0;
+		
+		while(!Obj_IsDeleted(objID)){
+			ObjRender_SetPosition(obj,ObjMove_GetX(objID),ObjMove_GetY(objID),0);
+			ObjRender_SetScaleXYZ(obj,ringscale*scale,ringscale*scale,ringscale*scale);
+			ObjRender_SetAngleZ(obj,spin);
+			spin+=rot;
+			yield;
+		}
+		Obj_Delete(obj);
+	}
+	while(!Obj_GetValueD(objID,"EndAnimation",false)) {
+		if(Obj_IsDeleted(objID)) { break; }
+		yield;
+	}
+	frames = frames*2;
+	if(!Obj_IsDeleted(objID)) {
+		descent(i in 0..frames) {
+			scale = maxscale*sin(90*i/frames);
+			dispX-=35/frames;
+			dispY-=35/frames;
+			dir = maxdir*sin(90*i/frames)+initdir;
+			ObjRender_SetScaleXYZ(objID,scale,scale,scale);
+			ObjRender_SetPosition(objID,initX+dispX*cos(dir),initY+dispY*sin(dir),0);
+			yield;
+		}
+	}
+}
+task AnimateEnemyB2(objID, frames, maxdisp, initdir, maxdir, Color){
+	let x = 0;
+	let y = 381;
+	
+	let spin = 0;
+	let scale = 0;
+	let maxscale = 1;
+	
+	if(Color == "Red") { x = 398; }
+	if(Color == "Green") { x = 430; }
+	if(Color == "Blue") { x = 462; }
+	if(Color == "Purple") { x = 494; }
+	if(Color == "Aqua") { x = 526; }
+	if(Color == "Yellow") { x = 558; }
+	
+	Animate(1,BLEND_ALPHA,5);
+	Animate(1.5,BLEND_ADD_ARGB,-5);
+	
+	ObjPrim_SetTexture(objID, MD ~ "IMG/Enemy/Enemy.png");
+	ObjSprite2D_SetSourceRect(objID, x, y, x+31, y+31);
+	ObjSprite2D_SetDestCenter(objID);
+	
+	let initX = ObjRender_GetX(objID);
+	let initY = ObjRender_GetY(objID);
+	let dispX = maxdisp;
+	let dispY = maxdisp;
+	let dir = 0;
+	
+	ascent(i in 0..frames) {
+		scale = maxscale*sin(90*i/frames);
+		dispX-=maxdisp/frames;
+		dispY-=maxdisp/frames;
+		dir = (maxdir-initdir)*sin(90*i/frames)+initdir;
+		ObjRender_SetScaleXYZ(objID,scale,scale,scale);
+		ObjRender_SetPosition(objID,initX+dispX*cos(dir),initY+dispY*sin(dir),0);
+		yield;
+	}
+	scale = 1;
+	
+	task Animate(ringscale,blend,rot) {
+		let obj = ObjPrim_Create(OBJ_SPRITE_2D);
+		
+		ObjPrim_SetTexture(obj, MD ~ "IMG/Enemy/Enemy.png");
+		ObjRender_SetBlendType(obj, blend);
+		ObjSprite2D_SetSourceRect(obj, x, y+32, x+31, y+63);
+		ObjSprite2D_SetDestCenter(obj);
+		Obj_SetRenderPriorityI(obj,40);
+		
+		let spin = 0;
+		
+		while(!Obj_IsDeleted(objID)){
+			ObjRender_SetPosition(obj,ObjMove_GetX(objID),ObjMove_GetY(objID),0);
+			ObjRender_SetScaleXYZ(obj,ringscale*scale,ringscale*scale,ringscale*scale);
+			ObjRender_SetAngleZ(obj,spin);
+			ObjRender_SetAlpha(obj,Obj_GetValueD(objID,"Alpha",255));
+			ObjRender_SetColor(obj,Obj_GetValueD(objID,"Alpha",255),Obj_GetValueD(objID,"Alpha",255),Obj_GetValueD(objID,"Alpha",255));
+			spin+=rot;
+			yield;
+		}
+		Obj_Delete(obj);
+	}
+	while(!Obj_GetValueD(objID,"EndAnimation",false)) {
+		if(Obj_IsDeleted(objID)) { break; }
+		yield;
+	}
+	frames = frames*2;
+	if(!Obj_IsDeleted(objID)) {
+		descent(i in 0..frames) {
+			scale = maxscale*sin(90*i/frames);
+			dispX-=maxdisp/frames;
+			dispY-=maxdisp/frames;
+			dir = maxdir*sin(90*i/frames)+initdir;
+			ObjRender_SetScaleXYZ(objID,scale,scale,scale);
+			ObjRender_SetPosition(objID,initX+dispX*cos(dir),initY+dispY*sin(dir),0);
+			yield;
+		}
+	}
+}
+task AnimateTrapA1(objID,color,scale,alpha,dspin) {
+	
+	ObjPrim_SetTexture(objID,MD ~ "IMG/Enemy/Fam_" ~color~ ".png");
+	ObjRender_SetBlendType(objID,BLEND_ADD_ARGB);
+	ObjSprite2D_SetSourceRect(objID,0,0,256,256);
+	ObjSprite2D_SetDestCenter(objID);
+	ObjRender_SetScaleXYZ(objID,scale,scale,scale);
+	ObjRender_SetAlpha(objID,alpha);
+	ObjRender_SetColor(objID,alpha,alpha,alpha);
+
+	let spin = 0;
+	
+	while(!Obj_IsDeleted(objID)) {
+		if(GetCommonData("Discord",false)) { ObjRender_SetBlendType(objID,BLEND_ALPHA); }
+		else { ObjRender_SetBlendType(objID,BLEND_ADD_ARGB); }
+		ObjRender_SetAngleZ(objID,spin);
+		spin+=dspin;
+		yield;
+	}
+}
+task AnimateTrapA2(objID,color,scale,alpha,dspin) {
+	
+	ObjPrim_SetTexture(objID,MD ~ "IMG/Enemy/Fam_" ~color~ ".png");
+	ObjRender_SetBlendType(objID,BLEND_ADD_ARGB);
+	ObjSprite2D_SetSourceRect(objID,0,0,256,256);
+	ObjSprite2D_SetDestCenter(objID);
+	ObjRender_SetScaleXYZ(objID,scale,scale,scale);
+	ObjRender_SetAlpha(objID,alpha);
+	ObjRender_SetColor(objID,alpha,alpha,alpha);
+
+	let objID2 = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjRender_SetPosition(objID2,ObjRender_GetX(objID),ObjRender_GetY(objID),0);
+	AnimateTrapA1(objID2,color,scale,alpha,-dspin);
+
+	let spin = 0;
+	
+	while(!Obj_IsDeleted(objID)) {
+		if(GetCommonData("Discord",false)) {
+			ObjRender_SetBlendType(objID,BLEND_ALPHA);
+		}
+		else {
+			ObjRender_SetBlendType(objID,BLEND_ADD_ARGB);
+		}
+		let alpha2 = Obj_GetValueD(objID,"Alpha",255);
+		ObjRender_SetPosition(objID2,ObjRender_GetX(objID),ObjRender_GetY(objID),0);
+		ObjRender_SetAngleZ(objID,spin);
+		ObjRender_SetScaleXYZ(objID2,ObjRender_GetScaleX(objID),ObjRender_GetScaleX(objID),ObjRender_GetScaleX(objID));
+		ObjRender_SetAlpha(objID2,alpha2);
+		ObjRender_SetColor(objID2,alpha2,alpha2,alpha2);
+		spin+=dspin;
+		yield;
+	}
+	Obj_Delete(objID2);
+}
+task AnimateTest1(objID){
+	let count = 0;
+	let type = 0;
+	
+	let x = 32;
+	let y = 0;
+	
+	let idle = 10;
+	let move = 6;
+	let attack = 6;
+	
+	let r = idle;
+	let m = 0; 
+	
+	ObjPrim_SetTexture(objID, MD ~ "IMG/Enemy/__Enemy_Test.png");
+	
+	while(!Obj_IsDeleted(objID)){
+		//if(GetSpeedX(objID) >= 0.5 || GetSpeedX(objID) <= -0.5){
+		//	if(type == 0) {
+		//		count = 0;
+		//		type = 2;
+		//	}
+		//}
+		//else {
+		//	if(type == 1) {
+		//		count = 0;
+		//		type = 3;
+		//	}
+		//}
+		//if(GetSpeedX(objID) >= 0.5) { ObjRender_SetScaleXYZ(objID, 1, 1, 1); }
+		//if(GetSpeedX(objID) <= -0.5){ ObjRender_SetScaleXYZ(objID, -1, 1, 1); }
+		
+		if(type==0){ //Idle
+			//WriteLog(count);
+			r = idle;
+			if(count >= 0){ ObjSprite2D_SetSourceRect(objID, x*0, y, x*1, y+32); }
+			if(count >= r){ ObjSprite2D_SetSourceRect(objID, x*1, y, x*2, y+32); }
+			if(count >= r*2){ ObjSprite2D_SetSourceRect(objID, x*2, y, x*3, y+32); }
+			if(count >= r*3){ ObjSprite2D_SetSourceRect(objID, x*3, y, x*4, y+32); }
+			if(count >= r*4){ count = 0; }
+		}
+		//if(type==1){ //Moving
+		//	r = move;
+		//	if(count >= 0){ ObjSprite2D_SetSourceRect(objID, x*8, y, x*9, y+32); }
+		//	if(count >= r){ ObjSprite2D_SetSourceRect(objID, x*9, y, x*10, y+32); }
+		//	if(count >= r*2){ ObjSprite2D_SetSourceRect(objID, x*10, y, x*11, y+32); }
+		//	if(count >= r*3){ ObjSprite2D_SetSourceRect(objID, x*11, y, x*12, y+32); }
+		//	if(count >= r*4){ count = 0; }
+		//}
+		//if(type==2){ //Idle to moving
+		//	r = move;
+		//	if(count >= 0){ ObjSprite2D_SetSourceRect(objID, x*4, y, x*5, y+32); }
+		//	if(count >= r){ ObjSprite2D_SetSourceRect(objID, x*5, y, x*6, y+32); }
+		//	if(count >= r*2){ ObjSprite2D_SetSourceRect(objID, x*6, y, x*7, y+32); }
+		//	if(count >= r*3){ ObjSprite2D_SetSourceRect(objID, x*7, y, x*8, y+32); }
+		//	if(count >= r*3-r/2){ type=1; count=0; }
+		//	if(GetSpeedX(objID) < 0.5 && GetSpeedX(objID) > -0.5){ type=0; }
+		//}
+		//if(type==3){ //Moving to idle
+		//	r = move;
+		//	if(count >= 0){ ObjSprite2D_SetSourceRect(objID, x*7, y, x*8, y+32); }
+		//	if(count >= r){ ObjSprite2D_SetSourceRect(objID, x*6, y, x*7, y+32); }
+		//	if(count >= r*2){  ObjSprite2D_SetSourceRect(objID, x*5, y, x*6, y+32); }
+		//	if(count >= r*3-r/2){ type=0; count=0; }
+		//	if(GetSpeedX(objID) >= 0.5 || GetSpeedX(objID) <= -0.5){ type=1; }
+		//}
+		//m+=1;
+		count++;
+		//ObjSprite2D_SetDestRect(objID, -x/2, -y/2+(4*sin(m)), x/2, y/2+(4*sin(m)));
+		ObjSprite2D_SetDestCenter(objID);
+		//if(!IsTimeStopped){count++;}
+		yield;
+	}
+}
+task AnimateTest2(objID){
+	let count = 0;
+	let type = 0;
+	
+	let x = 256;
+	let y = 0;
+	
+	let idle = 10;
+	let move = 6;
+	let attack = 6;
+	
+	let r = idle;
+	let m = 0; 
+	
+	ObjPrim_SetTexture(objID, MD ~ "IMG/Enemy/Enemy_Test2.png");
+	
+	while(!Obj_IsDeleted(objID)){
+		//if(GetSpeedX(objID) >= 0.5 || GetSpeedX(objID) <= -0.5){
+		//	if(type == 0) {
+		//		count = 0;
+		//		type = 2;
+		//	}
+		//}
+		//else {
+		//	if(type == 1) {
+		//		count = 0;
+		//		type = 3;
+		//	}
+		//}
+		//if(GetSpeedX(objID) >= 0.5) { ObjRender_SetScaleXYZ(objID, 1, 1, 1); }
+		//if(GetSpeedX(objID) <= -0.5){ ObjRender_SetScaleXYZ(objID, -1, 1, 1); }
+		
+		if(type==0){ //Idle
+			r = idle;
+			if(count >= 0){ ObjSprite2D_SetSourceRect(objID, x*0, y, x*1, y+256); }
+			if(count >= r){ ObjSprite2D_SetSourceRect(objID, x*1, y, x*2, y+256); }
+			if(count >= r*2){ ObjSprite2D_SetSourceRect(objID, x*2, y, x*3, y+256); }
+			if(count >= r*3){ ObjSprite2D_SetSourceRect(objID, x*3, y, x*4, y+256); }
+			if(count >= r*4){ count = 0; }
+		}
+		//if(type==1){ //Moving
+		//	r = move;
+		//	if(count >= 0){ ObjSprite2D_SetSourceRect(objID, x*8, y, x*9, y+32); }
+		//	if(count >= r){ ObjSprite2D_SetSourceRect(objID, x*9, y, x*10, y+32); }
+		//	if(count >= r*2){ ObjSprite2D_SetSourceRect(objID, x*10, y, x*11, y+32); }
+		//	if(count >= r*3){ ObjSprite2D_SetSourceRect(objID, x*11, y, x*12, y+32); }
+		//	if(count >= r*4){ count = 0; }
+		//}
+		//if(type==2){ //Idle to moving
+		//	r = move;
+		//	if(count >= 0){ ObjSprite2D_SetSourceRect(objID, x*4, y, x*5, y+32); }
+		//	if(count >= r){ ObjSprite2D_SetSourceRect(objID, x*5, y, x*6, y+32); }
+		//	if(count >= r*2){ ObjSprite2D_SetSourceRect(objID, x*6, y, x*7, y+32); }
+		//	if(count >= r*3){ ObjSprite2D_SetSourceRect(objID, x*7, y, x*8, y+32); }
+		//	if(count >= r*3-r/2){ type=1; count=0; }
+		//	if(GetSpeedX(objID) < 0.5 && GetSpeedX(objID) > -0.5){ type=0; }
+		//}
+		//if(type==3){ //Moving to idle
+		//	r = move;
+		//	if(count >= 0){ ObjSprite2D_SetSourceRect(objID, x*7, y, x*8, y+32); }
+		//	if(count >= r){ ObjSprite2D_SetSourceRect(objID, x*6, y, x*7, y+32); }
+		//	if(count >= r*2){  ObjSprite2D_SetSourceRect(objID, x*5, y, x*6, y+32); }
+		//	if(count >= r*3-r/2){ type=0; count=0; }
+		//	if(GetSpeedX(objID) >= 0.5 || GetSpeedX(objID) <= -0.5){ type=1; }
+		//}
+		//m+=1;
+		count++;
+		//ObjSprite2D_SetDestRect(objID, -x/2, -y/2+(4*sin(m)), x/2, y/2+(4*sin(m)));
+		ObjSprite2D_SetDestCenter(objID);
+		//if(!IsTimeStopped){count++;}
+		yield;
+	}
+}
+
+task AnimateTest3(objID){
+	let count = 0;
+	let type = 0;
+	
+	let x = 32;
+	let y = 0;
+	
+	let idle = 10;
+	let move = 6;
+	let attack = 6;
+	
+	let r = idle;
+	let m = 0; 
+	/*
+	if(Color == "Blue") { y = 320; }
+	if(Color == "Red") { y = 352; }
+	if(Color == "Green") { y = 384; }
+	if(Color == "Yellow") { y = 416; }
+	if(Color == "Aqua") { y = 448; }
+	*/
+	ObjPrim_SetTexture(objID, MD ~ "IMG/Enemy/__Enemy_Test3.png");
+	
+	while(!Obj_IsDeleted(objID)){
+		if(GetSpeedX(objID) >= 0.5 || GetSpeedX(objID) <= -0.5){
+			if(type == 0) {
+				count = 0;
+				type = 2;
+			}
+		}
+		else {
+			if(type == 1) {
+				count = 0;
+				type = 3;
+			}
+		}
+		if(GetSpeedX(objID) >= 0.5) { ObjRender_SetScaleXYZ(objID, 1, 1, 1); }
+		if(GetSpeedX(objID) <= -0.5){ ObjRender_SetScaleXYZ(objID, -1, 1, 1); }
+		
+		if(type==0){ //Idle
+			r = idle;
+			if(count >= 0){ ObjSprite2D_SetSourceRect(objID, x*0, y, x*1, y+32); }
+			if(count >= r){ ObjSprite2D_SetSourceRect(objID, x*1, y, x*2, y+32); }
+			if(count >= r*2){ ObjSprite2D_SetSourceRect(objID, x*2, y, x*3, y+32); }
+			if(count >= r*3){ ObjSprite2D_SetSourceRect(objID, x*3, y, x*4, y+32); }
+			if(count >= r*4){ count = 0; }
+		}
+		if(type==1){ //Moving
+			r = move;
+			if(count >= 0){ ObjSprite2D_SetSourceRect(objID, x*0, y+32*2, x*1, y+32*3); }
+			if(count >= r){ ObjSprite2D_SetSourceRect(objID, x*1, y+32*2, x*2, y+32*3); }
+			if(count >= r*2){ ObjSprite2D_SetSourceRect(objID, x*2, y+32*2, x*3, y+32*3); }
+			if(count >= r*3){ ObjSprite2D_SetSourceRect(objID, x*3, y+32*2, x*4, y+32*3); }
+			if(count >= r*4){ count = 0; }
+		}
+		if(type==2){ //Idle to moving
+			r = move;
+			if(count >= 0){ ObjSprite2D_SetSourceRect(objID, x*0, y+32, x*1, y+32*2); }
+			if(count >= r){ ObjSprite2D_SetSourceRect(objID, x*1, y+32, x*2, y+32*2); }
+			if(count >= r*2){ ObjSprite2D_SetSourceRect(objID, x*2, y+32, x*3, y+32*2); }
+			if(count >= r*3){ ObjSprite2D_SetSourceRect(objID, x*3, y+32, x*4, y+32*2); }
+			if(count >= r*3-r/2){ type=1; count=0; }
+			if(GetSpeedX(objID) < 0.5 && GetSpeedX(objID) > -0.5){ type=0; }
+		}
+		if(type==3){ //Moving to idle
+			r = move;
+			if(count >= 0){ ObjSprite2D_SetSourceRect(objID, x*3, y+32, x*4, y+32*2); }
+			if(count >= r){ ObjSprite2D_SetSourceRect(objID, x*2, y+32, x*3, y+32*2); }
+			if(count >= r*2){ ObjSprite2D_SetSourceRect(objID, x*1, y+32, x*2, y+32*2); }
+			if(count >= r*3-r/2){ type=0; count=0; }
+			if(GetSpeedX(objID) >= 0.5 || GetSpeedX(objID) <= -0.5){ type=1; }
+		}
+		m+=1;
+		count++;
+		//ObjSprite2D_SetDestRect(objID, -x/2, -y/2+(4*sin(m)), x/2, y/2+(4*sin(m)));
+		ObjSprite2D_SetDestCenter(objID);
+		//if(!IsTimeStopped){count++;}
+		yield;
+	}
+}
+
+task AnimateTest4(objID){
+	let count = 0;
+	let type = 0;
+	
+	let x = 64;
+	let y = 0;
+	
+	let idle = 10;
+	let move = 6;
+	let attack = 6;
+	
+	let r = idle;
+	let m = 0; 
+	/*
+	if(Color == "Blue") { y = 320; }
+	if(Color == "Red") { y = 352; }
+	if(Color == "Green") { y = 384; }
+	if(Color == "Yellow") { y = 416; }
+	if(Color == "Aqua") { y = 448; }
+	*/
+	ObjPrim_SetTexture(objID, MD ~ "IMG/Enemy/__Enemy_Test2.png");
+	
+	while(!Obj_IsDeleted(objID)){
+		if(GetSpeedX(objID) >= 0.5 || GetSpeedX(objID) <= -0.5){
+			if(type == 0) {
+				count = 0;
+				type = 2;
+			}
+		}
+		else {
+			if(type == 1) {
+				count = 0;
+				type = 3;
+			}
+		}
+		if(GetSpeedX(objID) >= 0.5) { ObjRender_SetScaleXYZ(objID, 1, 1, 1); }
+		if(GetSpeedX(objID) <= -0.5){ ObjRender_SetScaleXYZ(objID, -1, 1, 1); }
+		
+		if(type==0){ //Idle
+			r = idle;
+			if(count >= 0){ ObjSprite2D_SetSourceRect(objID, x*0, y, x*1, y+64); }
+			if(count >= r){ ObjSprite2D_SetSourceRect(objID, x*1, y, x*2, y+64); }
+			if(count >= r*2){ ObjSprite2D_SetSourceRect(objID, x*2, y, x*3, y+64); }
+			if(count >= r*3){ ObjSprite2D_SetSourceRect(objID, x*3, y, x*4, y+64); }
+			if(count >= r*4){ count = 0; }
+		}
+		if(type==1){ //Moving
+			r = move;
+			if(count >= 0){ ObjSprite2D_SetSourceRect(objID, x*0, y+64*2, x*1, y+64*3); }
+			if(count >= r){ ObjSprite2D_SetSourceRect(objID, x*1, y+64*2, x*2, y+64*3); }
+			if(count >= r*2){ ObjSprite2D_SetSourceRect(objID, x*2, y+64*2, x*3, y+64*3); }
+			if(count >= r*3){ ObjSprite2D_SetSourceRect(objID, x*3, y+64*2, x*4, y+64*3); }
+			if(count >= r*4){ count = 0; }
+		}
+		if(type==2){ //Idle to moving
+			r = move;
+			if(count >= 0){ ObjSprite2D_SetSourceRect(objID, x*0, y+64, x*1, y+64*2); }
+			if(count >= r){ ObjSprite2D_SetSourceRect(objID, x*1, y+64, x*2, y+64*2); }
+			if(count >= r*2){ ObjSprite2D_SetSourceRect(objID, x*2, y+64, x*3, y+64*2); }
+			if(count >= r*3){ ObjSprite2D_SetSourceRect(objID, x*3, y+64, x*4, y+64*2); }
+			if(count >= r*3-r/2){ type=1; count=0; }
+			if(GetSpeedX(objID) < 0.5 && GetSpeedX(objID) > -0.5){ type=0; }
+		}
+		if(type==3){ //Moving to idle
+			r = move;
+			if(count >= 0){ ObjSprite2D_SetSourceRect(objID, x*3, y+64, x*4, y+64*2); }
+			if(count >= r){ ObjSprite2D_SetSourceRect(objID, x*2, y+64, x*3, y+64*2); }
+			if(count >= r*2){ ObjSprite2D_SetSourceRect(objID, x*1, y+64, x*2, y+64*2); }
+			if(count >= r*3-r/2){ type=0; count=0; }
+			if(GetSpeedX(objID) >= 0.5 || GetSpeedX(objID) <= -0.5){ type=1; }
+		}
+		m+=1;
+		count++;
+		//ObjSprite2D_SetDestRect(objID, -x/2, -y/2+(4*sin(m)), x/2, y/2+(4*sin(m)));
+		ObjSprite2D_SetDestCenter(objID);
+		//if(!IsTimeStopped){count++;}
+		yield;
+	}
+}
+
+task AnimateTest5(objID){
+
+	let count = 0;
+	let type = 0;
+	
+	let xinit = 0;
+	let x = 48;
+	let y = 0;
+	
+	let idle = 10;
+	let move = 6;
+	let attack = 6;
+	
+	let r = idle;
+	let m = 0; 
+	
+	//if(Color == "Blue") { y = 144; }
+	//if(Color == "Red") { y = 0; }
+	
+	ObjPrim_SetTexture(objID, MD ~ "IMG/Enemy/__Enemy_Test4.png");
+	
+	while(!Obj_IsDeleted(objID)){
+		if(GetSpeedX(objID) >= 0.5 || GetSpeedX(objID) <= -0.5){
+			if(type == 0) {
+				count = 0;
+				type = 2;
+			}
+		}
+		else {
+			if(type == 1) {
+				count = 0;
+				type = 3;
+			}
+		}
+		if(GetSpeedX(objID) >= 0.5) { ObjRender_SetScaleXYZ(objID, 1, 1, 1); }
+		if(GetSpeedX(objID) <= -0.5){ ObjRender_SetScaleXYZ(objID, -1, 1, 1); }
+		
+		if(type==0){ //Idle
+			r = idle;
+			if(count >= 0){ ObjSprite2D_SetSourceRect(objID, xinit+x*0, y, xinit+x*1, y+48); }
+			if(count >= r){ ObjSprite2D_SetSourceRect(objID, xinit+x*1, y, xinit+x*2, y+48); }
+			if(count >= r*2){ ObjSprite2D_SetSourceRect(objID, xinit+x*2, y, xinit+x*3, y+48); }
+			if(count >= r*3){ ObjSprite2D_SetSourceRect(objID, xinit+x*3, y, xinit+x*4, y+48); }
+			if(count >= r*4){ count = 0; }
+		}
+		if(type==1){ //Moving
+			r = move;
+			if(count >= 0){ ObjSprite2D_SetSourceRect(objID, xinit+x*0, y+96, xinit+x*1, y+144); }
+			if(count >= r){ ObjSprite2D_SetSourceRect(objID, xinit+x*1, y+96, xinit+x*2, y+144); }
+			if(count >= r*2){ ObjSprite2D_SetSourceRect(objID, xinit+x*2, y+96, xinit+x*3, y+144); }
+			if(count >= r*3){ ObjSprite2D_SetSourceRect(objID, xinit+x*3, y+96, xinit+x*4, y+144); }
+			if(count >= r*4){ count = 0; }
+		}
+		if(type==2){ //Idle to moving
+			r = move;
+			if(count >= 0){ ObjSprite2D_SetSourceRect(objID, xinit+x*0, y+48, xinit+x*1, y+96); }
+			if(count >= r){ ObjSprite2D_SetSourceRect(objID, xinit+x*1, y+48, xinit+x*2, y+96); }
+			if(count >= r*2){ ObjSprite2D_SetSourceRect(objID, xinit+x*2, y+48, xinit+x*3, y+96); }
+			if(count >= r*3){ ObjSprite2D_SetSourceRect(objID, xinit+x*3, y+48, xinit+x*4, y+96); }
+			if(count >= r*4-r/2){ type=1; count=0; }
+		}
+		if(type==3){ //Moving to idle
+			r = move;
+			if(count >= 0){ ObjSprite2D_SetSourceRect(objID, xinit+x*3, y+48, xinit+x*4, y+96); }
+			if(count >= r){ ObjSprite2D_SetSourceRect(objID, xinit+x*2, y+48, xinit+x*3, y+96); }
+			if(count >= r*2){  ObjSprite2D_SetSourceRect(objID, xinit+x*1, y+48, xinit+x*2, y+96); }
+			if(count >= r*3-r/2){ type=0; count=0; }
+		}
+		m+=1;
+		count++;
+		//ObjSprite2D_SetDestRect(objID, -x/2, -y/2+(4*sin(m)), x/2, y/2+(4*sin(m)));
+		ObjSprite2D_SetDestCenter(objID);
+		//if(!IsTimeStopped){count++;}
+		yield;
+	}
+}
+
+function GetSpeedX(objID) {
+	return ObjMove_GetSpeed(objID)*cos(ObjMove_GetAngle(objID));
+}
+function GetSpeedY(objID) {
+	return ObjMove_GetSpeed(objID)*sin(ObjMove_GetAngle(objID));
+}

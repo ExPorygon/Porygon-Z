@@ -1,0 +1,83 @@
+#UserItemData
+
+item_image = "System/IMG/system.png"
+
+ItemData { //Power Item
+	id=1
+	value=1
+	rect=(0,0,16,16)
+	out=(0,17,16,29)
+}
+ItemData { //Point Item
+	id=2
+	value=2
+	rect=(16,0,32,16)
+	out=(16,17,32,29)
+}
+ItemData { //Balance Item
+	id=3
+	value=3
+	rect=(32,0,48,16)
+	out=(32,17,48,29)
+}
+ItemData { //Full Power Item
+	id=4
+	value=4
+	rect=(164,43,188,67)
+	out=(165,69,187,88)
+}
+ItemData { //Bonus Item
+	id=5
+	value=5
+	rect=(65,0,81,17)
+	out=(64,17,80,29)
+}
+ItemData { //Balance Bonus Item
+	id=6
+	value=6
+	rect=(83,0,99,17)
+	out=(32,17,48,29)
+}
+ItemData { //Life Piece
+	id=7
+	value=7
+	rect=(1,39,35,69)
+	out=(4,72,31,96)
+}
+ItemData { //Spell Piece
+	id=8
+	value=8
+	rect=(70,38,103,70)
+	out=(73,72,100,96)
+}
+ItemData { //1up
+	id=9
+	value=9
+	rect=(35,38,69,70)
+	out=(38,72,65,96)
+}
+ItemData { //Spell
+	id=10
+	value=10
+	rect=(104,38,137,70)
+	out=(107,72,134,96)
+}
+ItemData { //Big Power Item
+	id=11
+	value=11
+	rect=(140,43,164,67)
+	out=(141,69,163,88)
+}
+ItemData { //PIV Bonus Item
+	id=12
+	value=12
+	rect=(189,44,205,60)
+	out=(190,61,204,73)
+}
+ItemData { //Delete Item
+	id=13
+	value=13
+	alpha = 150;
+	render = ADD_ARGB;
+	rect=(84,18,97,30)
+}

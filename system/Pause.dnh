@@ -1,0 +1,747 @@
+let objBGM = ID_INVALID;
+let menuEnd = false;
+#include"Script/LIB/Function_Rand.dnh"
+@Initialize {
+	SetAutoDeleteObject(true);
+	Background;
+	//Menu;
+	NewMenu;
+}
+
+@MainLoop {
+	yield;
+}
+
+@Finalize {
+}
+
+task Background {
+	task TVertex(var index, var left, var top, var right, var bottom) {
+		ObjPrim_SetVertexPosition(obj, index + 0, left, top, 0);
+		ObjPrim_SetVertexPosition(obj, index + 1, left, bottom, 0);
+		ObjPrim_SetVertexPosition(obj, index + 2, right, top, 0);
+		ObjPrim_SetVertexPosition(obj, index + 3, right, top, 0);
+		ObjPrim_SetVertexPosition(obj, index + 4, left, bottom, 0);
+		ObjPrim_SetVertexPosition(obj, index + 5, right, bottom, 0);
+
+		ObjPrim_SetVertexUVT(obj, index + 0, left, top);
+		ObjPrim_SetVertexUVT(obj, index + 1, left, bottom);
+		ObjPrim_SetVertexUVT(obj, index + 2, right, top);
+		ObjPrim_SetVertexUVT(obj, index + 3, right, top);
+		ObjPrim_SetVertexUVT(obj, index + 4, left, bottom);
+		ObjPrim_SetVertexUVT(obj, index + 5, right, bottom);
+
+		if(left >= 40 && right <= 424 && top >=16 && bottom <= 464)
+		{
+			let alpha = 255;
+			while(alpha >= 128)
+			{
+				ObjPrim_SetVertexAlpha(obj, index + 0, alpha);
+				ObjPrim_SetVertexAlpha(obj, index + 1, alpha/2);
+				ObjPrim_SetVertexAlpha(obj, index + 2, alpha/2);
+				ObjPrim_SetVertexAlpha(obj, index + 3, alpha/2);
+				ObjPrim_SetVertexAlpha(obj, index + 4, alpha/2);
+				ObjPrim_SetVertexAlpha(obj, index + 5, alpha);
+				alpha -= 255 / frame;
+
+				yield;
+			}
+		}
+	}
+
+	let frame = 30;
+	let countH = 20;
+	let countV = 30; 
+	let width = 640 / countH;
+	let height = 480 / countV;
+	let target = GetTransitionRenderTargetName();
+	
+	let obj2 = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(obj2, target);
+	Obj_SetRenderPriorityI(obj2, 0);
+	ObjSprite2D_SetSourceRect(obj2,0,0,8,480);
+	ObjSprite2D_SetDestRect(obj2,0,0,8,480);
+	
+	let obj = ObjPrim_Create(OBJ_PRIMITIVE_2D);
+	ObjPrim_SetPrimitiveType(obj, PRIMITIVE_TRIANGLELIST);
+	ObjPrim_SetVertexCount(obj, countH * countV * 6);
+	Obj_SetRenderPriorityI(obj, 0);
+	ObjPrim_SetTexture(obj, target);
+
+	ascent(ix in 0.. countH)
+	{
+		ascent(iy in 0.. countV)
+		{
+			let index = (ix + iy * countH) * 6;
+			let left = ix * width;
+			let right = left + width;
+			let top = iy * height;
+			let bottom = top + height;
+			TVertex(index, left+8, top, right+8, bottom);
+		}
+	}
+
+}
+
+task NewMenu {
+	let selectIndex = 0;
+	let gameState = "Pause";
+
+	if(!GetCommonData("GameOver",false)) { PlaySoundEffect("pause",100); }
+
+	let frameKeyHold = 0;
+	let RESULT_REPLAY = 20;
+
+	let listResult = [RESULT_CANCEL, RESULT_END, RESULT_REPLAY, RESULT_RETRY];
+
+	if(GetAreaCommonData("PlayState","Mode","Main")=="Main" && GetCommonData("GameOver",false)) {
+		listResult = [RESULT_CANCEL, RESULT_END, RESULT_REPLAY, RESULT_RETRY];
+		NotifyEventAll(EV_USER + 21,0.2);
+		gameState = "Main Game Over";
+	}
+	else if (GetAreaCommonData("PlayState","Mode","Main")=="Spell Practice" && GetCommonData("GameOver",false)) {
+		listResult = [RESULT_END, RESULT_REPLAY, RESULT_RETRY];
+		gameState = "Spell Game Over";
+		selectIndex = 2;
+	}
+	else if (GetAreaCommonData("PlayState","Mode","Main")!="Main" && GetCommonData("GameOver",false)) {
+		listResult = [RESULT_END, RESULT_REPLAY, RESULT_RETRY];
+		NotifyEventAll(EV_USER + 21,0.2);
+		gameState = "Stage Game Over";
+	}
+	
+	if(!IsReplay && GetCommonData("EndGame",false)) {
+		listResult = [RESULT_END, RESULT_REPLAY, RESULT_RETRY];
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Spell Practice") { NotifyEventAll(EV_USER + 21,0.2); }
+		gameState = "End";
+	}
+	if(IsReplay){
+		if(!GetCommonData("EndReplay",false)) {
+			listResult = [RESULT_CANCEL, RESULT_END, RESULT_RETRY];
+			gameState = "Pause";
+		}
+		else {
+			listResult = [RESULT_END, RESULT_RETRY];
+			gameState = "End";
+		}
+	}
+	var countMenu = length(listResult);
+	RenderMenu;
+
+	while(GetVirtualKeyState(VK_PAUSE) != KEY_FREE || GetVirtualKeyState(VK_OK) != KEY_FREE || GetVirtualKeyState(VK_UP) != KEY_FREE || GetVirtualKeyState(VK_DOWN) != KEY_FREE){ yield; }
+
+	loop {
+		if(GetVirtualKeyState(VK_OK) == KEY_PULL){
+			if(listResult[selectIndex] == RESULT_REPLAY){
+				PlaySoundEffect("confirm",100);
+				menuEnd = true;
+				loop(15) { yield; }
+				SetCommonData("ReplayScene", true);
+				SetScriptResult(RESULT_END);
+				//NotifyEventAll(EV_USER + 23,0);
+				CloseScript(GetOwnScriptID);
+				return;
+			}
+			SetCommonData("ReplayScene",false);
+			SetCommonData("BreakScene",true);
+			if(listResult[selectIndex] == RESULT_CANCEL) {
+				if(!GetCommonData("GameOver",false)) {
+					PlaySoundEffect("confirm",100);
+					menuEnd = true;
+					loop(15){ yield; }
+					SetScriptResult(listResult[selectIndex]);
+					NotifyEventAll(EV_USER + 23,0);
+					CloseScript(GetOwnScriptID);
+					return;
+				}
+				else if (GetCommonData("ContinueCount",9)>0) {
+					PlaySoundEffect("confirm",100);
+					menuEnd = true;
+					loop(15){ yield; }
+					NotifyEventAll(EV_USER + 23,0);
+					SetScriptResult(listResult[selectIndex]);
+					CloseScript(GetOwnScriptID);
+					return;
+				}
+				else if(GetCommonData("ContinueCount",9)==0) { PlaySoundEffect("invalid",100); }
+			}
+			else {
+				PlaySoundEffect("confirm",100);
+				menuEnd = true;
+				loop(20) { yield; }
+				SetScriptResult(listResult[selectIndex]);
+				NotifyEventAll(EV_USER + 23,0);
+				CloseScript(GetOwnScriptID);
+				return;
+			}
+		}
+		if(GetKeyState(KEY_R) == KEY_PULL && !IsReplay) {
+			//if(!GetCommonData("GameOver",false)) {
+				PlaySoundEffect("confirm",100);
+				if (GetAreaCommonData("PlayState","Mode","Main")=="Spell Practice" && gameState == "Spell Game Over"){ selectIndex = 2; }
+				else{ selectIndex = 3; }
+				//selectIndex = 3;
+				menuEnd = true;
+				loop(15) { yield; }
+				SetScriptResult(RESULT_RETRY);
+				NotifyEventAll(EV_USER + 23,0);
+				CloseScript(GetOwnScriptID);
+			//}
+		}
+		if(GetVirtualKeyState(VK_CANCEL) == KEY_PULL || GetVirtualKeyState(VK_PAUSE) == KEY_PULL) {
+			if(!GetCommonData("GameOver",false) && !GetCommonData("EndGame",false)) {
+				if(GetCommonData("ContinueCount",9)!=0) {
+					PlaySoundEffect("confirm",100);
+					selectIndex = 0;
+					menuEnd = true;
+					loop(15){ yield; }
+					SetScriptResult(RESULT_CANCEL);
+					//Obj_Delete(objBGM);
+					CloseScript(GetOwnScriptID);
+					return;
+				}
+			}
+		}
+
+		if(GetVirtualKeyState(VK_UP) == KEY_PUSH)
+		{
+			PlaySoundEffect("select",100);
+			selectIndex--;
+		}
+		else if(GetVirtualKeyState(VK_DOWN) == KEY_PUSH)
+		{
+			PlaySoundEffect("select",100);
+			selectIndex++;
+		}
+		else if(GetVirtualKeyState(VK_UP) == KEY_HOLD)
+		{
+			frameKeyHold++;
+			if(frameKeyHold == 30 || (frameKeyHold > 30 && (frameKeyHold % 8 == 0)))
+			{
+				PlaySoundEffect("select",100);
+				selectIndex--;
+			}
+		}
+		else if(GetVirtualKeyState(VK_DOWN) == KEY_HOLD)
+		{
+			frameKeyHold++;
+			if(frameKeyHold == 30 || (frameKeyHold > 30 && (frameKeyHold % 8 == 0)))
+			{
+				PlaySoundEffect("select",100);
+				selectIndex++;
+			}
+		}
+		else
+		{
+			frameKeyHold = 0;
+		}
+
+		if(selectIndex < 0) 
+		{
+			selectIndex = countMenu - 1;
+		}
+		else
+		{
+			selectIndex %= countMenu;
+		}
+
+		yield;
+	}
+
+
+	task RenderMenu {
+		//TestDim;
+		let scale = 1.5;
+		let alpha = 0;
+		let obj1 = ID_INVALID;
+		let obj2 = ID_INVALID;
+		let obj3 = ID_INVALID;
+		let obj4 = ID_INVALID;
+		let obj5 = ID_INVALID;
+		let obj6 = ID_INVALID;
+		let obj7 = ID_INVALID;
+
+		let obj_highlight2 = ID_INVALID;
+		let obj_highlight3 = ID_INVALID;
+		let obj_highlight4 = ID_INVALID;
+		let obj_highlight5 = ID_INVALID;
+
+		if(gameState == "Pause") {
+			if(IsReplay) { 
+				obj1 = RenderPauseOption(1,GetStgFrameWidth/2+40,130);
+				obj2 = RenderPauseOption(3,GetStgFrameWidth/2+40,200);
+				obj3 = RenderPauseOption(4,GetStgFrameWidth/2+40,250);
+				obj4 = RenderPauseOption(8,GetStgFrameWidth/2+40,300);
+
+				obj_highlight2 = RenderPauseOption(3,GetStgFrameWidth/2+40,200);
+				obj_highlight3 = RenderPauseOption(4,GetStgFrameWidth/2+40,250);
+				obj_highlight4 = RenderPauseOption(8,GetStgFrameWidth/2+40,300);
+			}
+			else {
+				obj1 = RenderPauseOption(1,GetStgFrameWidth/2+40,130);
+				obj2 = RenderPauseOption(3,GetStgFrameWidth/2+40,200);
+				obj3 = RenderPauseOption(4,GetStgFrameWidth/2+40,250);
+				obj4 = RenderPauseOption(5,GetStgFrameWidth/2+40,300);
+				obj5 = RenderPauseOption(6,GetStgFrameWidth/2+40,350);
+
+				obj_highlight2 = RenderPauseOption(3,GetStgFrameWidth/2+40,200);
+				obj_highlight3 = RenderPauseOption(4,GetStgFrameWidth/2+40,250);
+				obj_highlight4 = RenderPauseOption(5,GetStgFrameWidth/2+40,300);
+				obj_highlight5 = RenderPauseOption(6,GetStgFrameWidth/2+40,350);
+			}
+		}
+
+		if(gameState == "Main Game Over") {
+			obj1 = RenderPauseOption(2,GetStgFrameWidth/2+40,130);
+			obj2 = RenderPauseOption(7,GetStgFrameWidth/2+40,200);
+			obj3 = RenderPauseOption(4,GetStgFrameWidth/2+40,250);
+			obj4 = RenderPauseOption(5,GetStgFrameWidth/2+40,300);
+			obj5 = RenderPauseOption(6,GetStgFrameWidth/2+40,350);
+
+			obj_highlight2 = RenderPauseOption(7,GetStgFrameWidth/2+40,200);
+			obj_highlight3 = RenderPauseOption(4,GetStgFrameWidth/2+40,250);
+			obj_highlight4 = RenderPauseOption(5,GetStgFrameWidth/2+40,300);
+			obj_highlight5 = RenderPauseOption(6,GetStgFrameWidth/2+40,350);
+		}
+
+		if(gameState == "Stage Game Over") {
+			obj1 = RenderPauseOption(2,GetStgFrameWidth/2+40,130);
+			obj2 = RenderPauseOption(4,GetStgFrameWidth/2+40,200);
+			obj3 = RenderPauseOption(5,GetStgFrameWidth/2+40,250);
+			obj4 = RenderPauseOption(6,GetStgFrameWidth/2+40,300);
+
+			obj_highlight2 = RenderPauseOption(4,GetStgFrameWidth/2+40,200);
+			obj_highlight3 = RenderPauseOption(5,GetStgFrameWidth/2+40,250);
+			obj_highlight4 = RenderPauseOption(6,GetStgFrameWidth/2+40,300);
+		}
+
+		if(gameState == "Spell Game Over") {
+			//obj1 = RenderPauseOption(2,GetStgFrameWidth/2+40,130);
+			obj2 = RenderPauseOption(4,GetStgFrameWidth/2+40,200);
+			obj3 = RenderPauseOption(5,GetStgFrameWidth/2+40,250);
+			obj4 = RenderPauseOption(6,GetStgFrameWidth/2+40,300);
+
+			obj_highlight2 = RenderPauseOption(4,GetStgFrameWidth/2+40,200);
+			obj_highlight3 = RenderPauseOption(5,GetStgFrameWidth/2+40,250);
+			obj_highlight4 = RenderPauseOption(6,GetStgFrameWidth/2+40,300);
+		}
+
+		if(gameState == "End") {
+			if(IsReplay) {
+				obj2 = RenderPauseOption(4,GetStgFrameWidth/2+40,200);
+				obj3 = RenderPauseOption(8,GetStgFrameWidth/2+40,250);
+
+				obj_highlight2 = RenderPauseOption(4,GetStgFrameWidth/2+40,200);
+				obj_highlight3 = RenderPauseOption(8,GetStgFrameWidth/2+40,250);
+			}
+			else {
+				obj2 = RenderPauseOption(4,GetStgFrameWidth/2+40,200);
+				obj3 = RenderPauseOption(5,GetStgFrameWidth/2+40,250);
+				obj4 = RenderPauseOption(6,GetStgFrameWidth/2+40,300);
+
+				obj_highlight2 = RenderPauseOption(4,GetStgFrameWidth/2+40,200);
+				obj_highlight3 = RenderPauseOption(5,GetStgFrameWidth/2+40,250);
+				obj_highlight4 = RenderPauseOption(6,GetStgFrameWidth/2+40,300);
+			}
+		}
+
+		RenderPausePattern;
+
+		loop(10) {
+			if(selectIndex==0) { Obj_SetVisible(obj_highlight2,true); } else { Obj_SetVisible(obj_highlight2,false); }
+			if(selectIndex==1) { Obj_SetVisible(obj_highlight3,true); } else { Obj_SetVisible(obj_highlight3,false); }
+			if(selectIndex==2) { Obj_SetVisible(obj_highlight4,true); } else { Obj_SetVisible(obj_highlight4,false); }
+			if(selectIndex==3) { Obj_SetVisible(obj_highlight5,true); } else { Obj_SetVisible(obj_highlight5,false); }
+
+			ObjRender_SetScaleXYZ(obj_highlight2,0.35*scale,0.35*scale,0.35*scale);
+			ObjRender_SetScaleXYZ(obj_highlight3,0.35*scale,0.35*scale,0.35*scale);
+			ObjRender_SetScaleXYZ(obj_highlight4,0.35*scale,0.35*scale,0.35*scale);
+			ObjRender_SetScaleXYZ(obj_highlight5,0.35*scale,0.35*scale,0.35*scale);
+
+			ObjRender_SetScaleXYZ(obj1,0.45*scale,0.45*scale,0.45*scale);
+			ObjRender_SetScaleXYZ(obj2,0.35*scale,0.35*scale,0.35*scale);
+			ObjRender_SetScaleXYZ(obj3,0.35*scale,0.35*scale,0.35*scale);
+			ObjRender_SetScaleXYZ(obj4,0.35*scale,0.35*scale,0.35*scale);
+			ObjRender_SetScaleXYZ(obj5,0.35*scale,0.35*scale,0.35*scale);
+
+			ObjRender_SetAlpha(obj_highlight2,255*alpha);
+			ObjRender_SetAlpha(obj_highlight3,255*alpha);
+			ObjRender_SetAlpha(obj_highlight4,255*alpha);
+			ObjRender_SetAlpha(obj_highlight5,255*alpha);
+
+			ObjRender_SetAlpha(obj1,255*alpha);
+			ObjRender_SetAlpha(obj2,255*alpha);
+			ObjRender_SetAlpha(obj3,255*alpha);
+			ObjRender_SetAlpha(obj4,255*alpha);
+			ObjRender_SetAlpha(obj5,255*alpha);
+			alpha+=1/10;
+			scale-=0.5/10;
+			yield;
+		}
+		alpha = 1;
+		loop {
+			if(selectIndex==0) { Obj_SetVisible(obj_highlight2,true); } else { Obj_SetVisible(obj_highlight2,false); }
+			if(selectIndex==1) { Obj_SetVisible(obj_highlight3,true); } else { Obj_SetVisible(obj_highlight3,false); }
+			if(selectIndex==2) { Obj_SetVisible(obj_highlight4,true); } else { Obj_SetVisible(obj_highlight4,false); }
+			if(selectIndex==3) { Obj_SetVisible(obj_highlight5,true); } else { Obj_SetVisible(obj_highlight5,false); }
+			if(menuEnd) { break; }
+			yield;
+		}
+		alpha = 1;
+		let alphaset = 1;
+		loop(15) {
+			if(alphaset == 0){ alpha+=0.5 }
+			if(alphaset == 1){ alpha-=0.5 }
+			if(alpha>=1){ alphaset = 1; }
+			if(alpha<=0.1){ alphaset = 0; }
+			ObjRender_SetAlpha(obj_highlight2, 255*alpha);
+			ObjRender_SetAlpha(obj_highlight3, 255*alpha);
+			ObjRender_SetAlpha(obj_highlight4, 255*alpha);
+			ObjRender_SetAlpha(obj_highlight5, 255*alpha);
+			yield;
+		}
+
+		function RenderPauseOption(num,x,y) {
+			let objEffect = ObjPrim_Create(OBJ_SPRITE_2D);
+			let path = "";
+			let lang = GetAreaCommonData("Options","Language",0);
+			path = GetModuleDirectory ~ "System/IMG/pause_text.png"; 
+
+			Obj_SetRenderPriorityI(objEffect,10);
+			ObjPrim_SetTexture(objEffect, path);
+			ObjRender_SetBlendType(objEffect,BLEND_ADD_ARGB);
+			ObjSprite2D_SetSourceRect(objEffect,0,204*(num-1),1024,204*num);
+			ObjSprite2D_SetDestCenter(objEffect);
+			ObjRender_SetPosition(objEffect,x,y,0);
+			
+
+			return objEffect;
+		}
+		task RenderPausePattern {
+			let objEffect = ObjPrim_Create(OBJ_SPRITE_2D);
+
+			Obj_SetRenderPriorityI(objEffect,11);
+			ObjPrim_SetTexture(objEffect, GetModuleDirectory ~ "System/IMG/pause_image.png");
+			ObjRender_SetBlendType(objEffect,BLEND_ADD_ARGB);
+			ObjSprite2D_SetSourceRect(objEffect,0,0,1024,256);
+			ObjSprite2D_SetDestCenter(objEffect);
+			
+			let t = 0;
+			loop {
+				ObjRender_SetPosition(objEffect,GetStgFrameWidth/2+40,200+selectIndex*50,0);
+				ObjRender_SetScaleXYZ(objEffect,0.40*scale,0.40*scale,0.40*scale);
+				ObjRender_SetAngleZ(objEffect,-7+1.5*cos(2*t));
+				ObjRender_SetAlpha(objEffect,60*alpha);
+				t++;
+				if(menuEnd) { break; }
+				yield;
+			}
+			//let alphaset = 1;
+			loop(15) {
+				//if(alphaset == 0){ alpha+=0.1 }
+				//if(alphaset == 1){ alpha-=0.1 }
+				//if(alpha>=60){ alphaset = 1; }
+				//if(alpha<=0){ alphaset = 0; }
+				ObjRender_SetAlpha(objEffect, 60*alpha);
+				yield;
+			}
+		}
+		task TestDim {
+			let objEffect = ObjPrim_Create(OBJ_SPRITE_2D);
+			
+			Obj_SetRenderPriorityI(objEffect,9);
+			ObjPrim_SetTexture(objEffect, GetModuleDirectory ~ "IMG/Background/black.png");
+			ObjRender_SetBlendType(objEffect,BLEND_ALPHA);
+			ObjSprite2D_SetSourceRect(objEffect,0,0,640,480);
+			ObjSprite2D_SetDestCenter(objEffect);
+			ObjRender_SetPosition(objEffect,GetStgFrameWidth/2+40,GetStgFrameHeight/2+16,0);
+			ObjRender_SetAlpha(objEffect,150);
+
+		}
+	}
+	
+}
+
+task Menu {
+	let selectIndex = 0;
+	task TMenuItem(index, mx, my, text, mod){
+		let omx = mx;
+		let mspd = 5;
+		mx = mx+56*mod;
+		function CreateTextObject(mx, my, text, r, g, b){
+			let obj = ObjText_Create;
+			ObjText_SetText(obj, text);
+			ObjText_SetFontSize(obj, 30);
+			ObjText_SetFontType(obj, "Lekton");
+			ObjText_SetFontBold(obj, true);
+			ObjText_SetFontColorTop(obj, r, g, b);
+			ObjText_SetFontColorBottom(obj, r, g, b);
+			ObjText_SetFontBorderColor(obj, 0, 0, 0);
+			ObjText_SetFontBorderType(obj, BORDER_FULL);
+			ObjText_SetFontBorderWidth(obj, 2);
+			Obj_SetRenderPriorityI(obj, 10);
+			ObjRender_SetX(obj, mx);
+			ObjRender_SetY(obj, my);
+			return obj;
+		}
+
+		let objText = CreateTextObject(mx, my, text, 230, 230, 230);
+		let objSelect = CreateTextObject(mx, my, text, 200, 0, 230);
+		ObjRender_SetBlendType(objSelect, BLEND_ALPHA);
+		let color = 100;
+		let colorset = 0;
+		let selection = 0;
+		let move = 0;
+		
+		loop {
+			if(selection != selectIndex){
+				colorset = 0;
+				color = 125;
+				move = 16;
+			}
+			selection = selectIndex;
+			
+			if(move>0 && index == selection){
+				let randx = mx + randEff(-move/4, move/4);
+				let randy = my + randEff(-move/4, move/4);
+				ObjRender_SetPosition(objText, randx, randy, 0);
+				ObjRender_SetPosition(objSelect, randx, randy, 0);
+				move--;
+			}
+			else {
+				ObjRender_SetPosition(objText, mx, my, 0);
+				ObjRender_SetPosition(objSelect, mx, my, 0);
+			}
+			
+			if(colorset == 0){ color+=8 }
+			if(colorset == 1){ color-=8 }
+			if(color>=255){ colorset = 1; }
+			if(color<=15){ colorset = 0; }
+			ObjRender_SetAlpha(objSelect, color-color*(absolute(omx-mx)/omx));
+			ObjRender_SetAlpha(objText, 255-255*(absolute(omx-mx)/omx));
+			Obj_SetVisible(objSelect, index == selectIndex);
+			if(mx>omx){ mx = max(mx-mspd, omx); }
+			if(mx<omx){ mx = min(mx+mspd, omx); }
+			if(menuEnd) {
+				break;
+			}
+			yield;
+		}
+		colorset = 0;
+		color = 255;
+		loop(15) {
+			if(colorset == 0){ color+=130 }
+			if(colorset == 1){ color-=130 }
+			if(color>=255){ colorset = 1; }
+			if(color<=15){ colorset = 0; }
+			ObjRender_SetAlpha(objSelect, color-color*(absolute(omx-mx)/omx));
+			yield;
+		}
+	}
+	
+	if(!GetCommonData("GameOver",false)) { PlaySoundEffect("pause",100); }
+	else {
+		if(GetAreaCommonData("PlayState","Mode","Main")=="Main" || GetAreaCommonData("PlayState","Mode","Main")=="Stage Practice") {
+			//objBGM = StartBGM(GetModuleDirectory ~ "BGM/gameover.ogg");
+			CreateText(84, 150, "Game Over", 42, 230, 230, 230);
+			CreateText(84, 180, "Continues Remaining:" ~ itoa(GetCommonData("ContinueCount",9)), 30, 230, 230, 230);
+		}
+	}
+	
+	let mx = 60;
+	let my = 230;
+	let texts = ["Resume", "Return to menu", "Return to menu and save replay", "Give up and retry"];
+	if(GetCommonData("GameOver",false)) {
+		if(GetAreaCommonData("PlayState","Mode","Main")=="Main") { texts = ["Continue", "Return to menu", "Return to menu and save replay", "Give up and retry"]; }
+		else { texts = ["Retry", "Return to menu", "Return to menu and save replay"]; }
+	}
+	if(GetCommonData("EndGame",false)) {
+		texts = ["Return to menu", "Return to menu and save replay", "Retry"];
+	}
+	if(IsReplay == true){
+		if(!GetCommonData("EndReplay",false)) {
+			texts = ["Resume replay", "Return to menu"];
+		}
+		else {
+			texts = ["Return to menu"];
+		}
+		my += 48;
+	}
+	var countMenu = length(texts);
+	ascent(var iText in 0 .. countMenu){
+		let s = 1;
+		if(iText==0 || iText == 2){ s = -1; }
+		TMenuItem(iText, mx, my, texts[iText], s);
+		my += 28;
+	}
+
+	while(GetVirtualKeyState(VK_PAUSE) != KEY_FREE){ yield; }
+	while(GetVirtualKeyState(VK_OK) != KEY_FREE){ yield; }
+
+	let frameKeyHold = 0;
+	let RESULT_REPLAY = 20;
+	let listResult = [RESULT_CANCEL, RESULT_END, RESULT_REPLAY, RESULT_RETRY];
+	if(GetAreaCommonData("PlayState","Mode","Main")!="Main" && GetCommonData("GameOver",false)) { listResult = [RESULT_RETRY, RESULT_END, RESULT_REPLAY]; }
+	if(GetCommonData("EndGame",false)) { listResult = [RESULT_END, RESULT_REPLAY, RESULT_RETRY]; }
+	if(IsReplay == true){
+		if(!GetCommonData("EndReplay",false)) {
+			listResult = [RESULT_CANCEL, RESULT_END];
+		}
+		else {
+			listResult = [RESULT_END];
+		}
+	}
+	loop {
+		if(GetVirtualKeyState(VK_OK) == KEY_PULL){
+			if(listResult[selectIndex] == RESULT_REPLAY){
+				PlaySoundEffect("confirm",100);
+				menuEnd = true;
+				loop(15) { yield; }
+				SetCommonData("ReplayScene", true);
+				SetScriptResult(RESULT_END);
+				Obj_Delete(objBGM);
+				CloseScript(GetOwnScriptID);
+				return;
+			}
+			SetCommonData("ReplayScene",false);
+			SetCommonData("BreakScene",true);
+			if(listResult[selectIndex] == RESULT_CANCEL) {
+				if(!GetCommonData("GameOver",false)) {
+					PlaySoundEffect("confirm",100);
+					menuEnd = true;
+					loop(15){ yield; }
+					SetScriptResult(listResult[selectIndex]);
+					Obj_Delete(objBGM);
+					CloseScript(GetOwnScriptID);
+					return;
+				}
+				else if (GetCommonData("ContinueCount",9)>0) {
+					PlaySoundEffect("confirm",100);
+					menuEnd = true;
+					loop(15){ yield; }
+					SetScriptResult(listResult[selectIndex]);
+					Obj_Delete(objBGM);
+					CloseScript(GetOwnScriptID);
+					return;
+				}
+				else if(GetCommonData("ContinueCount",9)==0) { PlaySoundEffect("invalid",100); }
+			}
+			else {
+				PlaySoundEffect("confirm",100);
+				menuEnd = true;
+				loop(20) { yield; }
+				SetScriptResult(listResult[selectIndex]);
+				Obj_Delete(objBGM);
+				CloseScript(GetOwnScriptID);
+				return;
+			}
+		}
+		if(GetKeyState(KEY_R) == KEY_PULL && !IsReplay) {
+			PlaySoundEffect("confirm",100);
+			if (GetAreaCommonData("PlayState","Mode","Main")=="Spell Practice"){ selectIndex = 2; }
+			else{ selectIndex = 3; }
+			menuEnd = true;
+			loop(20) { yield; }
+			SetScriptResult(RESULT_RETRY);
+			Obj_Delete(objBGM);
+			CloseScript(GetOwnScriptID);
+		}
+		if(GetVirtualKeyState(VK_CANCEL) == KEY_PULL || GetVirtualKeyState(VK_PAUSE) == KEY_PULL) {
+			if(!GetCommonData("GameOver",false)) {
+				if(GetCommonData("ContinueCount",2)!=0) {
+					SetScriptResult(RESULT_CANCEL);
+					Obj_Delete(objBGM);
+					CloseScript(GetOwnScriptID);
+					return;
+				}
+			}
+		}
+
+		if(GetVirtualKeyState(VK_UP) == KEY_PUSH)
+		{
+			PlaySoundEffect("select",100);
+			selectIndex--;
+		}
+		else if(GetVirtualKeyState(VK_DOWN) == KEY_PUSH)
+		{
+			PlaySoundEffect("select",100);
+			selectIndex++;
+		}
+		else if(GetVirtualKeyState(VK_UP) == KEY_HOLD)
+		{
+			frameKeyHold++;
+			if(frameKeyHold == 30 || (frameKeyHold > 30 && (frameKeyHold % 8 == 0)))
+			{
+				PlaySoundEffect("select",100);
+				selectIndex--;
+			}
+		}
+		else if(GetVirtualKeyState(VK_DOWN) == KEY_HOLD)
+		{
+			frameKeyHold++;
+			if(frameKeyHold == 30 || (frameKeyHold > 30 && (frameKeyHold % 8 == 0)))
+			{
+				PlaySoundEffect("select",100);
+				selectIndex++;
+			}
+		}
+		else
+		{
+			frameKeyHold = 0;
+		}
+
+		if(selectIndex < 0) 
+		{
+			selectIndex = countMenu - 1;
+		}
+		else
+		{
+			selectIndex %= countMenu;
+		}
+
+		yield;
+	}
+}
+
+function StartBGM(path) {
+	let objBGM = ObjSound_Create;
+
+	ObjSound_Load(objBGM,path);
+	ObjSound_SetVolumeRate(objBGM,GetAreaCommonData("Options","Music",100)*100);
+	ObjSound_SetSoundDivision(objBGM,SOUND_BGM);
+	ObjSound_SetRestartEnable(objBGM,true);
+	ObjSound_SetLoopEnable(objBGM,true);
+	ObjSound_SetLoopSampleCount(objBGM,2133906,3960576);
+	ObjSound_Play(objBGM);
+	
+	return objBGM;
+}
+
+function PlaySoundEffect(name,volume) {
+	//let obj = ObjSound_Create;
+	//ObjSound_SetSoundDivision(obj,SOUND_SE);
+	//ObjSound_Load(obj,GetModuleDirectory ~ "SE/" ~name~ ".wav");
+	//ObjSound_SetRestartEnable(obj, true);
+	//ObjSound_SetVolumeRate(obj,volume*GetAreaCommonData("Options","SFX",100)/100);
+	//ObjSound_Play(obj);
+	NotifyEventAll(EV_USER + 20,[name,IntToString(volume)]);
+}
+
+function CreateText(mx, my, text, size, r, g, b){
+	let obj = ObjText_Create;
+	ObjText_SetText(obj, text);
+	ObjText_SetFontSize(obj, size);
+	ObjText_SetFontType(obj, "Lekton");
+	ObjText_SetFontBold(obj, true);
+	ObjText_SetFontColorTop(obj, r, g, b);
+	ObjText_SetFontColorBottom(obj, r, g, b);
+	ObjText_SetFontBorderColor(obj, 0, 0, 0);
+	ObjText_SetFontBorderType(obj, BORDER_FULL);
+	ObjText_SetHorizontalAlignment(obj,ALIGNMENT_CENTER);
+	ObjText_SetMaxWidth(obj, 300);
+	ObjText_SetFontBorderWidth(obj, 3);
+	Obj_SetRenderPriorityI(obj, 10);
+	ObjRender_SetX(obj, mx);
+	ObjRender_SetY(obj, my);
+	return obj;
+}

@@ -1,0 +1,420 @@
+function CheckUnlock(id) {
+	if(id==0) {
+		if(IsCommonDataAreaExists("Unlock_Ex")){
+			return GetAreaCommonData("Unlock_Ex","Unlock_Ex",false);
+		}
+		else { return true; }
+	}
+	if(IsCommonDataAreaExists("Unlock")){
+		return GetAreaCommonData("Unlock","Unlock",[])[id];
+	}
+	else { return true; }
+}
+
+function CheckUnlock1cc {
+	return CheckUnlock(Rin_Normal_1cc)||CheckUnlock(Rin_Hard_1cc)||CheckUnlock(Rin_Lunatic_1cc)||CheckUnlock(Kasen_Normal_1cc)||CheckUnlock(Kasen_Hard_1cc)||CheckUnlock(Kasen_Lunatic_1cc)||CheckUnlock(Tokiko_Normal_1cc)||CheckUnlock(Tokiko_Hard_1cc)||CheckUnlock(Tokiko_Lunatic_1cc);
+}
+
+function CheckRin1cc {
+	return CheckUnlock(Rin_Normal_1cc)||CheckUnlock(Rin_Hard_1cc)||CheckUnlock(Rin_Lunatic_1cc);
+}
+function CheckKasen1cc {
+	return CheckUnlock(Kasen_Normal_1cc)||CheckUnlock(Kasen_Hard_1cc)||CheckUnlock(Kasen_Lunatic_1cc);
+}
+function CheckTokiko1cc {
+	return CheckUnlock(Tokiko_Normal_1cc)||CheckUnlock(Tokiko_Hard_1cc)||CheckUnlock(Tokiko_Lunatic_1cc);
+}
+
+function CheckUnlockMultipleChar1cc {
+	let num = 0;
+	if (CheckUnlock(Rin_Normal_1cc)||CheckUnlock(Rin_Hard_1cc)||CheckUnlock(Rin_Lunatic_1cc)) {
+		num++;
+	}
+	if (CheckUnlock(Kasen_Normal_1cc)||CheckUnlock(Kasen_Hard_1cc)||CheckUnlock(Kasen_Lunatic_1cc)) {
+		num++;
+	}
+	if (CheckUnlock(Tokiko_Normal_1cc)||CheckUnlock(Tokiko_Hard_1cc)||CheckUnlock(Tokiko_Lunatic_1cc)) {
+		num++;
+	}
+	return num;
+}
+
+function CheckExtra1cc {
+	return CheckUnlock(Rin_Extra)||CheckUnlock(Rin_Elite)||CheckUnlock(Kasen_Extra)||CheckUnlock(Kasen_Elite)||CheckUnlock(Tokiko_Extra)||CheckUnlock(Tokiko_Elite);
+}
+
+function CheckUnlock_SpellPractice {
+	let Rin_unlock = CheckUnlock(Rin_Easy_1)||CheckUnlock(Rin_Normal_1)||CheckUnlock(Rin_Hard_1)||CheckUnlock(Rin_Lunatic_1);
+	let Kasen_unlock = CheckUnlock(Kasen_Easy_1)||CheckUnlock(Kasen_Normal_1)||CheckUnlock(Kasen_Hard_1)||CheckUnlock(Kasen_Lunatic_1);
+	//let Tokiko_unlock = CheckUnlock(Tokiko_Easy_1)||CheckUnlock(Tokiko_Normal_1)||CheckUnlock(Tokiko_Hard_1)||CheckUnlock(Tokiko_Lunatic_1);
+	let Tokiko_unlock = CheckUnlock(Rinnosuke_Event);
+	return Rin_unlock && Kasen_unlock && Tokiko_unlock;
+}
+
+function UnlockFlag(id) {
+	if(id==0) { NotifyEventAll(EV_UNLOCK_EX,id); }
+	else { NotifyEventAll(EV_UNLOCK,id); }
+}
+
+function LWUnlock(num) {
+	let debugStr = "Last Word " ~ ToString(num) ~ " Unlocked";
+	//WriteLog(debugStr);
+	//NotifyEventAll(EV_SOUND,["thunder",IntToString(100)]);
+	UnlockFlag(200 + num);
+}
+
+task CheckBeatAllEncoreSpells {
+	let player_array = ["Rin","Kasen","Tokiko"];
+	ascent(a in 0..3) {
+	let History = GetAreaCommonData("History", player_array[a]~" History", [[],[],[],[]]);
+	let History_temp = [];
+	let History_temp2 = [];
+	let History_caps = [];
+	let History_caps2 = [];
+	let spellIDs = [14,15,16,34,35,36,54,55,56,82,83,84,110,111,112];
+	//let spellIDs = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
+	let ret = 0;
+	let blank = [false,false,false,false,false];
+	//WriteLog(ToString(History));
+	ascent(i in 0..2) {
+		let check = [] ~ blank;
+		History_temp = History[i*2];
+		History_temp2 = History[(i*2)+1];
+		//WriteLog(ToString(History_temp));
+		ascent(j in 0..15) {
+			let spellID = spellIDs[j];
+			History_caps = History_temp[spellID];
+			History_caps2 = History_temp2[spellID];
+			let caps = History_caps[1];
+			let caps2 = History_caps2[1];
+			if ((caps > 0) || (caps2 > 0)) {
+				//WriteLog("Spell " ~ ToString(spellID) ~ ": true");
+				check[floor(j / 3)] = true;
+			}
+		}
+		//WriteLog(ToString(check));
+		if ((check[0]) && (check[1]) && (check[2]) && (check[3]) && (check[4])) {
+			ret += 1;
+		}
+	}
+	if (ret > 1) {
+		LWUnlock(3);
+	}
+	if (ret > 0) {
+		LWUnlock(11);
+	}
+	}
+	return;
+}
+
+task CheckNumSpellsUnlocked {
+	let player_array = ["Rin","Kasen","Tokiko"];
+	ascent(a in 0..3) {
+	let History = GetAreaCommonData("History", player_array[a]~" History", [[],[],[],[]]);
+	let History_temp = [];
+	let History_temp2 = [];
+	let History_temp3 = [];
+	let History_temp4 = [];
+	let History_caps = [];
+	let History_caps2 = [];
+	let History_caps3 = [];
+	let History_caps4 = [];
+	let spellIDs = [14,15,16,34,35,36,54,55,56,82,83,84,110,111,112];
+	//let spellIDs = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
+	let ret = 0;
+		History_temp = History[0];
+		History_temp2 = History[1];
+		History_temp3 = History[2];
+		History_temp4 = History[3];
+		//WriteLog(ToString(History_temp));
+		ascent(j in 0..200) {
+			History_caps = History_temp[j];
+			History_caps2 = History_temp2[j];
+			History_caps3 = History_temp3[j];
+			History_caps4 = History_temp4[j];
+			let caps = History_caps[1];
+			let caps2 = History_caps2[1];
+			let caps3 = History_caps[1];
+			let caps4 = History_caps2[1];
+			if ((caps > 0) || (caps2 > 0) || (caps3 > 0) || (caps4 > 0)) {
+				ret++;
+			}
+		}
+	if ((ret > 75) && (CheckExtra1cc)) { //75
+		LWUnlock(13);
+	}
+	if ((ret > 100) && (CheckUnlock(Rinno_Extra))) { //100
+		LWUnlock(14);
+	}
+	}
+	return;
+}
+
+
+
+function CheckUnlock_CountMaster {
+	let MasterData = GetAreaCommonData("Master","Data",[]);
+	if (length(MasterData) < 5) {
+		let dataTen = [false, false, false, false, false, false, false, false, false, false];
+		let dataHundred = [];
+		dataHundred = dataHundred ~ dataTen ~ dataTen ~ dataTen ~ dataTen ~ dataTen ~ dataTen ~ dataTen ~ dataTen ~ dataTen ~ dataTen;
+		MasterData = MasterData ~ dataHundred ~ dataHundred ~ dataHundred;
+	}
+	let countMaster = 0;
+	ascent(i in 0..300) {
+		if (MasterData[i] == true) {
+			countMaster++;
+		}
+	}
+	return countMaster;
+}
+
+function CheckUnlockAllLW {
+	let check = false;
+	ascent(i in 1..20) {
+		check = check || CheckUnlock(200 + i);
+	}
+	return check;
+}
+
+function UnlockAll {
+	let Unlock = [];
+	loop(800) {
+		Unlock = Unlock ~ [true];
+	}
+	SetAreaCommonData("Unlock","Unlock",Unlock);
+	SaveCommonDataAreaA2("Unlock","Data/Unlock.dat");
+
+	SetAreaCommonData("Unlock_Ex","Unlock_Ex",true);
+	SaveCommonDataAreaA2("Unlock_Ex","Data/Rinnosuke_Event.dat");
+}
+
+function LockAll {
+	let Unlock = [];
+	loop(800) {
+		Unlock = Unlock ~ [false];
+	}
+	SetAreaCommonData("Unlock","Unlock",Unlock);
+	SaveCommonDataAreaA2("Unlock","Data/Unlock.dat");
+
+	SetAreaCommonData("Unlock_Ex","Unlock_Ex",false);
+	SaveCommonDataAreaA2("Unlock_Ex","Data/Rinnosuke_Event.dat");
+}
+
+let Rinnosuke_Event 	= 0;
+
+//Game Clears
+
+let Rin_Easy_1cc 		= 1;
+let Rin_Normal_1cc 		= 2;
+let Rin_Hard_1cc 		= 3;
+let Rin_Lunatic_1cc 	= 4;
+let Kasen_Easy_1cc		= 5;
+let Kasen_Normal_1cc	= 6;
+let Kasen_Hard_1cc		= 7;
+let Kasen_Lunatic_1cc	= 8;
+let Tokiko_Easy_1cc		= 9;
+let Tokiko_Normal_1cc	= 10;
+let Tokiko_Hard_1cc		= 11;
+let Tokiko_Lunatic_1cc	= 12;
+
+//Stage Progress
+
+let Rin_Easy_1 			= 13;
+let Rin_Easy_2 			= 14;
+let Rin_Easy_3 			= 15;
+let Rin_Easy_4 			= 16;
+let Rin_Easy_5 			= 17;
+let Rin_Easy_6 			= 18;
+let Rin_Normal_1 		= 19;
+let Rin_Normal_2 		= 20;
+let Rin_Normal_3 		= 21;
+let Rin_Normal_4 		= 22;
+let Rin_Normal_5 		= 23;
+let Rin_Normal_6 		= 24;
+let Rin_Hard_1 			= 25;
+let Rin_Hard_2 			= 26;
+let Rin_Hard_3 			= 27;
+let Rin_Hard_4 			= 28;
+let Rin_Hard_5 			= 29;
+let Rin_Hard_6 			= 30;
+let Rin_Lunatic_1 		= 31;
+let Rin_Lunatic_2 		= 32;
+let Rin_Lunatic_3 		= 33;
+let Rin_Lunatic_4 		= 34;
+let Rin_Lunatic_5 		= 35;
+let Rin_Lunatic_6 		= 36;
+
+let Kasen_Easy_1 		= 37;
+let Kasen_Easy_2 		= 38;
+let Kasen_Easy_3 		= 39;
+let Kasen_Easy_4 		= 40;
+let Kasen_Easy_5 		= 41;
+let Kasen_Easy_6 		= 42;
+let Kasen_Normal_1 		= 43;
+let Kasen_Normal_2 		= 44;
+let Kasen_Normal_3 		= 45;
+let Kasen_Normal_4 		= 46;
+let Kasen_Normal_5 		= 47;
+let Kasen_Normal_6 		= 48;
+let Kasen_Hard_1 		= 49;
+let Kasen_Hard_2 		= 50;
+let Kasen_Hard_3 		= 51;
+let Kasen_Hard_4 		= 52;
+let Kasen_Hard_5 		= 53;
+let Kasen_Hard_6 		= 54;
+let Kasen_Lunatic_1 	= 55;
+let Kasen_Lunatic_2 	= 56;
+let Kasen_Lunatic_3 	= 57;
+let Kasen_Lunatic_4 	= 58;
+let Kasen_Lunatic_5 	= 59;
+let Kasen_Lunatic_6 	= 60;
+
+let Tokiko_Easy_1 		= 61;
+let Tokiko_Easy_2 		= 62;
+let Tokiko_Easy_3 		= 63;
+let Tokiko_Easy_4 		= 64;
+let Tokiko_Easy_5 		= 65;
+let Tokiko_Easy_6 		= 66;
+let Tokiko_Normal_1 	= 67;
+let Tokiko_Normal_2 	= 68;
+let Tokiko_Normal_3 	= 69;
+let Tokiko_Normal_4 	= 70;
+let Tokiko_Normal_5 	= 71;
+let Tokiko_Normal_6 	= 72;
+let Tokiko_Hard_1 		= 73;
+let Tokiko_Hard_2 		= 74;
+let Tokiko_Hard_3 		= 75;
+let Tokiko_Hard_4 		= 76;
+let Tokiko_Hard_5 		= 77;
+let Tokiko_Hard_6 		= 78;
+let Tokiko_Lunatic_1 	= 79;
+let Tokiko_Lunatic_2 	= 80;
+let Tokiko_Lunatic_3 	= 81;
+let Tokiko_Lunatic_4 	= 82;
+let Tokiko_Lunatic_5 	= 83;
+let Tokiko_Lunatic_6 	= 84;
+
+let Rin_Extra 			= 85;
+let Rin_Elite			= 86;
+let Kasen_Extra 		= 87;
+let Kasen_Elite			= 88;
+let Tokiko_Extra 		= 89;
+let Tokiko_Elite		= 90;
+
+let Rinno_Extra			= 95;
+
+//Spell Practice
+let St1_Spell_1 		= 101;
+let St1_Spell_2 		= 102;
+let St1_Spell_3 		= 103;
+let St1_Spell_4 		= 104;
+
+let St2_Spell_1 		= 105;
+let St2_Spell_2 		= 106;
+let St2_Spell_3 		= 107;
+let St2_Spell_4 		= 108;
+let St2_Spell_5 		= 109;
+
+let St3_Spell_1 		= 110;
+let St3_Spell_2 		= 111;
+let St3_Spell_3 		= 112;
+let St3_Spell_4 		= 113;
+let St3_Spell_5 		= 114;
+
+let St4_Spell_1 		= 115;
+let St4_Spell_2 		= 116;
+let St4_Spell_3 		= 117;
+let St4_Spell_4 		= 118;
+let St4_Spell_5 		= 119;
+let St4_Spell_6 		= 120;
+let St4_Spell_7 		= 121;
+
+let St5_Spell_1 		= 122;
+let St5_Spell_2 		= 123;
+let St5_Spell_3 		= 124;
+let St5_Spell_4 		= 125;
+let St5_Spell_5 		= 126;
+let St5_Spell_6 		= 127;
+let St5_Spell_7 		= 128;
+
+let St6_Spell_1 		= 129;
+let St6_Spell_2 		= 130;
+let St6_Spell_3 		= 131;
+let St6_Spell_4 		= 132;
+let St6_Spell_5 		= 133;
+let St6_Spell_6 		= 134;
+let St6_Spell_7 		= 135;
+
+let St7_Spell_1 		= 136;
+let St7_Spell_2 		= 137;
+let St7_Spell_3 		= 138;
+let St7_Spell_4 		= 139;
+let St7_Spell_5 		= 140;
+let St7_Spell_6 		= 141;
+let St7_Spell_7 		= 142;
+let St7_Spell_8 		= 143;
+let St7_Spell_9 		= 144;
+let St7_Spell_10 		= 145;
+let St7_Spell_11 		= 146;
+let St7_Spell_12 		= 147;
+let St7_Spell_13 		= 148;
+let St7_Spell_14 		= 149;
+let St7_Spell_15 		= 150;
+let St7_Spell_16 		= 151;
+let St7_Spell_17 		= 152;
+
+let LW_Spell_1			= 201;
+let LW_Spell_2			= 202;
+let LW_Spell_3			= 203;
+let LW_Spell_4			= 204;
+let LW_Spell_5			= 205;
+let LW_Spell_6			= 206;
+let LW_Spell_7			= 207;
+let LW_Spell_8			= 208;
+let LW_Spell_9			= 209;
+let LW_Spell_10			= 210;
+let LW_Spell_11			= 211;
+let LW_Spell_12			= 212;
+let LW_Spell_13			= 213;
+let LW_Spell_14			= 214;
+let LW_Spell_15			= 215;
+let LW_Spell_16			= 216;
+let LW_Spell_17			= 217;
+let LW_Spell_18			= 218;
+let LW_Spell_19			= 219;
+let LW_Spell_20			= 220;
+let LW_Spell_21			= 221;
+
+
+//Music Room
+
+let music_1_1			= 301;
+let music_1_2			= 302;
+let music_2_1			= 303;
+let music_2_2			= 304;
+let music_3_1			= 305;
+let music_3_2			= 306;
+let music_4_1			= 307;
+let music_4_2			= 308;
+let music_5_1			= 309;
+let music_5_2			= 310;
+let music_6_1			= 311;
+let music_6_2			= 312;
+let music_6_3			= 313;
+let music_7_1			= 314;
+let music_7_2			= 315;
+let music_7_3			= 316;
+let music_7_4			= 317;
+let music_8_1			= 318;
+let music_8_2			= 319;
+let music_0_2			= 320;
+let music_1_05			= 321;
+let music_9_1			= 322;
+
+//Discordant Mode
+let Discordant 			= 351;
+let Discordant_Extra 	= 352;
+
+//Tokiko
+let Tokiko_Unlock 		= 353; //Not currently in use, Spell Practice is instead to be locked until after each player is played once

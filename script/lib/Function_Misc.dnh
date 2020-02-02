@@ -1,0 +1,104 @@
+task DeleteShotAll_EventVer(bullet_type, delete_type){
+	//NotifyEvent(GetCommonData("ev_SystemScriptObjectID", ID_INVALID), EV_DELETE_SHOT_ALL, [bullet_type, delete_type]);
+	DeleteShotAll(bullet_type, delete_type);
+}
+
+function CoinFlip {
+	let num = rand(-1,1);
+	while(num==0) {
+		num = rand(-1,1);
+	}
+	if(num>0) { num = 1; }
+	else { num = -1; }
+	return num;
+}
+
+function SetMovePosition(obj,x,y,weight,max_speed) {
+	let distance = GetDistance(ObjRender_GetX(obj),ObjRender_GetY(obj),x,y);
+	let angle = atan2(y-ObjRender_GetY(obj), x-ObjRender_GetX(obj));
+	while(distance > 1){
+		let speed = distance/weight;
+		if(speed > max_speed) { speed = max_speed; }
+		ObjRender_SetX(obj, ObjRender_GetX(obj) + cos(angle)*speed);
+		ObjRender_SetY(obj, ObjRender_GetY(obj) + sin(angle)*speed);
+		distance = GetDistance(ObjRender_GetX(obj),ObjRender_GetY(obj),x,y);
+		yield;
+	}
+	ObjRender_SetPosition(obj,x,y,0);
+}
+task SetMovePosition01(obj,x,y,weight,max_speed) {
+	let distance = GetDistance(ObjRender_GetX(obj),ObjRender_GetY(obj),x,y);
+	let angle = atan2(y-ObjRender_GetY(obj), x-ObjRender_GetX(obj));
+	while(distance > 1){
+		let speed = distance/weight;
+		if(speed > max_speed) { speed = max_speed; }
+		ObjRender_SetX(obj, ObjRender_GetX(obj) + cos(angle)*speed);
+		ObjRender_SetY(obj, ObjRender_GetY(obj) + sin(angle)*speed);
+		distance = GetDistance(ObjRender_GetX(obj),ObjRender_GetY(obj),x,y);
+		yield;
+	}
+	ObjRender_SetPosition(obj,x,y,0);
+}
+task SetSpeedAndAngle(obj,speed,dir) {
+	let x = ObjRender_GetX(obj);
+	let y = ObjRender_GetY(obj);
+	while(!Obj_IsDeleted(obj)) {
+		x+=speed*cos(dir);
+		y+=speed*sin(dir);
+		ObjRender_SetPosition(obj,x,y,0);
+		yield;
+	}
+}
+function AngleBetweenPoints(x1, y1, x2, y2){ //get angle from (x1, y1) to (x2, y2) 
+	return atan2(y2-y1, x2-x1);
+}
+function AngleBetweenObjects(obj1, obj2){ //get angle from obj1 to obj2
+	return AngleBetweenPoints(ObjMove_GetX(obj1), ObjMove_GetY(obj1), ObjMove_GetX(obj2), ObjMove_GetY(obj2));
+}
+
+function GetDistance(x1,y1,x2,y2) {
+	return ((x1-x2)^2+(y1-y2)^2)^(1/2);
+}
+
+function GetDistanceSq(x1,y1,x2,y2) {
+	return ((x1-x2)^2+(y1-y2)^2);
+}
+
+function wait(w) {
+	loop(w) { yield; }
+}
+
+function Obj_IncreaseRenderPriorityI(obj, amount){
+	Obj_SetRenderPriorityI(obj, Obj_GetRenderPriorityI(obj)+amount);
+}
+
+task DebugText01(text) {
+	let objText = GetCommonData("DebugText",ID_INVALID);
+	if(objText==ID_INVALID || Obj_IsDeleted(objText)) {
+		objText = ObjText_Create;
+		SetCommonData("DebugText",objText);
+	}
+	ObjText_SetHorizontalAlignment(objText, ALIGNMENT_LEFT);
+	ObjText_SetFontType(objText, "Crystal Clear");
+	ObjText_SetFontSize(objText,16);
+	ObjText_SetMaxWidth(objText, 300);
+	Obj_SetRenderPriorityI(objText, 80);
+	ObjRender_SetPosition(objText, 50, GetStgFrameHeight-30, 0);
+	
+	ObjText_SetText(objText,text);	
+}
+task DebugText02(text,ID,x,y) {
+	let objText = GetCommonData("DebugText_"~ToString(ID),ID_INVALID);
+	if(objText==ID_INVALID || Obj_IsDeleted(objText)) {
+		objText = ObjText_Create;
+		SetCommonData("DebugText_"~ToString(ID),objText);
+	}
+	ObjText_SetHorizontalAlignment(objText, ALIGNMENT_LEFT);
+	ObjText_SetFontType(objText, "Crystal Clear");
+	ObjText_SetFontSize(objText,20);
+	ObjText_SetMaxWidth(objText, 300);
+	Obj_SetRenderPriorityI(objText, 80);
+	ObjRender_SetPosition(objText, x, y, 0);
+	
+	ObjText_SetText(objText,text);	
+}

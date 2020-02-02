@@ -1,0 +1,5 @@
+InstallFont(MD ~ "font/Aldrich-Regular.ttf");
+InstallFont(MD ~ "font/OpenSans-CondBold.ttf");
+InstallFont(MD ~ "font/DAGGERSQUARE.otf");
+InstallFont(MD ~ "font/DAGGERNUM.ttf");
+InstallFont(MD ~ "font/digital-7.mono.ttf");

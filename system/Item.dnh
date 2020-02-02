@@ -1,0 +1,904 @@
+//Item Creation Script
+
+let LogItemDrops = false; 
+let LogItemCollects = false;
+let LogItem_Average = 60; //in frames; will log drops/collects every specified frames; 0 for no log
+
+let CSD = GetCurrentScriptDirectory;
+let MD = GetModuleDirectory;
+
+let ItemNames = ["POWER", "POINT", "BALANCE", "POWER_FULL", "BONUS", "BALANCEBONUS", "LIFE_PIECE",
+"SPELL_PIECE","LIFE", "SPELL", "POWER_BIG", "PIV"];
+
+let ItemValues = [];
+let ItemValuesRate = [];
+
+let POWER = 1;
+let POINT = 2;
+let BALANCE = 3;
+let POWER_FULL = 4;
+let BONUS = 5;
+let BALANCEBONUS = 6;
+let LIFE_PIECE = 7;
+let SPELL_PIECE = 8;
+let LIFE = 9;
+let SPELL = 10;
+let POWER_BIG = 11;
+let PIV = 12;
+let DELETE = 13;
+
+let staticBalanceBonus = 0;
+
+let isFullPower = false;
+let hasMaxBalanceHappened = false;
+let isMaxBalance = false;
+
+#include"Script/LIB/Function_Audio.dnh"
+#include"System/LIB/Event_Const.dnh"
+#include"Script/LIB/Function_Misc.dnh"
+#include"Script/LIB/Function_Rand.dnh"
+#include"Script/LIB/Function_Desync.dnh"
+
+@Initialize {
+	SetDefaultBonusItemEnable(false);
+	LoadItemData(MD ~ "System/LIB/Item_Data.dnh");
+	//LoadTexture(MD ~ "IMG/Effect/BulletBreak.png");
+	LaunchItemLogging;
+}
+
+@MainLoop {
+	SetCommonData("PointOfCollection",130+GetCommonData("Balance",0)/10000*135);
+	if(!GetCommonData("Discord",false) && !GetCommonData("Simple Discord",false)) { staticBalanceBonus = 1+GetCommonData("Balance",0)/10000; }
+	if(GetPlayerState==STATE_DOWN) { CancelCollectItems; }
+	if(GetPlayerPower<400) { isFullPower = false; }
+	if(!isFullPower && GetPlayerPower >= 400) { NotifyEventAll(EV_FULL_POWER,0); isFullPower = true; }
+	if(GetCommonData("Balance",0)>=10000){ isMaxBalance = true; } else { isMaxBalance = false; }
+	hasMaxBalanceHappened = false; //this variable limits Max Balance calls to once per frame (in theory)
+	yield;
+}
+
+@Event {
+	
+	alternative(GetEventType)
+		case(EV_GET_ITEM) {
+			let itemType = GetEventArgument(0);
+			let objItem = GetEventArgument(1);
+			AddScore(Obj_GetValueD(objItem,"Score",0));
+			if(Obj_GetValueD(objItem,"PIV",0)) {
+				SetCommonData("ItemValue",GetCommonData("ItemValue",10000)+Obj_GetValueD(objItem,"PIV",0));
+			}
+		//AddItemLogDataB1(itemType, 0, 1);
+		alternative(itemType)
+			case(SPELL){
+				PlaySoundEffect("item",100);
+				PlaySoundEffect("bonus6",100);
+				SetPlayerSpell(GetPlayerSpell+1);
+				NotifyEventAll(EV_GET_SPELL,0);
+			}
+			case(SPELL_PIECE){
+				PlaySoundEffect("item",100);
+				SetCommonData("SpellPieces",GetCommonData("SpellPieces",0)+1);
+				if(GetCommonData("SpellPieces",0)>=6) {
+					PlaySoundEffect("bonus6",100);
+					SetPlayerSpell(GetPlayerSpell+1);
+					NotifyEventAll(EV_GET_SPELL,0);
+					SetCommonData("SpellPieces",0);
+				}
+			}
+			case(LIFE){
+				PlaySoundEffect("item",100);
+				PlaySoundEffect("extend",100);
+				SetPlayerLife(GetPlayerLife+1);
+				NotifyEventAll(EV_EXTEND,0);
+			}
+			case(LIFE_PIECE){
+				PlaySoundEffect("item",100);
+				SetCommonData("LifePieces",GetCommonData("LifePieces",0)+1);
+				if(GetCommonData("LifePieces",0)>=GetCommonData("LifePieces_Limit",8)) {
+					PlaySoundEffect("extend",100);
+					SetPlayerLife(GetPlayerLife+1);
+					NotifyEventAll(EV_EXTEND,0);
+					SetCommonData("LifePieces",0);
+					SetCommonData("LifePieces_Limit",GetCommonData("LifePieces_Limit",8)+2);
+				}
+			}
+			case(POWER_FULL){
+				PlaySoundEffect("item",100);
+				SetPlayerPower(400);
+				//if(GetPlayerPower==2 || GetPlayerPower==3 || GetPlayerPower==4) { PlaySE(powerup); }
+				if(GetPlayerPower>400) { SetPlayerPower(400); }
+			}
+			case(POWER){
+				PlaySoundEffect("item",100);
+				// Variable power item value by current power level. ~Kappa
+				/* if(GetPlayerPower >= 1 && GetPlayerPower < 2) { SetPlayerPower(GetPlayerPower+0.04); }
+				else if(GetPlayerPower >= 2 && GetPlayerPower < 3) { SetPlayerPower(GetPlayerPower+0.02); } -------Using extra enemy power drops for low power levels instead
+				else if(GetPlayerPower >= 3 && GetPlayerPower < 4) { SetPlayerPower(GetPlayerPower+0.01); } */
+				SetPlayerPower(GetPlayerPower+1);
+				if(GetPlayerPower<400) { AddScore(100); }
+				else { AddScore(10000); }
+				if(GetPlayerPower>400) { SetPlayerPower(400); }
+			}
+			case(POWER_BIG){
+				PlaySoundEffect("item",100);
+				SetPlayerPower(GetPlayerPower+5);
+				if(GetPlayerPower<4) { AddScore(100); }
+				else { AddScore(10000); }
+				if(GetPlayerPower>400) { SetPlayerPower(400); }
+			}
+			case(POINT){
+				PlaySoundEffect("item",100);
+			}
+			case(BONUS){
+				PlaySoundEffect("item",100);
+			}
+			case(PIV){
+				PlaySoundEffect("item",100);
+			}
+			case(BALANCE){
+				PlaySoundEffect("item",100);
+				SetCommonData("Balance",GetCommonData("Balance",0)+100);
+				if(!hasMaxBalanceHappened && !isMaxBalance){
+					if(GetCommonData("Balance",0)>=10000 && !GetCommonData("Discord",false) && !GetCommonData("Simple Discord",false)) {
+						PlaySoundEffect("bonus3",100);
+						NotifyEventAll(EV_MAX_BALANCE,0);
+						hasMaxBalanceHappened = true;
+					}
+				}
+				if(GetCommonData("Balance",0)>10000) { SetCommonData("Balance",10000); }
+			}
+			case(BALANCEBONUS){
+				PlaySoundEffect("item",100);
+				SetCommonData("Balance",GetCommonData("Balance",0)+100);
+				if(!hasMaxBalanceHappened && !isMaxBalance){
+					if(GetCommonData("Balance",0)>=10000 && !GetCommonData("Discord",false) && !GetCommonData("Simple Discord",false)) {
+						PlaySoundEffect("bonus3",100);
+						NotifyEventAll(EV_MAX_BALANCE,0);
+						hasMaxBalanceHappened = true;
+					}
+				}
+				if(GetCommonData("Balance",0)>10000) { SetCommonData("Balance",10000); }
+			}
+			case(DELETE){
+				PlaySoundEffect("item",100);
+				SetCommonData("ItemValue",GetCommonData("ItemValue",10000)+1+(GetGraze/500));
+			}
+		}
+		case(EV_CREATE_ITEM) {
+			let itemParam = GetEventArgument(0);
+			let objEnemy = itemParam[0];
+			let type = itemParam[1];
+			AddItemLogDataB1(type, 1, 0);
+			if(objEnemy!=ID_INVALID) { EnemyItems(objEnemy,type,itemParam[2],itemParam[3],itemParam[4]); }
+			else {
+				if(type==LIFE_PIECE || type==SPELL_PIECE) { PlaySoundEffect("bonus",100); }
+				if(type==POINT) { CreatePointItem(itemParam[2],itemParam[3],itemParam[4]); }
+				else if(type==POWER_BIG) { CreateBigPowerItem(itemParam[2],itemParam[3],itemParam[4]); }
+				else if(type==BALANCE) {
+					if(GetCommonData("Balance",0)<10000 && !GetCommonData("Discord",false) && !GetCommonData("Simple Discord",false)) { CreateBalanceItem(itemParam[2],itemParam[3],itemParam[4]); }
+					else if(GetCommonData("Discord",false) || GetCommonData("Simple Discord",false)) { CreatePIVItem(itemParam[2],itemParam[3],itemParam[4]); }
+					else if(GetCommonData("Balance",0)>=10000) { CreateBonusItem(itemParam[2],itemParam[3],itemParam[4],false,false); }
+				}
+				else if(type==PIV) { CreatePIVItem(itemParam[2],itemParam[3],itemParam[4]); }
+				else if(type==BONUS) { CreateBonusItem(itemParam[2],itemParam[3],itemParam[4],false,false); }
+				else if(type==BALANCEBONUS) { CreateBalanceBonusItem(itemParam[2],itemParam[3],itemParam[4]); }
+				else { CreateItem(type,itemParam[2],itemParam[3],itemParam[4],false,false); }
+			}
+		}
+		case(EV_CREATE_AUTO_ITEM) {
+			let itemParam = GetEventArgument(0);
+			let objEnemy = itemParam[0];
+			let type = itemParam[1];
+			AddItemLogDataB1(type, 1, 0);
+			CreateAutoItem(type,itemParam[2],itemParam[3],itemParam[4]);
+		}
+		case(EV_DELETE_ITEM) {
+			let itemParam = GetEventArgument(0);
+			CreateDeleteItem(itemParam[0],itemParam[1]);
+		}
+		case(EV_DELETE_SHOT_TO_ITEM) {
+			let objShot = GetEventArgument(0);
+			let objPos = GetEventArgument(1);
+			if(objPos[0]>0 && objPos[0]<GetStgFrameWidth && objPos[1]>0 && objPos[1]<GetStgFrameHeight) {
+				if(Obj_GetValueD(objShot,"Delete To Item",true)) {
+					CreateDeleteItem(objPos[0], objPos[1]);
+					//NotifyEventAll(EV_DELETE_SHOT,[objPos[0],objPos[1],ObjShot_GetImageID(objShot),objShot]);
+				}
+			}
+		}
+}
+
+task EnemyItems(objEnemy,type,x,y,disperse) {
+	let xpos = 0;
+	let ypos = 0;
+	while(!Obj_IsDeleted(objEnemy)) {
+		xpos = ObjMove_GetX(objEnemy)+x;
+		ypos = ObjMove_GetY(objEnemy)+y;
+		yield;
+	}
+	if(type==LIFE_PIECE || type==SPELL_PIECE) { PlaySoundEffect("bonus",100); }
+	if(type==POINT) { CreatePointItem(xpos,ypos,disperse); }
+	else if(type==POWER_BIG) { CreateBigPowerItem(xpos,ypos,disperse); }
+	else if(type==BALANCE) {
+		if(GetCommonData("Balance",0)<10000 && !GetCommonData("Discord",false) && !GetCommonData("Simple Discord",false)) { CreateBalanceItem(xpos,ypos,disperse); }
+		else if(GetCommonData("Discord",false) || GetCommonData("Simple Discord",false)) { CreatePIVItem(xpos,ypos,disperse); }
+		else if(GetCommonData("Balance",0)>=10000) { CreateBonusItem(xpos,ypos,disperse,false,false); }
+	}
+	else if(type==PIV) { CreatePIVItem(xpos,ypos,disperse); }
+	else if(type==BONUS) { CreateBonusItem(xpos,ypos,disperse,false,false); }
+	else if(type==BALANCEBONUS) { CreateBalanceBonusItem(xpos,ypos,disperse); }
+	else { CreateItem(type,xpos,ypos,disperse,false,false); }
+}
+
+task CreateDeleteItem(x,y) {
+	let obj = CreateItemU1(DELETE,x,y,0);
+	let id = uniqueID;
+	let speed = -5;
+	SetID(obj,id);
+	Obj_SetVisible(obj,false); // Countermeasure to delete items briefly appearing in the upper left corner when they are created
+	yield;
+	if(Obj_IsDeleted(obj)) { return; }
+	if(CheckID(obj)==id) {
+		Obj_SetVisible(obj,true); // I can only assume this is some kind of Danmakufu bug since I'm setting their position as soon as possible.
+		Obj_SetRenderPriorityI(obj, 49);
+		ObjItem_SetRenderScoreEnable(obj,false);
+		ObjMove_SetAngle(obj, 270+randEffItem(-5,5));
+		speed = randEffItem(1,2);
+		ObjRender_SetScaleXYZ(obj,0.8,0.8,0.8);
+		ObjItem_SetAutoCollectEnable(obj,false);
+	}
+	descent(i in 0..45) {
+		if(Obj_IsDeleted(obj)) { break; }
+		if(CheckID(obj)==id) { ObjMove_SetSpeed(obj,speed*i/45); }
+		yield;
+	}
+	while(!Obj_IsDeleted(obj)) {
+		if(CheckID(obj)==id) {
+			if(GetPlayerState==STATE_DOWN) { ObjItem_SetDefinedMovePatternA1(obj,ITEM_MOVE_DOWN); }
+			else { ObjItem_SetDefinedMovePatternA1(obj,ITEM_MOVE_TOPLAYER); }
+		}
+		yield;
+	}
+}
+
+task CreateItem(type,x,y,disperse,autocollect,transform) {
+	let objItem = CreateItemU1(type,x+randEffItem(-disperse,disperse),y+randEffItem(-disperse,disperse),0);
+	Obj_SetRenderPriorityI(objItem, 49);
+	ObjItem_SetRenderScoreEnable(objItem,false);
+
+	let collect = false;
+	if(!autocollect && !transform) { Animate; }
+	if(transform) {
+		ObjMove_SetSpeed(objItem,2.5);
+		ObjMove_SetAngle(objItem,90);
+	}
+	
+	RenderScore(objItem);
+	ItemCollect(objItem);
+	task ItemCollect(ItemID) {
+		let radius = 0;
+		let distCollect = 0;
+		while(!Obj_IsDeleted(ItemID)) {
+			if(GetVirtualKeyState(VK_SLOWMOVE)!= KEY_FREE) { radius = 55; } else { radius = 35; }
+			if(GetPlayerState!=STATE_DOWN && GetPlayerState!=STATE_END) {
+				if(GetDistanceSq(GetPlayerX,GetPlayerY,ObjMove_GetX(ItemID),ObjMove_GetY(ItemID))<=radius^2 && collect == false) {
+					ObjMove_SetSpeed(ItemID,2.5);
+					ObjMove_SetAcceleration(ItemID,0.15);
+					ObjMove_SetMaxSpeed(ItemID,6);
+					collect = true;
+				}
+			}
+			if(collect == true) {
+				ObjMove_SetAngle(ItemID,GetAngleToPlayer(ItemID));
+				if(GetPlayerState==STATE_DOWN) { ObjItem_SetDefinedMovePatternA1(ItemID,ITEM_MOVE_DOWN); collect = false; } // Attempt to stop items that are being drawn in when the player is dead
+			}
+			if(autocollect == true) {
+				ObjItem_SetDefinedMovePatternA1(objItem,ITEM_MOVE_TOPLAYER);
+				if(GetPlayerState==STATE_DOWN) { ObjItem_SetDefinedMovePatternA1(ItemID,ITEM_MOVE_DOWN); collect = false; } // Attempt to stop items that are being drawn in when the player is dead
+			}
+			yield;
+		}
+	}
+	task RenderScore(objItem) {
+		let xpos = 0;
+		let ypos = 0;
+		let itemScore = 0;
+		let distCollect = 0;
+		while(!Obj_IsDeleted(objItem)) {
+			itemScore = Obj_GetValueD(objItem,"Score",0);
+			xpos = ObjMove_GetX(objItem);
+			ypos = ObjMove_GetY(objItem);
+			yield;
+		}
+		if(itemScore!=0) {
+			RenderScoreText(xpos,ypos,IntToString(itemScore),255,255,255);
+		}
+	}
+	task Animate {
+		let angle = 0;
+		loop(15) {
+			angle+=360/15*40;
+			if(Obj_IsDeleted(objItem)) { break; }
+			ObjRender_SetAngleZ(objItem,angle);
+			yield;
+		}
+	}
+}
+task CreateAutoItem(type,x,y,disperse) {
+	let objItem = CreateItemU1(type,x+randEffItem(-disperse,disperse),y+randEffItem(-disperse,disperse),0);
+	Obj_SetRenderPriorityI(objItem, 49);
+	ObjItem_SetRenderScoreEnable(objItem,false);
+	
+	let collect = false;
+	
+	Animate;
+	ItemCollect(objItem);
+	task ItemCollect(ItemID) {
+		loop(60) { yield; }
+		if(!Obj_IsDeleted(objItem)) { ObjItem_SetDefinedMovePatternA1(objItem,ITEM_MOVE_TOPLAYER); }
+	}
+	task Animate {
+		let angle = 0;
+		loop(15) {
+			angle+=360/15*40;
+			if(Obj_IsDeleted(objItem)) { break; }
+			ObjRender_SetAngleZ(objItem,angle);
+			yield;
+		}
+	}
+}
+task CreatePointItem(x,y,disperse) {
+	let objItem = CreateItemU1(POINT,x+randEffItem(-disperse,disperse),y+randEffItem(-disperse,disperse),0);
+	Obj_SetRenderPriorityI(objItem, 49);
+	ObjItem_SetRenderScoreEnable(objItem,false);
+	
+	let score = round(GetCommonData("ItemValue",10000));
+	let balanceBonus = 1+GetCommonData("Balance",0)/10000;
+	let collect = false;
+	
+	Animate;
+	RenderScore(objItem);
+	ItemCollect(objItem);
+	
+	task ItemCollect(ItemID) {
+		let radius = 0;
+		while(!Obj_IsDeleted(ItemID)) {
+			score = round(GetCommonData("ItemValue",10000));
+			balanceBonus = 1+GetCommonData("Balance",0)/10000;
+			
+			Obj_SetValue(ItemID,"Score",round(score*balanceBonus/10)*10);
+			
+			if(GetPlayerY<=GetCommonData("PointOfCollection",100)) { return; }
+			if(GetVirtualKeyState(VK_SLOWMOVE)!= KEY_FREE) { radius = 55; } else { radius = 35; }
+			if(GetPlayerState!=STATE_DOWN && GetPlayerState!=STATE_END) {
+				if(GetDistanceSq(GetPlayerX,GetPlayerY,ObjMove_GetX(ItemID),ObjMove_GetY(ItemID))<=radius^2 && collect == false) {
+					ObjMove_SetSpeed(ItemID,2.5);
+					ObjMove_SetAcceleration(ItemID,0.15);
+					ObjMove_SetMaxSpeed(ItemID,6);
+					collect = true;
+				}
+			}
+			if(collect == true) {
+				ObjMove_SetAngle(ItemID,GetAngleToPlayer(ItemID));
+				if(GetPlayerState==STATE_DOWN) { ObjItem_SetDefinedMovePatternA1(ItemID,ITEM_MOVE_DOWN); collect = false; } // Attempt to stop items that are being drawn in when the player is dead
+			}
+			yield;
+		}
+	}
+	task RenderScore(objItem) {
+		let xpos = 0;
+		let ypos = 0;
+		let itemScore = 0;
+		while(!Obj_IsDeleted(objItem)) {
+			itemScore = Obj_GetValueD(objItem,"Score",0);
+			xpos = ObjMove_GetX(objItem);
+			ypos = ObjMove_GetY(objItem);
+			yield;
+		}
+		if(itemScore!=0) {
+			if(GetCommonData("Balance",0)>=10000) { RenderScoreText(xpos,ypos,IntToString(itemScore),255,255,0); }
+			else { RenderScoreText(xpos,ypos,IntToString(itemScore),255,255,255); }
+		}
+	}
+	task Animate {
+		let angle = 0;
+		loop(15) {
+			angle+=360/15*40;
+			if(Obj_IsDeleted(objItem)) { break; }
+			ObjRender_SetAngleZ(objItem,angle);
+			yield;
+		}
+	}
+}
+task CreateBigPowerItem(x,y,disperse) {
+	let objItem = CreateItemU1(POWER_BIG,x+randEffItem(-disperse,disperse),y+randEffItem(-disperse,disperse),0);
+	Obj_SetRenderPriorityI(objItem, 49);
+	ObjItem_SetRenderScoreEnable(objItem,false);
+	ObjRender_SetScaleXYZ(objItem,0.85,0.85,0.85);
+	
+	let collect = false;
+	let collect2 = false;
+	
+	Animate;
+	RenderScore(objItem,x,y);
+	ItemCollect(objItem);
+	task ItemCollect(ItemID) {
+		let radius = 0;
+		while(!Obj_IsDeleted(ItemID)) {
+			if(GetVirtualKeyState(VK_SLOWMOVE)!= KEY_FREE) { radius = 55; } else { radius = 35; }
+			if(GetPlayerState!=STATE_DOWN && GetPlayerState!=STATE_END) {
+				if(GetDistanceSq(GetPlayerX,GetPlayerY,ObjMove_GetX(ItemID),ObjMove_GetY(ItemID))<=radius^2 && collect == false) {
+					ObjMove_SetSpeed(ItemID,2.5);
+					ObjMove_SetAcceleration(ItemID,0.15);
+					ObjMove_SetMaxSpeed(ItemID,6);
+					collect = true;
+				}
+				if(GetPlayerY<GetCommonData("PointOfCollection",100)) {
+					collect2 = true;
+				}
+			}
+			if(collect == true) {
+				ObjMove_SetAngle(ItemID,GetAngleToPlayer(ItemID));
+				if(GetPlayerState==STATE_DOWN) { ObjItem_SetDefinedMovePatternA1(ItemID,ITEM_MOVE_DOWN); collect = false; } // Attempt to stop items that are being drawn in when the player is dead
+			}
+			if(GetPlayerPower>=GetCommonData("Power Baseline",100)) {
+				ItemEffect(ObjMove_GetX(objItem),ObjMove_GetY(objItem));
+				if(collect) { CreateItem(POWER,ObjMove_GetX(objItem),ObjMove_GetY(objItem),0,collect,true); }
+				else if(collect2) { CreateItem(POWER,ObjMove_GetX(objItem),ObjMove_GetY(objItem),0,collect2,true); }
+				else { CreateItem(POWER,ObjMove_GetX(objItem),ObjMove_GetY(objItem),0,collect,true); }
+				Obj_Delete(objItem);
+				return;
+			}
+			yield;
+		}
+	}
+	task RenderScore(objItem,xpos,ypos) {
+		let distCollect = 0;
+		while(!Obj_IsDeleted(objItem)) {
+			xpos = ObjMove_GetX(objItem);
+			ypos = ObjMove_GetY(objItem);
+			yield;
+		}
+		//if(GetCommonData("Balance",0)<10000) { RenderScoreText(xpos,ypos,"100",0,168,255); }
+	}
+	task Animate {
+		let angle = 0;
+		loop(15) {
+			angle+=360/15*40;
+			if(Obj_IsDeleted(objItem)) { break; }
+			ObjRender_SetAngleZ(objItem,angle);
+			yield;
+		}
+	}
+}
+task CreateBonusItem(x,y,disperse,autocollect,transform) {
+	let objItem = CreateItemU1(BONUS,x+randEffItem(-disperse,disperse),y+randEffItem(-disperse,disperse),0);
+	Obj_SetRenderPriorityI(objItem, 49);
+	ObjItem_SetRenderScoreEnable(objItem,false);
+
+	if(!autocollect && !transform) { Animate; }
+	if(transform) {
+		ObjMove_SetSpeed(objItem,2.5);
+		ObjMove_SetAngle(objItem,90);
+	}
+	
+	let score = round(GetCommonData("ItemValue",10000));
+	let balanceBonus = 1+GetCommonData("Balance",0)/10000;
+	let collect = false;
+	
+	RenderScore(objItem);
+	ItemCollect(objItem);
+	
+	task ItemCollect(ItemID) {
+		if(GetCommonData("Discord",false) || GetCommonData("Simple Discord",false)) {
+			//Obj_SetValue(objItem,"Score",round(score*staticBalanceBonus/10)*10);
+			Obj_SetValue(objItem,"Score",0);
+			Obj_SetValue(objItem,"PIV",40);
+			loop(30) { yield; }
+			ObjItem_SetDefinedMovePatternA1(objItem,ITEM_MOVE_TOPLAYER);
+			while(!Obj_IsDeleted(ItemID)) {
+				if(GetPlayerState==STATE_DOWN) { ObjItem_SetDefinedMovePatternA1(objItem,ITEM_MOVE_DOWN); }
+				yield;
+			}
+		}
+		else {
+			let radius = 0;
+			Obj_SetValue(objItem,"Score",round(score*balanceBonus/10)*10);
+			Obj_SetValue(objItem,"PIV",0);
+			while(!Obj_IsDeleted(ItemID)) {
+				if(GetVirtualKeyState(VK_SLOWMOVE)!= KEY_FREE) { radius = 55; } else { radius = 35; }
+				if(GetPlayerState!=STATE_DOWN && GetPlayerState!=STATE_END) {
+					if(GetDistanceSq(GetPlayerX,GetPlayerY,ObjMove_GetX(ItemID),ObjMove_GetY(ItemID))<=radius^2 && collect == false) {
+						ObjMove_SetSpeed(ItemID,2.5);
+						ObjMove_SetAcceleration(ItemID,0.15);
+						ObjMove_SetMaxSpeed(ItemID,6);
+						collect = true;
+					}
+				}
+				if(collect == true) {
+					ObjMove_SetAngle(ItemID,GetAngleToPlayer(ItemID));
+					if(GetPlayerState==STATE_DOWN) { ObjItem_SetDefinedMovePatternA1(ItemID,ITEM_MOVE_DOWN); collect = false; } // Attempt to stop items that are being drawn in when the player is dead
+				}
+				if(autocollect == true) {
+					ObjItem_SetDefinedMovePatternA1(objItem,ITEM_MOVE_TOPLAYER);
+					if(GetPlayerState==STATE_DOWN) { ObjItem_SetDefinedMovePatternA1(ItemID,ITEM_MOVE_DOWN); collect = false; } // Attempt to stop items that are being drawn in when the player is dead
+				}
+				yield;
+			}
+		}
+		yield;
+	}
+	task RenderScore(objItem) {
+		let xpos = 0;
+		let ypos = 0;
+		let itemScore = 0;
+		while(!Obj_IsDeleted(objItem)) {
+			itemScore = Obj_GetValueD(objItem,"Score",0);
+			xpos = ObjMove_GetX(objItem);
+			ypos = ObjMove_GetY(objItem);
+			yield;
+		}
+		if(itemScore!=0) {
+			RenderScoreText(xpos,ypos,IntToString(itemScore),255,255,0);
+		}
+	}
+	task Animate {
+		let angle = 0;
+		loop(15) {
+			angle+=360/15*40;
+			if(Obj_IsDeleted(objItem)) { break; }
+			ObjRender_SetAngleZ(objItem,angle);
+			yield;
+		}
+	}
+}
+task CreatePIVItem(x,y,disperse) {
+	let objItem = CreateItemU1(PIV,x+randEffItem(-disperse,disperse),y+randEffItem(-disperse,disperse),0);
+	Obj_SetRenderPriorityI(objItem, 49);
+	ObjItem_SetRenderScoreEnable(objItem,false);
+	
+	let score = round(GetCommonData("ItemValue",10000));
+	let balanceBonus = 1+GetCommonData("Balance",0)/10000;
+	let collect = false;
+	
+	Animate;
+	RenderScore(objItem);
+	ItemCollect(objItem);
+	
+	task ItemCollect(ItemID) {
+		if(GetCommonData("Discord",false) || GetCommonData("Simple Discord",false)) {
+			//Obj_SetValue(objItem,"Score",round(score*staticBalanceBonus/10)*10);
+			Obj_SetValue(objItem,"Score",0);
+			Obj_SetValue(objItem,"PIV",40);
+			loop(30) { yield; }
+			ObjItem_SetDefinedMovePatternA1(objItem,ITEM_MOVE_TOPLAYER);
+			while(!Obj_IsDeleted(ItemID)) {
+				if(GetPlayerState==STATE_DOWN) {
+					ObjItem_SetDefinedMovePatternA1(objItem,ITEM_MOVE_DOWN);
+					ItemCollect(ItemID);
+				}
+				yield;
+			}
+		}
+		else {
+			let radius = 0;
+			Obj_SetValue(objItem,"Score",0);
+			Obj_SetValue(objItem,"PIV",40);
+			while(!Obj_IsDeleted(ItemID)) {
+				if(GetVirtualKeyState(VK_SLOWMOVE)!= KEY_FREE) { radius = 55; } else { radius = 35; }
+				if(GetPlayerState!=STATE_DOWN && GetPlayerState!=STATE_END) {
+					if(GetDistanceSq(GetPlayerX,GetPlayerY,ObjMove_GetX(ItemID),ObjMove_GetY(ItemID))<=radius^2 && collect == false) {
+						ObjMove_SetSpeed(ItemID,2.5);
+						ObjMove_SetAcceleration(ItemID,0.15);
+						ObjMove_SetMaxSpeed(ItemID,6);
+						collect = true;
+					}
+				}
+				if(collect == true) {
+					ObjMove_SetAngle(ItemID,GetAngleToPlayer(ItemID));
+					if(GetPlayerState==STATE_DOWN) { ObjItem_SetDefinedMovePatternA1(ItemID,ITEM_MOVE_DOWN); collect = false; } // Attempt to stop items that are being drawn in when the player is dead
+				}
+				yield;
+			}
+		}
+		yield;
+	}
+	task RenderScore(objItem) {
+		let xpos = 0;
+		let ypos = 0;
+		let itemScore = 0;
+		while(!Obj_IsDeleted(objItem)) {
+			itemScore = Obj_GetValueD(objItem,"Score",0);
+			xpos = ObjMove_GetX(objItem);
+			ypos = ObjMove_GetY(objItem);
+			yield;
+		}
+		if(itemScore!=0) {
+			if(Obj_GetValueD(objItem,"PIV",0)>0) { RenderScoreText(xpos,ypos,IntToString(itemScore),0,0,255); }
+			else { RenderScoreText(xpos,ypos,IntToString(itemScore),255,255,255); }
+		}
+	}
+	task Animate {
+		let angle = 0;
+		loop(15) {
+			angle+=360/15*40;
+			if(Obj_IsDeleted(objItem)) { break; }
+			ObjRender_SetAngleZ(objItem,angle);
+			yield;
+		}
+	}
+}
+task CreateBalanceBonusItem(x,y,disperse) {
+	let objItem = CreateItemU1(BALANCEBONUS,x+randEffItem(-disperse,disperse),y+randEffItem(-disperse,disperse),0);
+	Obj_SetRenderPriorityI(objItem, 49);
+	ObjItem_SetRenderScoreEnable(objItem,false);
+	
+	let collect = false;
+	
+	Animate;
+	RenderScore(objItem,x,y);
+	ItemCollect(objItem);
+	
+	task ItemCollect(ItemID) {
+		// ObjItem_SetDefinedMovePatternA1(objItem,ITEM_MOVE_DOWN);
+		loop(30) {
+			if(!Obj_IsDeleted(objItem)) { ObjMove_SetSpeed(objItem,0); }
+			yield;
+		}
+		if(!Obj_IsDeleted(objItem)) { ObjItem_SetDefinedMovePatternA1(objItem,ITEM_MOVE_TOPLAYER); }
+		yield;
+	}
+	task RenderScore(objItem,xpos,ypos) {
+		let distCollect = 0;
+		while(!Obj_IsDeleted(objItem)) {
+			xpos = ObjRender_GetX(objItem);
+			ypos = ObjRender_GetY(objItem);
+			yield;
+		}
+		if(GetCommonData("Balance",0)<10000) { RenderScoreText(xpos,ypos,"100",0,168,255); }
+	}
+	task Animate {
+		let angle = 0;
+		loop(15) {
+			angle+=360/15*40;
+			if(Obj_IsDeleted(objItem)) { break; }
+			ObjRender_SetAngleZ(objItem,angle);
+			yield;
+		}
+	}
+}
+task CreateBalanceItem(x,y,disperse) {
+	let objItem = CreateItemU1(BALANCE,x+randEffItem(-disperse,disperse),y+randEffItem(-disperse,disperse),0);
+	Obj_SetRenderPriorityI(objItem, 49);
+	ObjItem_SetRenderScoreEnable(objItem,false);
+	
+	let collect = false;
+	
+	Animate;
+	RenderScore(objItem,x,y);
+	ItemCollect(objItem);
+	task ItemCollect(ItemID) {
+		let radius = 0;
+		while(!Obj_IsDeleted(ItemID)) {
+			if(GetVirtualKeyState(VK_SLOWMOVE)!= KEY_FREE) { radius = 55; } else { radius = 35; }
+			if(GetPlayerState!=STATE_DOWN && GetPlayerState!=STATE_END) {
+				if(GetDistanceSq(GetPlayerX,GetPlayerY,ObjMove_GetX(ItemID),ObjMove_GetY(ItemID))<=radius^2 && collect == false) {
+					ObjMove_SetSpeed(ItemID,2.5);
+					ObjMove_SetAcceleration(ItemID,0.15);
+					ObjMove_SetMaxSpeed(ItemID,6);
+					collect = true;
+				}
+			}
+			if(collect == true) {
+				ObjMove_SetAngle(ItemID,GetAngleToPlayer(ItemID));
+				if(GetPlayerState==STATE_DOWN) { ObjItem_SetDefinedMovePatternA1(ItemID,ITEM_MOVE_DOWN); collect = false; } // Attempt to stop items that are being drawn in when the player is dead
+			}
+			if(GetCommonData("Balance",0)==10000 || GetCommonData("Discord",false) || GetCommonData("Simple Discord",false)) {
+				ItemEffect(ObjMove_GetX(objItem),ObjMove_GetY(objItem));
+				CreateBonusItem(ObjMove_GetX(objItem),ObjMove_GetY(objItem),0,collect,true);
+				Obj_Delete(objItem);
+				return;
+			}
+			yield;
+		}
+	}
+	task RenderScore(objItem,xpos,ypos) {
+		let distCollect = 0;
+		while(!Obj_IsDeleted(objItem)) {
+			xpos = ObjMove_GetX(objItem);
+			ypos = ObjMove_GetY(objItem);
+			yield;
+		}
+		if(GetCommonData("Balance",0)<10000) { RenderScoreText(xpos,ypos,"100",0,168,255); }
+	}
+	task Animate {
+		let angle = 0;
+		loop(15) {
+			angle+=360/15*40;
+			if(Obj_IsDeleted(objItem)) { break; }
+			ObjRender_SetAngleZ(objItem,angle);
+			yield;
+		}
+	}
+}
+task RenderScoreText(x,y,text,R,G,B) {
+	let obj = ObjText_Create;
+	ObjText_SetText(obj, text);
+	ObjText_SetFontSize(obj, 13);
+	ObjText_SetFontType(obj, "Crystal clear");
+	//ObjText_SetFontBold(obj, true);
+	ObjText_SetFontColorTop(obj, R, G, B);
+	ObjText_SetFontColorBottom(obj, R, G, B);
+	// ObjText_SetFontBorderType(obj, BORDER_SHADOW);
+	// ObjText_SetFontBorderWidth(obj, 1);
+	// ObjText_SetFontBorderColor(obj, 0, 0, 0);
+	ObjText_SetHorizontalAlignment(obj,ALIGNMENT_CENTER);
+	ObjText_SetMaxWidth(obj,40);
+	Obj_SetRenderPriorityI(obj, 61);
+	
+	let alpha = 200;
+	
+	loop(20) {
+		ObjRender_SetPosition(obj,x-20,y,0);
+		ObjRender_SetAlpha(obj,alpha);
+		y-=0.6;
+		yield;
+	}
+	loop(10) {
+		ObjRender_SetPosition(obj,x-20,y,0);
+		ObjRender_SetAlpha(obj,alpha);
+		alpha-=200/10;
+		y-=0.6;
+		yield;
+	}
+	Obj_Delete(obj);
+}
+task ItemEffect(x,y) {
+	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
+	
+	ObjRender_SetBlendType(obj, BLEND_ADD_RGB);
+	Obj_SetRenderPriorityI(obj,61);
+	ObjPrim_SetTexture(obj, MD ~ "System/IMG/Effect/Item_Change.png");
+	ObjSprite2D_SetSourceRect(obj, 0, 0, 32, 32);
+	ObjSprite2D_SetDestCenter(obj);
+	
+
+	let alpha = 255;
+	let scale = 0;
+	let dscale = 0.2;
+	loop(15){
+		scale += dscale;
+		alpha -= 255/15;
+		if(dscale>0){ dscale = dscale^1.15; }
+		ObjRender_SetColor(obj,96*(alpha/255),255*(alpha/255),96*(alpha/255));
+		ObjRender_SetPosition(obj, x, y, 0);
+		ObjRender_SetScaleXYZ(obj, scale, scale, 1);
+		yield;
+	}
+	Obj_Delete(obj);
+}
+
+task LaunchItemLogging{
+	
+	
+	let EmptyItemValues;
+	ascent(i in 0..length(ItemNames)){
+		ItemValues = ItemValues ~ [[0, 0]];
+	}
+	loop(10){yield;}
+	
+	ItemValuesRate = ItemValues;
+	EmptyItemValues = ItemValues;
+
+	if(!LogItemDrops && !LogItemCollects){WriteLog("Item Logging stopped, logging is turned off."); return;}
+	WriteLog("Item Logging Enabled.");
+	
+	let LogSource = CSD~"/logs/";
+	
+	let date = GetCurrentDateTimeS;
+	let dateStr = date[4..6]~"-"~date[6..8]~" "~date[8..10]~"."~date[10..12];
+	
+	let CurLog = LogSource;
+	
+	let StageIndex = GetCommonData("Stage", "Undefined");
+	
+	
+	
+	let objFileStage = ObjFile_Create(OBJ_FILE_TEXT);
+	ObjFile_OpenNW(objFileStage, CurLog~"ItemInfo_"~StageIndex~".txt");
+	
+	
+	let objFileStageDR = ObjFile_Create(OBJ_FILE_TEXT);
+	ObjFile_OpenNW(objFileStageDR, CurLog~"ItemDropRate_"~StageIndex~".txt");
+	
+	let objFileStageCR = ObjFile_Create(OBJ_FILE_TEXT);
+	ObjFile_OpenNW(objFileStageCR, CurLog~"ItemCollectRate_"~StageIndex~".txt");
+	
+	
+	
+	while(StageIndex == GetCommonData("Stage", "Undefined")){ // The task is getting stuck in this loop, even when Stage is not Undefined
+		if(LogItem_Average > 0){WriteRateValues;}			  // This might be intended, but the storage command never occurs and info is never written to file
+		loop(max(1,LogItem_Average)){CheckNewStageB; yield;}  // Unless the stage is completed and it moves to the next one. Again, may be intentional but is not intuitive
+	}
+	
+	ascent(i in 0..length(ItemNames)){
+		ObjFileT_AddLine(objFileStage, ItemNames[i]~" Items Dropped: "~IntToString(ItemValues[i][0]));
+		ObjFileT_AddLine(objFileStage, ItemNames[i]~" Items Collected: "~IntToString(ItemValues[i][1]));
+	}
+	
+	WriteRateValues;
+	
+	ObjFile_Store(objFileStage);
+	ObjFile_Store(objFileStageDR);
+	ObjFile_Store(objFileStageCR);
+			
+	yield;
+	
+	Obj_Delete(objFileStage);
+	Obj_Delete(objFileStageDR);
+	Obj_Delete(objFileStageCR);
+	
+	
+	sub CheckNewStageB {
+		if(StageIndex != GetCommonData("Stage", "Undefined")){break;}
+	}
+	
+	sub CheckNewStage { // I'm also wondering what the purpose of this sub is if it's never called anywhere
+		if(StageIndex != GetCommonData("Stage", "Undefined")){
+		
+			ascent(i in 0..length(ItemNames)){
+				ObjFileT_AddLine(objFileStage, ItemNames[i]~" Items Dropped: "~IntToString(ItemValues[i][0]));
+				ObjFileT_AddLine(objFileStage, ItemNames[i]~" Items Collected: "~IntToString(ItemValues[i][1]));
+			}
+			ObjFile_Store(objFileStage);
+		
+			ObjFile_Store(objFileStageDR);
+			ObjFile_Store(objFileStageCR);
+			
+			yield;
+		
+			WriteRateValues;
+			ItemValues = EmptyItemValues;
+			
+		
+			Obj_Delete(objFileStage);
+			Obj_Delete(objFileStageDR);
+			Obj_Delete(objFileStageCR);
+			
+			StageIndex = GetCommonData("Stage", "Undefined");
+			
+			objFileStage = ObjFile_Create(OBJ_FILE_TEXT);
+			ObjFile_OpenNW(objFileStage, CurLog~"ItemInfo_"~StageIndex~".txt");
+			
+		
+			objFileStageDR = ObjFile_Create(OBJ_FILE_TEXT);
+			ObjFile_OpenNW(objFileStageDR, CurLog~"ItemDropRate_"~StageIndex~".txt");
+		
+			objFileStageCR = ObjFile_Create(OBJ_FILE_TEXT);
+			ObjFile_OpenNW(objFileStageCR, CurLog~"ItemCollectRate_"~StageIndex~".txt");
+		}
+	}
+
+	function WriteRateValues{
+		ascent(i in 0..length(ItemValuesRate)){
+			ObjFileT_AddLine(objFileStageDR, IntToString(ItemValuesRate[i][0]));
+			ObjFileT_AddLine(objFileStageCR, IntToString(ItemValuesRate[i][1]));
+		}
+		ObjFileT_AddLine(objFileStageDR, "");
+		ObjFileT_AddLine(objFileStageCR, "");
+
+		ObjFile_Store(objFileStage);
+		ObjFile_Store(objFileStageDR); //Added these lines so that they would save to file during the stage
+		ObjFile_Store(objFileStageCR);
+
+		WriteLog(length(ItemValuesRate));
+		
+		ItemValuesRate = EmptyItemValues;
+	}
+}
+function AddItemLogDataB1(type, drop, collect){
+	if(type == DELETE){return;}
+	type--;
+	ItemValues[type] = [ItemValues[type][0]+drop, ItemValues[type][1]+collect];
+	ItemValuesRate[type] = [ItemValuesRate[type][0]+drop, ItemValuesRate[type][1]+collect];
+}

@@ -1,0 +1,487 @@
+//Sound Effect and BGM Script
+
+let CSD = GetCurrentScriptDirectory;
+let MD = GetModuleDirectory;
+
+let objBGM = ID_INVALID;
+let objText = ID_INVALID;
+let currentBGM = 0;
+let deleteSound = false;
+
+#include"System/LIB/Event_Const.dnh"
+#include"Script/LIB/Data_Const.dnh"
+#include"Script/LIB/Function_Rand.dnh"
+@Initialize {
+	if(!IsCommonDataAreaExists("Sound")) {
+		CreateCommonDataArea("Sound");
+	}
+	SetAreaCommonData("Sound","Sound ID",[]);
+	SetAreaCommonData("Sound","Sound STR",[]);
+	SetAreaCommonData("Sound","Sound VOL",[]);
+	SetAreaCommonData("Sound","Music",[]);
+	InitializeGlobalSoundObjects;
+	InitializeMusicSoundObjects;
+}
+
+@MainLoop {
+	//if(GetCommonData("CommonData Debug",false)) {
+	//	DeleteCommonData("Sound ID");
+	//	DeleteCommonData("Sound STR");
+	//}
+	//WriteLog(GetScriptArgument(1));
+	yield;
+}
+
+@Event {
+	//if(GetCommonData("CommonData Debug",false)) { return; }
+	alternative(GetEventType)
+	case(EV_LOAD_SOUND) {
+		let eventParam = GetEventArgument(0);
+		CreateSoundObject02(eventParam[0],eventParam[1],GetCommonData("ActiveScript",0));
+	}
+	//case(EV_VOLUME) {
+		//let eventParam = GetEventArgument(0);
+		//volume = eventParam[0];
+	//}
+	case(EV_SOUND) {
+		let eventParam = GetEventArgument(0);
+		PlaySound(eventParam[0],atoi(eventParam[1]));
+	}
+	case(EV_MUSIC_START) {
+		let eventParam = GetEventArgument(0);
+		if(currentBGM!=eventParam) {
+			Obj_Delete(objBGM);
+			objBGM = PlayMusic(eventParam);
+		}
+	}
+	case(EV_MUSIC_FADE) {
+		let eventParam = GetEventArgument(0);
+		FadeOutSound(objBGM,eventParam);
+		currentBGM = 0;
+	}
+	case(EV_MUSIC_PAUSE){
+		if(GetAreaCommonData("PlayState","Mode","")!="Spell Practice" || IsReplay) {
+			ObjSound_Stop(objBGM);
+		}
+	}
+	case(EV_MUSIC_RESUME){
+		if(GetAreaCommonData("PlayState","Mode","")!="Spell Practice" || IsReplay) {
+			ObjSound_Play(objBGM);
+		}
+	}
+	case(EV_DELETE_SOUND){
+		deleteSound = true;
+	}
+	//case(EV_MUSIC_STOP) { Obj_Delete(objBGM); } //Deprecated, use EV_MUSIC_FADE with an argument of 1 instead
+}
+
+@Finalize {
+	//Obj_Delete(objBGM);
+	Obj_Delete(objText);
+}
+
+function InitializeGlobalSoundObjects {
+	let SE_ALL = ["alert","bonus","bonus2","bonus3","bonus4","bonus5","bonus6","cancel","cardget","charge", //list of sound effects
+			  "charge2","charge2.5","charge3","charge4","charge5","confirm","crash","damage1","damage2","damage3","death",
+			  "effect","effect2","effect3","effect4","explode","explode2","explode3","explodefinal","extend","fam","fire","fire2",
+			  "freeze","freeze2","graze","invalid","item","laser","laser2","laser3","laser4","laser5","laugh","lockon","pause",
+			  "pdeath","powerup","pshot","pspell","scratch","scream","select","shot","shot2","shot3","shot4","shot5","shot6","shot7","shot8","slash",
+			  "spell","teleportin","teleportout","thunder","timeout","timeout2","warning","warning2","warning2.5","water","wave","wave2","wave3","weird"];
+			  
+	ascent(i in 0..length(SE_ALL)) {
+		CreateSoundObject01(SE_ALL[i]);
+	}
+}
+function InitializeMusicSoundObjects {
+	let MUSIC_ALL = ["title","gameover","event",
+					"stage1","stage1boss","stage2","stage2boss","stage3","stage3boss",
+					"stage4","stage4boss","stage5","stage5boss","stage6","stage6boss","stage6bossfinal","stage6bossfinal_short",
+					"stageEx","stageExIntermission","stageExboss","stageExboss2","stageExboss2_short",
+					"ending","credits"];
+	let Music = GetAreaCommonData("Sound","Music",[]);
+	if(length(Music)<=0) {
+		ascent(i in 0..length(MUSIC_ALL)) {
+			let obj = ObjSound_Create;
+			ObjSound_SetSoundDivision(obj,SOUND_BGM);
+			ObjSound_Load(obj,MD ~ "BGM/" ~MUSIC_ALL[i]~ ".ogg");
+
+			Music = Music ~ [obj];
+		}
+		SetAreaCommonData("Sound","Music",Music);
+	}
+}
+task CreateSoundObject01(name) {
+	let obj = ObjSound_Create;
+	ObjSound_SetSoundDivision(obj,SOUND_SE);
+	ObjSound_Load(obj,MD ~ "SE/" ~name~ ".wav");
+	ObjSound_SetRestartEnable(obj, false);
+	
+	let Sound_ID = GetAreaCommonData("Sound","Sound ID",[-1]);
+	let Sound_STR = GetAreaCommonData("Sound","Sound STR",[""]);
+	
+	Sound_ID = Sound_ID ~ [obj];
+	Sound_STR = Sound_STR ~ [name];
+	
+	SetAreaCommonData("Sound","Sound ID", Sound_ID);
+	SetAreaCommonData("Sound","Sound STR", Sound_STR);
+}
+
+task CreateSoundObject02(name,path,scriptID) {
+	let obj = ObjSound_Create;
+	ObjSound_SetSoundDivision(obj,SOUND_SE);
+	ObjSound_Load(obj,path);
+	ObjSound_SetRestartEnable(obj, false);
+	
+	let Sound_ID = GetAreaCommonData("Sound","Sound ID",[-1]);
+	let Sound_STR = GetAreaCommonData("Sound","Sound STR",[""]);
+	
+	Sound_ID = Sound_ID ~ [obj];
+	Sound_STR = Sound_STR ~ [name];
+	
+	SetAreaCommonData("Sound","Sound ID", Sound_ID);
+	SetAreaCommonData("Sound","Sound STR", Sound_STR);
+	
+	while(!deleteSound) {
+		yield;
+	}
+	yield;
+	deleteSound = false;
+	while(ObjSound_IsPlaying(obj)) { yield; }
+	loop(30) { yield; }
+	
+	Sound_ID = GetAreaCommonData("Sound","Sound ID",[-1]);
+	Sound_STR = GetAreaCommonData("Sound","Sound STR",[""]);
+	let ID = -1;
+	ascent(i in 0..length(Sound_STR)) {
+		if(Sound_STR[i] == name) { ID = i; break; }
+	}
+	Sound_ID = erase(Sound_ID,ID);
+	Sound_STR = erase(Sound_STR,ID);
+	SetAreaCommonData("Sound","Sound ID", Sound_ID);
+	SetAreaCommonData("Sound","Sound STR", Sound_STR);
+	Obj_Delete(obj);
+}
+
+task PlaySound(name,volume) {
+	let Sound_ID = GetAreaCommonData("Sound","Sound ID",[-1]);
+	let Sound_STR = GetAreaCommonData("Sound","Sound STR",[""]);
+	
+	let ID = -1;
+	ascent(i in 0..length(Sound_STR)) {
+		if(Sound_STR[i] == name) { ID = i; break; }
+	}
+	if(ID == -1){ RaiseError("Sound object does not exist: "~name); }
+	
+	ObjSound_SetVolumeRate(Sound_ID[ID],volume*GetAreaCommonData("Options","SFX",100)/100);
+	ObjSound_Play(Sound_ID[ID]);
+}
+
+function PlayMusic(id) {
+	currentBGM = id;
+	//let objSound = ObjSound_Create;
+	let objSound = ID_INVALID;
+	
+	alternative(id)
+	case(0) { //dummy sound for silence to be used during transitions
+	
+	}
+	case(0.1) {
+		//ObjSound_Load(objSound,MD ~ "BGM/title.ogg");
+		objSound = GetAreaCommonData("Sound","Music",[])[0];
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { ObjSound_SetRestartEnable(objSound,true); }
+		ObjSound_SetLoopSampleCount(objSound,5026075,10051286);
+		ObjSound_SetLoopEnable(objSound,true);
+	}
+	case(0.2) {
+		//ObjSound_Load(objSound,MD ~ "BGM/gameover.ogg");
+		objSound = GetAreaCommonData("Sound","Music",[])[1];
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { ObjSound_SetRestartEnable(objSound,true); }
+		ObjSound_SetLoopSampleCount(objSound,2133906,3960576);
+		ObjSound_SetLoopEnable(objSound,true);
+		UnlockFlag(music_0_2);
+	}
+	case(1.05) {
+		//ObjSound_Load(objSound,MD ~ "BGM/event.ogg");
+		objSound = GetAreaCommonData("Sound","Music",[])[2];
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { ObjSound_SetRestartEnable(objSound,true); }
+		//ObjSound_SetLoopSampleCount(objSound,5594400,11188800);//55934426
+		//ObjSound_SetLoopEnable(objSound,true);
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { DrawBGMText("Disputed Fantasy"); }
+		UnlockFlag(music_1_05);
+	}
+	case(1.1) {
+		//ObjSound_Load(objSound,MD ~ "BGM/stage1.ogg");
+		objSound = GetAreaCommonData("Sound","Music",[])[3];
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { ObjSound_SetRestartEnable(objSound,true); }
+		ObjSound_SetLoopSampleCount(objSound,5594400,11188800);//55934426
+		ObjSound_SetLoopEnable(objSound,true);
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { DrawBGMText("Dream Sunrise"); }
+		UnlockFlag(music_1_1);
+	}
+	case(1.2) {
+		//ObjSound_Load(objSound,MD ~ "BGM/stage1boss.ogg");
+		objSound = GetAreaCommonData("Sound","Music",[])[4];
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { ObjSound_SetRestartEnable(objSound,true); }
+		ObjSound_SetLoopSampleCount(objSound,66152,4828950);
+		ObjSound_SetLoopEnable(objSound,true);
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { DrawBGMText("Unfired Jar of Awakened Vengeance"); }
+		UnlockFlag(music_1_2);
+	}
+	case(2.1) {
+		//ObjSound_Load(objSound,MD ~ "BGM/stage2.ogg");
+		objSound = GetAreaCommonData("Sound","Music",[])[5];
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { ObjSound_SetRestartEnable(objSound,true); }
+		ObjSound_SetLoopSampleCount(objSound,7818321,15637480);
+		ObjSound_SetLoopEnable(objSound,true);
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { DrawBGMText("Souls of the Dying Leaves"); }
+		UnlockFlag(music_2_1);
+	}
+	case(2.2) {
+		//ObjSound_Load(objSound,MD ~ "BGM/stage2boss.ogg");
+		objSound = GetAreaCommonData("Sound","Music",[])[6];
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { ObjSound_SetRestartEnable(objSound,true); }
+		ObjSound_SetLoopSampleCount(objSound,8154599,16303647);
+		ObjSound_SetLoopEnable(objSound,true);
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { DrawBGMText("Legend of the Unloved Goddess"); }
+		UnlockFlag(music_2_2);
+	}
+	case(3.1) {
+		//ObjSound_Load(objSound,MD ~ "BGM/stage3.ogg");
+		objSound = GetAreaCommonData("Sound","Music",[])[7];
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { ObjSound_SetRestartEnable(objSound,true); }
+		ObjSound_SetLoopSampleCount(objSound,9687056,18131418); //check
+		ObjSound_SetLoopEnable(objSound,true);
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { DrawBGMText("Initiate's Ascent ~ Autumnal Waterfall"); }
+		UnlockFlag(music_3_1);
+	}
+	case(3.2) {
+		//ObjSound_Load(objSound,MD ~ "BGM/stage3boss.ogg");
+		objSound = GetAreaCommonData("Sound","Music",[])[8];
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { ObjSound_SetRestartEnable(objSound,true); }
+		ObjSound_SetLoopSampleCount(objSound,6590701,13174695);
+		ObjSound_SetLoopEnable(objSound,true);
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { DrawBGMText("Pack Mentality ~ Order Versus Curiosity"); }
+		UnlockFlag(music_3_2);
+	}
+	case(4.1) {
+		//ObjSound_Load(objSound,MD ~ "BGM/stage4.ogg");
+		objSound = GetAreaCommonData("Sound","Music",[])[9];
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { ObjSound_SetRestartEnable(objSound,true); }
+		ObjSound_SetLoopSampleCount(objSound,347963, 7996404);
+		ObjSound_SetLoopEnable(objSound,true);
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { DrawBGMText("Under the Flower Banner ~ Miasmatic Fragrance"); }
+		UnlockFlag(music_4_1);
+	}
+	case(4.2) {
+		//ObjSound_Load(objSound,MD ~ "BGM/stage4boss.ogg");
+		objSound = GetAreaCommonData("Sound","Music",[])[10];
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { ObjSound_SetRestartEnable(objSound,true); }
+		ObjSound_SetLoopSampleCount(objSound,7285182,14568910);
+		ObjSound_SetLoopEnable(objSound,true);
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { DrawBGMText("The Flower Bearer's March ~ Fairy General"); }
+		UnlockFlag(music_4_2);
+	}
+	case(5.1) {
+		//ObjSound_Load(objSound,MD ~ "BGM/stage5.ogg");
+		objSound = GetAreaCommonData("Sound","Music",[])[11];
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { ObjSound_SetRestartEnable(objSound,true); }
+		ObjSound_SetLoopSampleCount(objSound,0,6559237);
+		ObjSound_SetLoopEnable(objSound,true);
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { DrawBGMText("The Contagious Addiction to Power"); }
+		UnlockFlag(music_5_1);
+	}
+	case(5.2) {
+		//ObjSound_Load(objSound,MD ~ "BGM/stage5boss.ogg");
+		objSound = GetAreaCommonData("Sound","Music",[])[12];
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { ObjSound_SetRestartEnable(objSound,true); }
+		ObjSound_SetLoopSampleCount(objSound,711375,9706787);
+		ObjSound_SetLoopEnable(objSound,true);
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { DrawBGMText("Sealed Innocence"); }
+		UnlockFlag(music_5_2);
+	}
+	case(6.1) {
+		//ObjSound_Load(objSound,MD ~ "BGM/stage6.ogg");
+		objSound = GetAreaCommonData("Sound","Music",[])[13];
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { ObjSound_SetRestartEnable(objSound,true); }
+		ObjSound_SetLoopSampleCount(objSound,4233942,8185145);
+		ObjSound_SetLoopEnable(objSound,true);
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { DrawBGMText("Spring Equinox ~ Perfect Sky"); }
+		UnlockFlag(music_6_1);
+	}
+	case(6.2) {
+		//ObjSound_Load(objSound,MD ~ "BGM/stage6boss.ogg");
+		objSound = GetAreaCommonData("Sound","Music",[])[14];
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { ObjSound_SetRestartEnable(objSound,true); }
+		ObjSound_SetLoopSampleCount(objSound,1085856,9247181);
+		ObjSound_SetLoopEnable(objSound,true);
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { DrawBGMText("Battle at the Capitol of Flowers"); }
+		UnlockFlag(music_6_2);
+	}
+	case(6.3) {
+		//ObjSound_Load(objSound,MD ~ "BGM/stage6bossfinal.ogg");
+		objSound = GetAreaCommonData("Sound","Music",[])[15];
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { ObjSound_SetRestartEnable(objSound,true); }
+		// ObjSound_SetLoopSampleCount(objSound,4233729,8184960);
+		ObjSound_SetLoopEnable(objSound,true);
+		// if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { DrawBGMText("???"); }
+		UnlockFlag(music_6_3);
+	}
+	case(6.35) {
+		//ObjSound_Load(objSound,MD ~ "BGM/stage6bossfinal_short.ogg");
+		objSound = GetAreaCommonData("Sound","Music",[])[16];
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { ObjSound_SetRestartEnable(objSound,true); }
+		// ObjSound_SetLoopSampleCount(objSound,4233729,8184960);
+		ObjSound_SetLoopEnable(objSound,true);
+		// if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { DrawBGMText("???"); }
+		UnlockFlag(music_6_3);
+	}
+	case(7.1) {
+		//ObjSound_Load(objSound,MD ~ "BGM/stageEx.ogg");
+		objSound = GetAreaCommonData("Sound","Music",[])[17];
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { ObjSound_SetRestartEnable(objSound,true); }
+		//ObjSound_SetLoopSampleCount(objSound,9960344,20056908);
+		ObjSound_SetLoopSampleCount(objSound,10028274,20054379);
+		ObjSound_SetLoopEnable(objSound,true);
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { DrawBGMText("This Needs A Name!!!"); }
+		UnlockFlag(music_7_1);
+	}
+	case(7.15) {
+		//ObjSound_Load(objSound,MD ~ "BGM/stageExIntermission.ogg");
+		objSound = GetAreaCommonData("Sound","Music",[])[18];
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { ObjSound_SetRestartEnable(objSound,true); }
+		ObjSound_SetLoopSampleCount(objSound,5418462,6773893);
+		ObjSound_SetLoopEnable(objSound,true);
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { DrawBGMText("Deal with a Devil"); }
+		UnlockFlag(music_7_2);
+	}
+	case(7.2) {
+		//ObjSound_Load(objSound,MD ~ "BGM/stageExboss.ogg");
+		objSound = GetAreaCommonData("Sound","Music",[])[19];
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { ObjSound_SetRestartEnable(objSound,true); }
+		ObjSound_SetLoopSampleCount(objSound,8996698,17994047);
+		ObjSound_SetLoopEnable(objSound,true);
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { DrawBGMText("Sinister Ceremony ~ Dance with a Devil"); }
+		UnlockFlag(music_7_3);
+	}
+	case(7.3) {
+		//ObjSound_Load(objSound,MD ~ "BGM/stageExboss2.ogg");
+		objSound = GetAreaCommonData("Sound","Music",[])[20];
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { ObjSound_SetRestartEnable(objSound,true); }
+		// ObjSound_SetLoopSampleCount(objSound,4233729,8184960);
+		ObjSound_SetLoopEnable(objSound,true);
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { DrawBGMText("Wicked Solomon's Successor"); }
+		UnlockFlag(music_7_4);
+	}
+	case(7.35) {
+		//ObjSound_Load(objSound,MD ~ "BGM/stageExboss2_short.ogg");
+		objSound = GetAreaCommonData("Sound","Music",[])[21];
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { ObjSound_SetRestartEnable(objSound,true); }
+		// ObjSound_SetLoopSampleCount(objSound,4233729,8184960);
+		ObjSound_SetLoopEnable(objSound,true);
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { DrawBGMText("Wicked Solomon's Successor"); }
+		UnlockFlag(music_7_4);
+	}
+	case(8.1) {
+		//ObjSound_Load(objSound,MD ~ "BGM/ending.ogg");
+		objSound = GetAreaCommonData("Sound","Music",[])[22];
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { ObjSound_SetRestartEnable(objSound,true); }
+		ObjSound_SetLoopSampleCount(objSound,2502293,5005458);
+		ObjSound_SetLoopEnable(objSound,true);
+		// if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { DrawBGMText("???"); }
+		UnlockFlag(music_8_1);
+	}
+	case(8.2) {
+		//ObjSound_Load(objSound,MD ~ "BGM/credits.ogg");
+		objSound = GetAreaCommonData("Sound","Music",[])[23];
+		if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { ObjSound_SetRestartEnable(objSound,true); }
+		// ObjSound_SetLoopSampleCount(objSound,4233729,8184960);
+		ObjSound_SetLoopEnable(objSound,true);
+		// if(GetAreaCommonData("PlayState","Mode","Main")!="Main Menu") { DrawBGMText("???"); }
+		UnlockFlag(music_8_2);
+	}
+	//ObjSound_SetVolumeRate(objSound,GetAreaCommonData("Options","Music",100));
+	ObjSound_SetSoundDivision(objSound,SOUND_BGM);
+	if(id>0){
+		ObjSound_Play(objSound);
+	}
+	
+	if(id==0){
+		ObjSound_Stop(objSound);
+	}
+	
+	SetVolume;
+	return objSound;
+	
+	task SetVolume {
+		while(!Obj_IsDeleted(objSound)) {
+			ObjSound_SetVolumeRate(objSound,GetAreaCommonData("Options","Music",100));
+			yield;
+		}
+	}
+	task DrawBGMText(text) {
+		Obj_Delete(objText);
+		objText = ObjText_Create;
+		let x = 0;
+		let y = 0;
+		
+		ObjText_SetText(objText, "BGM: " ~ text);
+		ObjText_SetFontType(objText, "Open Sans Condensed");
+		ObjText_SetFontSize(objText, 18);
+		ObjText_SetFontBold(objText, true);
+		ObjText_SetFontColorTop(objText, 128, 0, 255);
+		ObjText_SetFontColorBottom(objText, 255, 255, 255);
+		ObjText_SetFontBorderType(objText, BORDER_FULL);
+		ObjText_SetFontBorderColor(objText, 0, 0, 0);
+		ObjText_SetFontBorderWidth(objText, 1);
+		ObjText_SetHorizontalAlignment(objText, ALIGNMENT_RIGHT);
+		ObjText_SetMaxWidth(objText, 500);
+		Obj_SetRenderPriorityI(objText, 79);
+		
+		ObjRender_SetY(objText,GetStgFrameHeight-19);
+
+		let objText_local = objText;
+		
+		while(x<335 && !Obj_IsDeleted(objText_local)) {
+			ObjRender_SetX(objText,210-x);
+			x+=3;
+			if(GetAreaCommonData("PlayState","Mode","Main")=="Main Menu") { WriteLog("DELETE"); Obj_Delete(objText_local); }
+			yield;
+		}
+		ObjRender_SetX(objText,210-335);
+		loop(180) {
+			if(GetAreaCommonData("PlayState","Mode","Main")=="Main Menu") { WriteLog("DELETE");  Obj_Delete(objText_local); }
+			yield;
+		}
+		while(y<20 && !Obj_IsDeleted(objText_local)) {
+			ObjRender_SetY(objText,GetStgFrameHeight-19+y);
+			y+=1;
+			if(GetAreaCommonData("PlayState","Mode","Main")=="Main Menu") { WriteLog("DELETE");  Obj_Delete(objText_local); }
+			yield;
+		}
+		Obj_Delete(objText_local);
+	}
+}
+
+task FadeOutSound(obj,frames) {
+    let local_volume = 0;
+    if(!Obj_IsDeleted(obj)) { local_volume = ObjSound_GetVolumeRate(obj); }
+    let volumelimit = local_volume;
+    if(volumelimit<0) { volumelimit = 0; }
+    loop(frames) {
+        ObjSound_SetVolumeRate(obj,local_volume);
+        local_volume-=volumelimit/frames;
+        yield;
+    }
+    ObjSound_Stop(obj);
+    yield;
+    Obj_Delete(obj);
+}
+
+// task LoadBGM {
+	// ascent(i in 0..length(BGM_ALL)) {
+		// LoadSound(BGM_ALL[i]);
+	// }
+// }
+
+
+

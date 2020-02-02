@@ -1,0 +1,49 @@
+//Custom Events
+
+//Effect Rendering
+let EV_EXTEND = EV_USER + 1;
+let EV_GET_SPELL = EV_USER + 2;
+let EV_FULL_POWER = EV_USER + 3;
+let EV_HISCORE = EV_USER + 4;
+let EV_STAGE_CLEAR = EV_USER + 5;
+let EV_MAX_BALANCE = EV_USER + 6;
+
+let EV_BOSS_EFFECT = EV_USER + 7; //BossEffectsEx
+
+let EV_EFFECT = EV_USER + 8;
+let EV_CONCENTRATION = EV_USER + 9;
+let EV_EXPLODE = EV_USER + 10;
+let EV_DELAY = EV_USER + 11;
+
+//Item Creation
+let EV_CREATE_ITEM = EV_USER + 12;
+let EV_DELETE_ITEM = EV_USER + 13; //For shot deletion items
+let EV_CREATE_AUTO_ITEM = EV_USER + 14;
+
+//Shot Deletion
+let EV_DELETE_SHOT = EV_USER + 15;
+let EV_DELETE_LASER = EV_USER + 16;
+let EV_DELETE_ST_LASER = EV_USER + 17;
+let EV_DELETE_WAVE = EV_USER + 18;
+let EV_DELETE_SHOT_ALL = EV_USER + 117;
+
+//Audio Signaling
+let EV_LOAD_SOUND = EV_USER + 19; //For local sound objects (not in use anymore)
+let EV_SOUND = EV_USER + 20;
+let EV_MUSIC_START = EV_USER + 21;
+let EV_VOLUME = EV_USER + 22;
+let EV_MUSIC_PAUSE = EV_USER + 23;
+let EV_MUSIC_RESUME = EV_USER + 24;
+let EV_MUSIC_FADE = EV_USER + 25;
+
+//Stage Enemy Spawning
+let EV_SPAWN_ENEMY = EV_USER + 26;
+
+//Save Data
+let EV_UNLOCK = EV_USER + 27;
+let EV_HISTORY = EV_USER + 28;
+
+//Extra (Unplanned)
+let EV_DELETE_SOUND = EV_USER + 29;
+let EV_ENCORE_CHANCE = EV_USER + 30;
+let EV_UNLOCK_EX = EV_USER + 31;
