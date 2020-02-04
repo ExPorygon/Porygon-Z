@@ -1,6 +1,17 @@
-v0.1.1
--Initial port of EUB system
+v0.2.1
+-Added non1 prototype
+-Tweaked color of cyan diamond bullet
+
+v0.1.4
+-Readded missing delay and laser base graphics
+-Updated small diamond shot and added large diamond shot
+
+v0.1.3
+-Programmed basic nonspell diamond shot
 
 v0.1.2
 -Pixellized some elements of the hud
 -Added prototype diamond bullet in place of droplets
+
+v0.1.1
+-Initial port of EUB system
