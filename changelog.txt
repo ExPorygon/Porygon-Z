@@ -1,3 +1,7 @@
+v0.2.2
+-Implemented binary block basic functionality
+-Started non2 pattern
+
 v0.2.1
 -Added non1 prototype
 -Tweaked color of cyan diamond bullet
@@ -10,7 +14,7 @@ v0.1.3
 -Programmed basic nonspell diamond shot
 
 v0.1.2
--Pixellized some elements of the hud
+-Pixelized some elements of the hud
 -Added prototype diamond bullet in place of droplets
 
 v0.1.1
