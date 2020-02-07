@@ -68,7 +68,7 @@ let GetY = 0;
 }
 
 task mainTask {
-	wait(20);
+	wait(120);
 	Fire1;
 	Fire2;
 }

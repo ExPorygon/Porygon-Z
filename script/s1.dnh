@@ -27,15 +27,19 @@ let GetTimer = 0;
 let GetX = 0;
 let GetY = 0;
 
-let gl_speed = 1.5;
+let gl_speed = 0.7;
 let gl_active = 0;
+let gl_scale = 0.3;
+let gl_size = 512*gl_scale;
+let gl_wait = 180;
+let gl_startup_max = 15;
 
 @Loading {
 }
 
 @Event {
 	alternative(GetEventType)
-	case(EV_REQUEST_LIFE){ SetScriptResult(5000); }
+	case(EV_REQUEST_LIFE){ SetScriptResult(2000); }
 	case(EV_REQUEST_TIMER){	SetScriptResult(40); }
 }
 @Initialize {
@@ -46,12 +50,17 @@ let gl_active = 0;
 	Obj_SetValue(objEnemyMain,"Boss Name","Porygon-Z");
 	Obj_SetValue(objEnemyMain,"Aura Color",[1,10,2]);
 	Obj_SetValue(objEnemyMain,"Circle Color","Azure");
+	Obj_SetValue(objEnemyMain,"Spell ID",01);
+	Obj_SetValue(objScene,"Spell Base",1);
+	/* Obj_SetValue(objEnemyMain,"Cut Image",[MD ~ "IMG/Enemy/Stage 4/DaiCut.png"]); */
+	//SetAutoDeleteObject(true);
 	PlayEnemyHitSound(objEnemyMain, 1);
-	/* Obj_SetValue(objEnemyMain,"Animation","E1"); */
+	/* Obj_SetValue(objEnemyMain,"Animation","E4"); */
 
-	SetInvincibilityDamageRate(objEnemyMain, 120, 250, 200);
+	SetInvincibilityDamageRate(objEnemyMain, 240, 50, 38);
+	ObjMove_SetDestAtWeight(objEnemyMain, GetCenterX, GetCenterY-170, 10, 5);
 
-	ObjMove_SetPosition(objEnemyMain, GetCenterX, GetCenterY-130);
+	SetCommonData("EndBossBG",true);
 
 	mainTask;
 	End;
@@ -71,15 +80,50 @@ let gl_active = 0;
 }
 
 task mainTask {
+	let c = 0;
 	wait(20);
+	/* Fire1; */
 	Switch;
 	loop {
-		Block(0,GetCenterX-100,-256*0.2);
-		Block(1,GetCenterX+100,-256*0.2);
-		wait(512*0.2/gl_speed-1);
-		Block(0,GetCenterX+100,-256*0.2);
-		Block(1,GetCenterX-100,-256*0.2);
-		wait(512*0.2/gl_speed-1);
+		c = 0;
+		Block(0,GetCenterX-gl_size*2,-gl_size/2,1);
+		Block(1,GetCenterX-gl_size*1,GetStgFrameHeight+gl_size/2,-1);
+		Block(0,GetCenterX,-gl_size/2,1);
+		Block(1,GetCenterX+gl_size*1,GetStgFrameHeight+gl_size/2,-1);
+		Block(0,GetCenterX+gl_size*2,-gl_size/2,1);
+		loop {
+			c+=gl_speed;
+			if(c>gl_size) { break; }
+			yield;
+		}
+		c = 0;
+		Block(1,GetCenterX-gl_size*2,-gl_size/2,1);
+		Block(0,GetCenterX-gl_size*1,GetStgFrameHeight+gl_size/2,-1);
+		Block(1,GetCenterX,-gl_size/2,1);
+		Block(0,GetCenterX+gl_size*1,GetStgFrameHeight+gl_size/2,-1);
+		Block(1,GetCenterX+gl_size*2,-gl_size/2,1);
+		loop {
+			c+=gl_speed;
+			if(c>gl_size) { break; }
+			yield;
+		}
+	}
+}
+
+task Fire1 {
+	wait(120);
+	let dir = rand(0,360);
+	loop {
+		loop(6) {
+			loop(8) {
+				DiamondShot01(7,GetX,GetY,2,2,2.0,dir);
+				CreateShot01(GetX,GetY,2.0,dir,DIAMOND_LARGE_MAGENTA,14);
+				dir+=360/6;
+			}
+			wait(30);
+			dir+=360/12+4;
+		}
+		wait(120);
 	}
 }
 
@@ -88,11 +132,24 @@ task Switch {
 	loop {
 		c++;
 		gl_active = c%2;
-		wait(60);
+		wait(gl_wait-75);
+		Warning;
+		wait(75);
+		if(gl_wait>120) { gl_wait-=8; }
+		if(gl_speed<1.5) { gl_speed+=0.08; }
 	}
 }
 
-task Block(type,x,y) {
+task Warning {
+	let w = 25;
+	loop(3) {
+		PlaySoundEffect("chime",100);
+		wait(w);
+	}
+	PlaySoundEffect("chime2",100);
+}
+
+task Block(type,x,y,dir) {
 	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
 
 	let typeArray = ["zero","one"];
@@ -103,50 +160,67 @@ task Block(type,x,y) {
 	ObjSprite2D_SetSourceRect(obj, 0, 0, 512, 512);
 	ObjSprite2D_SetDestCenter(obj);
 
-	let scale = 0.2;
+	let scale = gl_scale;
+	let alpha = 0;
+	let a_min = 70;
+	let a_max = 200;
+	let a_diff = a_max-a_min;
+	if(gl_active==type) { alpha = 200; } else { alpha = 70; }
 	ObjRender_SetPosition(obj,x,y,0);
-	ObjRender_SetScaleXYZ(obj,0.2,0.2,0.2);
+	ObjRender_SetScaleXYZ(obj,scale,scale,scale);
 
 	Hitbox;
 
 	while(!Obj_IsDeleted(obj)) {
-		if(gl_active==type) { ObjRender_SetAlpha(obj,200); }
-		else { ObjRender_SetAlpha(obj,70); }
+		if(gl_active==type) {
+			if(alpha<200) { alpha+=a_diff/gl_startup_max; }
+		}
+		else {
+			if(alpha>70) { alpha-=a_diff/gl_startup_max; }
+		}
 
-		y+=gl_speed;
+		y+=gl_speed*dir;
 		ObjRender_SetY(obj,y);
+		ObjRender_SetAlpha(obj,alpha);
 		yield;
 	}
 
 	task Hitbox {
 		let length = 512*scale*1.05;
 		let width = 512*scale*1.03;
+		let startup = 0;
+		let startup_max = gl_startup_max;
 		let objhitbox = CreateStraightLaserA1(GetCenterX,GetCenterY,90,length,width,10000,LASER_GRAY,0);
 		ObjLaser_SetIntersectionWidth(objhitbox,width);
 		Obj_SetVisible(objhitbox,false);
 		while(!Obj_IsDeleted(obj)) {
 			ObjMove_SetPosition(objhitbox,ObjRender_GetX(obj),ObjRender_GetY(obj)-512/2*scale);
-			if(gl_active==type) { ObjShot_SetIntersectionEnable(objhitbox,true); }
-			else { ObjShot_SetIntersectionEnable(objhitbox,false); }
+			if(gl_active==type) { startup++; } else { startup = 0; }
+			if(gl_active==type && startup>=startup_max+5) {
+				ObjShot_SetIntersectionEnable(objhitbox,true);
+			}
+			else {
+				ObjShot_SetIntersectionEnable(objhitbox,false);
+			}
 			yield;
 		}
 		Obj_Delete(objhitbox);
 	}
 }
 
-task DiamondShot01(num,r,d,speed,dir) { //num and d must be a whole number
+task DiamondShot01(num,x,y,r,d,speed,dir) { //num and d must be a whole number
 	ascent(i in 0..num+1) {
-		CreateShot01(GetX+r*i*cos(dir+90),GetY+r*i*sin(dir+90),speed,dir,DIAMOND_CYAN,i*d);
+		CreateShot01(x+r*i*cos(dir+90),y+r*i*sin(dir+90),speed,dir,DIAMOND_CYAN,i*d);
 	}
 	ascent(i in 0..num+1) {
-		CreateShot01(GetX+r*i*cos(dir-90),GetY+r*i*sin(dir-90),speed,dir,DIAMOND_CYAN,i*d);
+		CreateShot01(x+r*i*cos(dir-90),y+r*i*sin(dir-90),speed,dir,DIAMOND_CYAN,i*d);
 	}
 	wait((num-1)*d);
 	descent(i in 0..num) {
-		CreateShot01(GetX+r*i*cos(dir+90),GetY+r*i*sin(dir+90),speed,dir,DIAMOND_CYAN,((num+1)*d)-i*d);
+		CreateShot01(x+r*i*cos(dir+90),y+r*i*sin(dir+90),speed,dir,DIAMOND_CYAN,((num+1)*d)-i*d);
 	}
 	descent(i in 0..num) {
-		CreateShot01(GetX+r*i*cos(dir-90),GetY+r*i*sin(dir-90),speed,dir,DIAMOND_CYAN,((num+1)*d)-i*d);
+		CreateShot01(x+r*i*cos(dir-90),y+r*i*sin(dir-90),speed,dir,DIAMOND_CYAN,((num+1)*d)-i*d);
 	}
 }
 

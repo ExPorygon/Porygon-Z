@@ -1,3 +1,6 @@
+v0.3.0
+-Added prototype of spell 1 with modifications from initial idea
+
 v0.2.3
 -Added new chime sound effects for binary blocks
 -Fixed a bug with the player on dying
