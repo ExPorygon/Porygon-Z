@@ -1,3 +1,7 @@
+v0.2.3
+-Added new chime sound effects for binary blocks
+-Fixed a bug with the player on dying
+
 v0.2.2
 -Implemented binary block basic functionality
 -Started non2 pattern

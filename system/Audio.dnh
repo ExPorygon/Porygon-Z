@@ -86,8 +86,8 @@ function InitializeGlobalSoundObjects {
 			  "effect","effect2","effect3","effect4","explode","explode2","explode3","explodefinal","extend","fam","fire","fire2",
 			  "freeze","freeze2","graze","invalid","item","laser","laser2","laser3","laser4","laser5","laugh","lockon","pause",
 			  "pdeath","powerup","pshot","pspell","scratch","scream","select","shot","shot2","shot3","shot4","shot5","shot6","shot7","shot8","slash",
-			  "spell","teleportin","teleportout","thunder","timeout","timeout2","warning","warning2","warning2.5","water","wave","wave2","wave3","weird"];
-			  
+			  "spell","teleportin","teleportout","thunder","timeout","timeout2","warning","warning2","warning2.5","water","wave","wave2","wave3","weird","chime","chime2"];
+
 	ascent(i in 0..length(SE_ALL)) {
 		CreateSoundObject01(SE_ALL[i]);
 	}
@@ -115,13 +115,13 @@ task CreateSoundObject01(name) {
 	ObjSound_SetSoundDivision(obj,SOUND_SE);
 	ObjSound_Load(obj,MD ~ "SE/" ~name~ ".wav");
 	ObjSound_SetRestartEnable(obj, false);
-	
+
 	let Sound_ID = GetAreaCommonData("Sound","Sound ID",[-1]);
 	let Sound_STR = GetAreaCommonData("Sound","Sound STR",[""]);
-	
+
 	Sound_ID = Sound_ID ~ [obj];
 	Sound_STR = Sound_STR ~ [name];
-	
+
 	SetAreaCommonData("Sound","Sound ID", Sound_ID);
 	SetAreaCommonData("Sound","Sound STR", Sound_STR);
 }
@@ -131,16 +131,16 @@ task CreateSoundObject02(name,path,scriptID) {
 	ObjSound_SetSoundDivision(obj,SOUND_SE);
 	ObjSound_Load(obj,path);
 	ObjSound_SetRestartEnable(obj, false);
-	
+
 	let Sound_ID = GetAreaCommonData("Sound","Sound ID",[-1]);
 	let Sound_STR = GetAreaCommonData("Sound","Sound STR",[""]);
-	
+
 	Sound_ID = Sound_ID ~ [obj];
 	Sound_STR = Sound_STR ~ [name];
-	
+
 	SetAreaCommonData("Sound","Sound ID", Sound_ID);
 	SetAreaCommonData("Sound","Sound STR", Sound_STR);
-	
+
 	while(!deleteSound) {
 		yield;
 	}
@@ -148,7 +148,7 @@ task CreateSoundObject02(name,path,scriptID) {
 	deleteSound = false;
 	while(ObjSound_IsPlaying(obj)) { yield; }
 	loop(30) { yield; }
-	
+
 	Sound_ID = GetAreaCommonData("Sound","Sound ID",[-1]);
 	Sound_STR = GetAreaCommonData("Sound","Sound STR",[""]);
 	let ID = -1;
@@ -165,13 +165,13 @@ task CreateSoundObject02(name,path,scriptID) {
 task PlaySound(name,volume) {
 	let Sound_ID = GetAreaCommonData("Sound","Sound ID",[-1]);
 	let Sound_STR = GetAreaCommonData("Sound","Sound STR",[""]);
-	
+
 	let ID = -1;
 	ascent(i in 0..length(Sound_STR)) {
 		if(Sound_STR[i] == name) { ID = i; break; }
 	}
 	if(ID == -1){ RaiseError("Sound object does not exist: "~name); }
-	
+
 	ObjSound_SetVolumeRate(Sound_ID[ID],volume*GetAreaCommonData("Options","SFX",100)/100);
 	ObjSound_Play(Sound_ID[ID]);
 }
@@ -180,10 +180,10 @@ function PlayMusic(id) {
 	currentBGM = id;
 	//let objSound = ObjSound_Create;
 	let objSound = ID_INVALID;
-	
+
 	alternative(id)
 	case(0) { //dummy sound for silence to be used during transitions
-	
+
 	}
 	case(0.1) {
 		//ObjSound_Load(objSound,MD ~ "BGM/title.ogg");
@@ -404,14 +404,14 @@ function PlayMusic(id) {
 	if(id>0){
 		ObjSound_Play(objSound);
 	}
-	
+
 	if(id==0){
 		ObjSound_Stop(objSound);
 	}
-	
+
 	SetVolume;
 	return objSound;
-	
+
 	task SetVolume {
 		while(!Obj_IsDeleted(objSound)) {
 			ObjSound_SetVolumeRate(objSound,GetAreaCommonData("Options","Music",100));
@@ -423,7 +423,7 @@ function PlayMusic(id) {
 		objText = ObjText_Create;
 		let x = 0;
 		let y = 0;
-		
+
 		ObjText_SetText(objText, "BGM: " ~ text);
 		ObjText_SetFontType(objText, "Open Sans Condensed");
 		ObjText_SetFontSize(objText, 18);
@@ -436,11 +436,11 @@ function PlayMusic(id) {
 		ObjText_SetHorizontalAlignment(objText, ALIGNMENT_RIGHT);
 		ObjText_SetMaxWidth(objText, 500);
 		Obj_SetRenderPriorityI(objText, 79);
-		
+
 		ObjRender_SetY(objText,GetStgFrameHeight-19);
 
 		let objText_local = objText;
-		
+
 		while(x<335 && !Obj_IsDeleted(objText_local)) {
 			ObjRender_SetX(objText,210-x);
 			x+=3;
@@ -482,6 +482,3 @@ task FadeOutSound(obj,frames) {
 		// LoadSound(BGM_ALL[i]);
 	// }
 // }
-
-
-

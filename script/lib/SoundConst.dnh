@@ -75,3 +75,5 @@ let se_wave = 84;
 let se_wave2 = 85;
 let se_wave3 = 86;
 let se_weird = 87;
+let se_chime = 88;
+let se_chime2 = 89;

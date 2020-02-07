@@ -36,13 +36,13 @@ let ForceMarisa = false;
 let ForceNazrin = false;
 
 @Initialize {
-	LoadPlayerShotData(CSD ~ "ThiefShot.dnh"); 
-	
-	ObjPlayer_AddIntersectionCircleA1(objPlayer, 0, 0, 1, 15); 
+	LoadPlayerShotData(CSD ~ "ThiefShot.dnh");
+
+	ObjPlayer_AddIntersectionCircleA1(objPlayer, 0, 0, 1, 15);
 	SetPlayerSpeed(FastSpeed,SlowSpeed);
 	SetPlayerRebirthFrame(15);
 	SetPlayerRebirthLossFrame(0);
-	
+
 	LoadTexture(CSD ~ "IMG/ConcentrationCircle.png");
 	LoadTexture(CSD ~ "IMG/effect.png");
 	LoadTexture(CSD ~ "IMG/MarisaCut.png");
@@ -65,12 +65,12 @@ let ForceNazrin = false;
 	LoadSound(effect2);
 	LoadSound(spell);
 	LoadSound(spark);
-	
+
 	TMagicCircle;
 	RenderPlayer;
 	RenderHitbox(1);
 	RenderHitbox(-1);
-	
+
 	SetPlayerSpell(2);
 	SetPlayerPower(1);
 	Option1(1);
@@ -90,7 +90,7 @@ let ForceNazrin = false;
 	if(!IsPermitPlayerShot && GetPlayerState==STATE_NORMAL){ CanShoot = false; }
 	if(IsPermitPlayerShot && GetPlayerState==STATE_NORMAL){ CanShoot = true; }
 	if(IsPlayerSpellActive && GetPlayerState==STATE_NORMAL){ CanShoot = false; }
-	
+
 	SetPlayerAutoItemCollectLine(GetCommonData("PointOfCollection",128));
 	SetPlayerClip(11,11,GetStgFrameWidth-11,GetStgFrameHeight-18);
 	t++;
@@ -229,7 +229,7 @@ task PlayerShot(x,y,scale,speed,dir,graphic,pene,dmg) {
 	let ypos = 0;
 	let xpos = 0;
 	ObjRender_SetScaleXYZ(obj,scale,scale,1);
-	
+
 	while(!Obj_IsDeleted(obj)) {
 		xpos = ObjRender_GetX(obj);
 		ypos = ObjRender_GetY(obj);
@@ -244,10 +244,10 @@ task ExplodeShot(x,y,scale,speed,dir,graphic,pene,dmg) {
 	let ypos = 0;
 	let xpos = 0;
 	let angle = rand(0,360);
-	
+
 	ObjRender_SetAngleXYZ(obj,0,0,rand(0,360));
 	ObjRender_SetScaleXYZ(obj,scale,scale,1);
-	
+
 	while(!Obj_IsDeleted(obj)) {
 		xpos = ObjRender_GetX(obj);
 		ypos = ObjRender_GetY(obj);
@@ -262,11 +262,11 @@ task ExplodeShot(x,y,scale,speed,dir,graphic,pene,dmg) {
 }
 task StarShot(x,y,dir) {
 	let obj = CreatePlayerShotA1(x,y,5,dir,0.10,30,4);
-	
+
 	let scale = 1;
 	let alpha = 255;
 	let speed = 5;
-	
+
 	while(alpha>0) {
 		alpha-=255/20;
 		scale-=1/20;
@@ -279,7 +279,7 @@ task StarShot(x,y,dir) {
 }
 task FadeShot(x,y,speed,dir,graphic) {
 	let obj = CreatePlayerShotA1(x,y,speed,dir,0,10,graphic);
-	
+
 	let scale = 1;
 	loop(12){
 		scale+=0.3/12;
@@ -290,36 +290,36 @@ task FadeShot(x,y,speed,dir,graphic) {
 }
 task Option1(power){
 	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
-	
+
 	ObjRender_SetBlendType(obj, BLEND_ALPHA);
 	Obj_SetRenderPriorityI(obj, 39);
 	ObjPrim_SetTexture(obj, CSD ~ "IMG/player_shot.png");
 	ObjSprite2D_SetSourceRect(obj, 92, 68, 113, 94);
 	ObjSprite2D_SetDestCenter(obj);
-	
+
 	let objeffect = ObjPrim_Create(OBJ_SPRITE_2D);
-	
+
 	ObjRender_SetBlendType(objeffect, BLEND_ALPHA);
 	Obj_SetRenderPriorityI(objeffect, 39);
 	ObjPrim_SetTexture(objeffect, CSD ~ "IMG/player_shot.png");
 	ObjSprite2D_SetSourceRect(objeffect, 92, 68, 113, 94);
 	ObjSprite2D_SetDestCenter(objeffect);
-	
+
 	let angle = 90*power;
 	let x = 0;
 	let y = 0;
 	let rX = 40;
 	let rY = 40;
 	let scale = 1;
-	
+
 	AnimateOption;
 	OptionShot1(obj);
-	
+
 	ObjRender_SetScaleXYZ(objeffect,1.2,1.2,1);
 	ObjRender_SetAlpha(objeffect,120);
 	ObjRender_SetPosition(obj,GetPlayerX,GetPlayerY,0);
 	ObjRender_SetPosition(objeffect,GetPlayerX,GetPlayerY,0);
-	
+
 	while(!Obj_IsDeleted(obj)) {
 		if(GetVirtualKeyState(VK_SLOWMOVE) == KEY_FREE || ForceNazrin == true) {
 			if(!ForceMarisa) {
@@ -355,35 +355,35 @@ task Option1(power){
 }
 task Option2(power){
 	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
-	
+
 	ObjRender_SetBlendType(obj, BLEND_ALPHA);
 	Obj_SetRenderPriorityI(obj, 39);
 	ObjPrim_SetTexture(obj, CSD ~ "IMG/player_shot.png");
 	ObjSprite2D_SetSourceRect(obj, 70, 72, 86, 88);
 	ObjSprite2D_SetDestCenter(obj);
-	
+
 	let objeffect = ObjPrim_Create(OBJ_SPRITE_2D);
-	
+
 	ObjRender_SetBlendType(objeffect, BLEND_ALPHA);
 	Obj_SetRenderPriorityI(objeffect, 39);
 	ObjPrim_SetTexture(objeffect, CSD ~ "IMG/player_shot.png");
 	ObjSprite2D_SetSourceRect(objeffect, 70, 72, 86, 88);
 	ObjSprite2D_SetDestCenter(objeffect);
-	
+
 	let scale = 1;
 	let DestinationX = 0;
 	let DestinationY = 0;
 	let DistanceToPoint = 0;
 	let AngleToPoint = 0;
-	
+
 	AnimateOption;
 	OptionShot2(obj);
-	
+
 	ObjRender_SetScaleXYZ(objeffect,1.2,1.2,1);
 	ObjRender_SetAlpha(objeffect,120);
 	ObjRender_SetPosition(obj,GetPlayerX,GetPlayerY,0);
 	ObjRender_SetPosition(objeffect,GetPlayerX,GetPlayerY,0);
-	
+
 	while(!Obj_IsDeleted(obj)) {
 		if(power == 1) {
 			if(GetVirtualKeyState(VK_SLOWMOVE)!=KEY_FREE || ForceMarisa == true) {
@@ -512,25 +512,25 @@ task Spell1 {
 task SpellStar(speed,angle,R,G,B) {
 	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
 	let objhitbox = ObjSpell_Create;
-	
+
 	ObjPrim_SetTexture(obj, CSD ~ "IMG/spellstar.png");
 	ObjSprite2D_SetSourceRect(obj,0,0,256,256);
 	ObjSprite2D_SetDestCenter(obj);
 	ObjRender_SetBlendType(obj, BLEND_ADD_RGB);
 	Obj_SetRenderPriorityI(obj, 50);
-	
+
 	ObjRender_SetScaleXYZ(obj,0.7,0.7,0.7);
-	
+
 	ObjSpell_SetDamage(objhitbox,0.30);
 	ObjSpell_Regist(objhitbox);
-	
+
 	let x = GetPlayerX;
 	let y = GetPlayerY;
 	let spin = 0;
 	let alpha = 180;
-	
+
 	SpellMouse;
-	
+
 	loop(330) {
 		x+=speed*cos(angle);
 		y+=speed*sin(angle);
@@ -556,18 +556,18 @@ task SpellStar(speed,angle,R,G,B) {
 		yield;
 	}
 	Obj_Delete(obj);
-	
+
 	task SpellMouse {
 		let objMouse = ObjPrim_Create(OBJ_SPRITE_2D);
-		
+
 		ObjPrim_SetTexture(objMouse, CSD ~ "IMG/spellmouse.png");
 		ObjSprite2D_SetSourceRect(objMouse,0,0,64,64);
 		ObjSprite2D_SetDestCenter(objMouse);
 		ObjRender_SetBlendType(objMouse, BLEND_ALPHA);
 		Obj_SetRenderPriorityI(objMouse, 50);
-		
+
 		ObjRender_SetScaleXYZ(objMouse,0.8,0.8,0.8);
-		
+
 		while(!Obj_IsDeleted(obj)) {
 			ObjRender_SetPosition(objMouse,x,y,0);
 			ObjRender_SetAngleZ(objMouse,angle+90);
@@ -601,22 +601,22 @@ task Spell2 {
 }
 task SpellDiamond(angle,R,G,B) {
 	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
-	
+
 	ObjPrim_SetTexture(obj, CSD ~ "IMG/spelldiamond.png");
 	ObjSprite2D_SetSourceRect(obj,0,0,128,128);
 	ObjSprite2D_SetDestCenter(obj);
 	ObjRender_SetBlendType(obj, BLEND_ALPHA);
 	Obj_SetRenderPriorityI(obj, 50);
-	
+
 	let rX = 0;
 	let rY = 0;
 	let y = 0;
 	let targetX = 0;
 	let targetY = 0;
 	let scale = 0;
-	
+
 	SpellSpark(obj,R,G,B);
-	
+
 	ascent(i in 0..30) {
 		let enm = GetAllEnemyID;
 		rX = 150*sin(90*i/30);
@@ -682,23 +682,23 @@ task SpellDiamond(angle,R,G,B) {
 task SpellSpark(objAnchor,R,G,B) {
 	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
 	let objhitbox = ObjSpell_Create;
-	
+
 	wait(30);
-	
+
 	ObjPrim_SetTexture(obj, CSD ~ "IMG/spellspark.png");
 	ObjSprite2D_SetSourceRect(obj,0,0,128,152);
 	ObjSprite2D_SetDestRect(obj,-64,140,64,-12);
 	ObjRender_SetBlendType(obj, BLEND_ADD_RGB);
 	Obj_SetRenderPriorityI(obj, 50);
-	
+
 	ObjRender_SetColor(obj,R,G,B);
-	
+
 	let alpha = 255;
 	let scaleX = 0.2;
 	let scaleY = 5.0;
-	
+
 	Beam;
-	
+
 	loop(60) {
 		ObjRender_SetPosition(obj,ObjRender_GetX(objAnchor),ObjRender_GetY(objAnchor),0);
 		ObjRender_SetAngleZ(obj,ObjRender_GetAngleZ(objAnchor));
@@ -722,7 +722,7 @@ task SpellSpark(objAnchor,R,G,B) {
 		yield;
 	}
 	Obj_Delete(obj);
-	
+
 	task Hitbox {
 		loop(180) {
 			ObjSpell_SetDamage(objhitbox,1.5);
@@ -734,16 +734,16 @@ task SpellSpark(objAnchor,R,G,B) {
 	}
 	task Beam {
 		let objBeam = ObjPrim_Create(OBJ_SPRITE_2D);
-		
+
 		ObjPrim_SetTexture(objBeam, CSD ~ "IMG/spellspark.png");
 		ObjSprite2D_SetSourceRect(objBeam,0,0,128,152);
 		ObjSprite2D_SetDestRect(objBeam,-64,152,64,0);
 		ObjRender_SetBlendType(objBeam, BLEND_ADD_RGB);
 		Obj_SetRenderPriorityI(objBeam, 50);
-		
+
 		let dist = 0;
 		let scaleX = 0.05;
-		
+
 		while(!Obj_IsDeleted(obj)) {
 			dist = GetDistance(GetPlayerX,GetPlayerY,ObjRender_GetX(objAnchor),ObjRender_GetY(objAnchor));
 			ObjRender_SetScaleXYZ(objBeam,scaleX,dist/152,1);
@@ -765,16 +765,16 @@ task SpellSpark(objAnchor,R,G,B) {
 task SpellBurst {
 	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
 	let objhitbox = ObjSpell_Create;
-	
+
 	ObjPrim_SetTexture(obj, CSD ~ "IMG/ConcentrationCircle.png");
 	ObjSprite2D_SetSourceRect(obj,0,0,256,256);
 	ObjSprite2D_SetDestCenter(obj);
 	ObjRender_SetBlendType(obj, BLEND_ADD_RGB);
 	Obj_SetRenderPriorityI(obj, 50);
-	
+
 	ObjSpell_SetDamage(objhitbox,0);
 	ObjSpell_Regist(objhitbox);
-	
+
 	let alpha = 1;
 	let scale = 0;
 	let dscale = 0.15;
@@ -883,19 +883,19 @@ task RenderPlayer {
 task RenderHitbox(rot){
 	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
 	let count = 0;
-	
+
 	let alpha = 0;
 	let scale = 0;
-	
+
 	ObjRender_SetBlendType(obj, BLEND_ALPHA);
 	Obj_SetRenderPriorityI(obj, 69);
 	ObjRender_SetAlpha(obj, 255);
 	ObjPrim_SetTexture(obj, CSD ~ "IMG/player_shot.png");
 	ObjSprite2D_SetSourceRect(obj, 64, 0, 127, 63);
 	ObjSprite2D_SetDestCenter(obj);
-	
+
 	while(!Obj_IsDeleted(obj)){
-		if(GetVirtualKeyState(VK_SLOWMOVE)==KEY_PUSH){ 
+		if(GetVirtualKeyState(VK_SLOWMOVE)==KEY_PUSH){
 			scale = 2;
 			alpha = 0;
 		}
@@ -914,9 +914,9 @@ task RenderHitbox(rot){
 		ObjRender_SetPosition(obj, GetPlayerX, GetPlayerY, 0);
 		ObjRender_SetScaleXYZ(obj, scale, scale, 0);
 		ObjRender_SetAlpha(obj, alpha);
-		
+
 		if(GetPlayerState==STATE_DOWN||GetPlayerState==STATE_END){ObjRender_SetAlpha(obj, 0);}
-		
+
 		count+=3.5;
 		yield;
 	}
@@ -961,9 +961,9 @@ task cutin(objspell,SpellCardName,CutImg,left,top,right,bottom) {
 		let y1 = 360;
 		let a = 0;
 		let scale = 1.5;
-		
+
 		SpellBG;
-		
+
 		ObjText_SetText(objtext,SpellCardName);
 		ObjText_SetFontSize(objtext,12);
 		ObjText_SetFontColorTop(objtext,255,255,255);
@@ -974,7 +974,7 @@ task cutin(objspell,SpellCardName,CutImg,left,top,right,bottom) {
 		ObjText_SetHorizontalAlignment(objtext,ALIGNMENT_LEFT);
 		ObjText_SetMaxWidth(objtext,250);
 		Obj_SetRenderPriorityI(objtext,28);
-		
+
 		loop(20) {
 			ObjRender_SetPosition(objtext,x1,y1,0);
 			ObjRender_SetAlpha(objtext,a);
@@ -996,7 +996,7 @@ task cutin(objspell,SpellCardName,CutImg,left,top,right,bottom) {
 			yield;
 		}
 		Obj_Delete(objtext);
-		
+
 		task SpellBG {
 			let objbg = ObjPrim_Create(OBJ_SPRITE_2D);
 			let x2 = 30;
@@ -1006,7 +1006,7 @@ task cutin(objspell,SpellCardName,CutImg,left,top,right,bottom) {
 			ObjPrim_SetTexture(objbg,CSD ~ "IMG/SpellBG.png");
 			ObjSprite2D_SetSourceRect(objbg,0,0,256,35);
 			ObjSprite2D_SetDestRect(objbg,-15,0,241,35);
-			
+
 			loop(20) {
 				ObjRender_SetPosition(objbg,x2,y2,0);
 				ObjRender_SetAlpha(objbg,a);
@@ -1030,7 +1030,8 @@ task cutin(objspell,SpellCardName,CutImg,left,top,right,bottom) {
 	}
 }
 task ClearBullets {
-	wait(30);
+	DeleteEnemyBullets; return;
+	wait(15);
 	while(GetPlayerState==STATE_DOWN){
 		DeleteEnemyBullets;
 		yield;
@@ -1068,16 +1069,16 @@ task GrazeEffect {
 }
 task DeathExplosion {
 	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
-	
+
 	ObjRender_SetBlendType(obj, BLEND_ALPHA);
 	Obj_SetRenderPriorityI(obj,60);
 	ObjPrim_SetTexture(obj, CSD ~ "IMG/player_shot.png");
 	ObjSprite2D_SetSourceRect(obj, 0, 0, 64, 64);
 	ObjSprite2D_SetDestCenter(obj);
-	
+
 	loop(30) { ParticleEffect(rand(0,360)); ObjectEffect(rand(0,360)); }
 	ObjRender_SetPosition(obj, GetPlayerX, GetPlayerY, 0);
-	
+
 	let alpha = 200;
 	let scale = 0;
 	let maxscale = 4;
@@ -1086,27 +1087,27 @@ task DeathExplosion {
 		alpha -= 255/20;
 		// if(dscale>0){ dscale = dscale^1.10; }
 		ObjRender_SetAlpha(obj, alpha);
-		
+
 		ObjRender_SetScaleXYZ(obj, scale, scale, 1);
 		yield;
 	}
 	Obj_Delete(obj);
-	
+
 	task ParticleEffect(angle) {
 		let objEffect = ObjPrim_Create(OBJ_SPRITE_2D);
-		
+
 		ObjRender_SetBlendType(objEffect, BLEND_ADD_RGB);
 		Obj_SetRenderPriorityI(objEffect,60);
 		ObjPrim_SetTexture(objEffect, CSD ~ "IMG/effect.png");
 		ObjSprite2D_SetSourceRect(objEffect, 0, 0, 128, 128);
 		ObjSprite2D_SetDestCenter(objEffect);
-		
+
 		let x = GetPlayerX;
 		let y = GetPlayerY;
 		let speed = rand(4,8);
 		let alpha = 255;
 		let scale = rand(0.01,0.06);
-		
+
 		while(!Obj_IsDeleted(objEffect)) {
 			ObjRender_SetColor(objEffect,alpha,alpha,alpha);
 			ObjRender_SetPosition(objEffect, x, y, 0);
@@ -1125,7 +1126,7 @@ task DeathExplosion {
 		let deAlpha = rand(85, 185);
 		let deScale = 2.8;
 		deScale = deScale*1.25;
-		let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D); 
+		let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
 		ObjRender_SetBlendType(obj, BLEND_ALPHA);
 		Obj_SetRenderPriority(obj, 0.49);
 		ObjPrim_SetTexture(obj, CSD ~ "IMG/star.png");
@@ -1134,16 +1135,16 @@ task DeathExplosion {
 		ObjSpriteList2D_SetDestCenter(obj);
 		ObjRender_SetAngleXYZ(obj, 0, 0, angX);
 		ObjRender_SetPosition(obj, deX, deY, 0);
-		
+
 		let RGB = [64,64,255];
-		
+
 		ObjRender_SetColor(obj,RGB[0]*(deAlpha/255),RGB[1]*(deAlpha/255),RGB[2]*(deAlpha/255));
 
 		let scale = deScale;
 		let randX = rand(-105, 105);
 		let randY = rand(-105, 105);
 		let	ang2 = rand(0, 360);
-		
+
 		while(scale>0.01){
 			scale += (-0.2)/2;
 			deX += randX/20;
@@ -1154,7 +1155,7 @@ task DeathExplosion {
 			ObjSpriteList2D_SetSourceRect(obj, 0, 0, 32, 32);
 			ObjSpriteList2D_SetDestCenter(obj);
 			ObjSpriteList2D_AddVertex(obj);
-			
+
 			ObjRender_SetPosition(obj, deX, deY, 0);
 			ObjRender_SetAngleXYZ(obj, ang2, angX, (ang2+angX)/2);
 			ObjRender_SetScaleXYZ(obj, scale, scale, scale);
@@ -1183,7 +1184,7 @@ task TMagicCircle {
 		let left = iVert * 128;
 		let indexVert = iVert * 2;
 		ObjPrim_SetVertexUVT(obj, indexVert + 0, left, 0);
-		ObjPrim_SetVertexUVT(obj, indexVert + 1, left, 64);		
+		ObjPrim_SetVertexUVT(obj, indexVert + 1, left, 64);
 	}
 
 	let cx = 0;
@@ -1266,16 +1267,21 @@ task TMagicCircle {
 	}
 }
 function DeleteEnemyBullets {
-let Bullets = GetShotIdInCircleA1(GetPlayerX,GetPlayerY,10000);
-	ascent(i in 0..length(Bullets)) {
-		if(!ObjShot_IsSpellResist(Bullets[i])) {
-			if(GetCommonData("EUB",true)) {
-				NotifyEventAll(EV_USER + 9,[ObjMove_GetX(Bullets[i]),ObjMove_GetY(Bullets[i]),ObjShot_GetImageID(Bullets[i])]);
-				Obj_Delete(Bullets[i]);
-			}
-			else { ObjShot_FadeDelete(Bullets[i]); }
-		}
+	wait(15);
+	//NotifyEventAll(EV_USER + 18,[4,GetPlayerX,GetPlayerY,24]);
+	// return;
+	let px = GetPlayerX;
+	let py = GetPlayerY;
+	let BDel = ObjSpell_Create;
+	ObjSpell_Regist(BDel);
+	ObjSpell_SetDamage(BDel, 1.5);
+	ObjSpell_SetEraseShot(BDel, true);
+	ObjSpell_SetEraseShotType(BDel, 0);
+	ascent(i in 0..90){
+		ObjSpell_SetIntersectionCircle(BDel, px, py, 700/60*i);
+		yield;
 	}
+	Obj_Delete(BDel);
 }
 task ConcentrationA1(objEnemy,duration,speed,radius,color) {
 let w = round(1/speed*10);
@@ -1308,18 +1314,18 @@ task ConcObject01(objEnemy,speed,dir,rot,r,color,opacity) {
 	let GREEN = color[1];
 	let BLUE = color[2];
 	let scale = 0.75*(r/200);
-	
+
 	if(r > 200) { scale = 0.75; }
-	
+
 	let x = ObjRender_GetX(objEnemy);
 	let y = ObjRender_GetY(objEnemy);
-	
+
 	ObjRender_SetBlendType(objStar, BLEND_ADD_RGB);
 	Obj_SetRenderPriorityI(objStar,41);
 	ObjPrim_SetTexture(objStar, CSD ~ "IMG/Star2.png");
 	ObjSprite2D_SetSourceRect(objStar, 0, 0, 256, 256);
 	ObjSprite2D_SetDestCenter(objStar);
-	
+
 	while(!Obj_IsDeleted(objStar)) {
 		x = ObjRender_GetX(objEnemy);
 		y = ObjRender_GetY(objEnemy);
@@ -1339,21 +1345,21 @@ task ConcObject01(objEnemy,speed,dir,rot,r,color,opacity) {
 }
 task ConcCircle01(objEnemy,speed,r,color) {
 	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
-	
+
 	let RGB = color;
-	
+
 	let alpha = 0;
 	let scale = 2.5*(r/200);
-	
+
 	let x = ObjRender_GetX(objEnemy);
 	let y = ObjRender_GetY(objEnemy);
-	
+
 	ObjRender_SetBlendType(obj, BLEND_ADD_RGB);
 	Obj_SetRenderPriorityI(obj,41);
 	ObjPrim_SetTexture(obj, CSD ~ "IMG/ConcentrationCircle.png");
 	ObjSprite2D_SetSourceRect(obj, 0, 0, 256, 256);
 	ObjSprite2D_SetDestCenter(obj);
-	
+
 	while(!Obj_IsDeleted(obj)) {
 		x = ObjRender_GetX(objEnemy);
 		y = ObjRender_GetY(objEnemy);
