@@ -1,3 +1,7 @@
+v0.4.2
+-Ported binary concentration effects
+-Updated binary concentration graphics
+
 v0.4.1
 -Changed spell1 to spell2
 -Added spell1 prototype

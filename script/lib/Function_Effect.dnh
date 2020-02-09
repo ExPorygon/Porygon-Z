@@ -69,7 +69,7 @@ function ExplosionA3(objEnemy,type,circlecolor,objectcolor) { //A larger enemy e
 	if(type=="FEATHER") { NotifyEventAll(EV_EXPLODE,[[2.70],[objEnemy],objectcolor,circlecolor]); }
 	if(type=="GLASS") { NotifyEventAll(EV_EXPLODE,[[2.71],[objEnemy],objectcolor,circlecolor]); }
 }
-function ExplosionB1(objEnemy,type,circlecolor,objectcolor) { //Standard boss enemy explosion effect 
+function ExplosionB1(objEnemy,type,circlecolor,objectcolor) { //Standard boss enemy explosion effect
 	if(type=="STAR") { NotifyEventAll(EV_EXPLODE,[[3.01],[objEnemy],objectcolor,circlecolor]); }
 	if(type=="MAGIC") { NotifyEventAll(EV_EXPLODE,[[3.02],[objEnemy],objectcolor,circlecolor]); }
 	if(type=="MAPLE") { NotifyEventAll(EV_EXPLODE,[[3.03],[objEnemy],objectcolor,circlecolor]); }
@@ -380,8 +380,14 @@ function ConcentrationB1(objEnemy,duration,num,angle,rot,speed,layer,color) { //
 function ConcentrationB2(objEnemy,duration,num,angle,rot,speed,layer,color1,color2) { //Same as B1 but with two effects crisscrossing, like how bosses appear in later stages of DDC
 	NotifyEventAll(EV_CONCENTRATION,[[8],[objEnemy],[duration],[num],[angle],[rot],[speed],[layer],color1,color2]);
 }
-function ConcentrationC1(objEnemy,duration,speed,radius,color) { 
+function ConcentrationC1(objEnemy,duration,speed,radius,color) {
 	NotifyEventAll(EV_CONCENTRATION,[[9],[objEnemy],[duration],[speed],[radius],color]);
+}
+task ConcentrationBinaryA1(objEnemy,duration,speed,radius,color) {
+	NotifyEventAll(EV_CONCENTRATION,[[10],[objEnemy],[duration],[speed],[radius],color]);
+}
+task ConcentrationBinaryA2(objEnemy,duration,speed,radius,color) {
+	NotifyEventAll(EV_CONCENTRATION,[[11],[objEnemy],[duration],[speed],[radius],color]);
 }
 function SpellBurstA1(x,y,type,color) {
 	if(type=="STAR") { NotifyEventAll(EV_EFFECT,[[1.01],[x],[y],color]); }
