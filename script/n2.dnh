@@ -32,7 +32,7 @@ let GetY = 0;
 
 @Event {
 	alternative(GetEventType)
-	case(EV_REQUEST_LIFE){ SetScriptResult(5000); }
+	case(EV_REQUEST_LIFE){ SetScriptResult(6000); }
 	case(EV_REQUEST_TIMER){	SetScriptResult(40); }
 }
 @Initialize {
@@ -69,52 +69,77 @@ let GetY = 0;
 
 task mainTask {
 	wait(20);
+	Move;
 	Fire1;
 	Fire2;
 }
 task Fire1 {
 	let dir = rand(0,360);
+	let off = rand(-25,25);
 	loop {
-		ascent(i in 0..16) {
-			DiamondShot02(6,0+i*60,0,3,1,5,2,90);
+		off = rand(-25,25);
+		ascent(i in 0..14) {
+			DiamondShot02(6,0+i*70+off,0,3,2,6,1.8,90);
 		}
 		wait(60);
-		dir+=360/16+4;
 	}
 }
 
 task Fire2 {
-
+	wait(120);
+	let off = rand(-25,25);
+	loop {
+		off = rand(-25,25);
+		ascent(i in 0..14) {
+			CreateShot02(0,0+i*50+off,2.0,0,1.5/30,3.5,DIAMOND_LARGE_MAGENTA,10);
+			wait(4);
+		}
+		wait(20);
+		off = rand(-25,25);
+		ascent(i in 0..14) {
+			CreateShot02(GetStgFrameWidth,0+i*50+off,2.0,180,1.5/30,3.5,DIAMOND_LARGE_MAGENTA,10);
+			wait(4);
+		}
+		wait(120);
+	}
 }
 
 task DiamondShot02(num,x,y,r,d,speed,speed2,dir) { //num and d must be a whole number
 	ascent(i in 0..num+1) {
 		let obj = CreateShot01(x+r*i*cos(dir+90),y+r*i*sin(dir+90),speed,dir,DIAMOND_CYAN,i*d);
-		Slow(obj);
+		Slow(i*d,obj);
 	}
 	ascent(i in 0..num+1) {
 		let obj = CreateShot01(x+r*i*cos(dir-90),y+r*i*sin(dir-90),speed,dir,DIAMOND_CYAN,i*d);
-		Slow(obj);
+		Slow(i*d,obj);
 	}
 	wait((num-1)*d);
 	descent(i in 0..num) {
 		let obj = CreateShot01(x+r*i*cos(dir+90),y+r*i*sin(dir+90),speed,dir,DIAMOND_CYAN,((num+1)*d)-i*d);
-		Slow(obj);
+		Slow(((num+1)*d)-i*d,obj);
 	}
 	descent(i in 0..num) {
 		let obj = CreateShot01(x+r*i*cos(dir-90),y+r*i*sin(dir-90),speed,dir,DIAMOND_CYAN,((num+1)*d)-i*d);
-		Slow(obj);
+		Slow(((num+1)*d)-i*d,obj);
 	}
-	task Slow(obj) {
-		wait(30);
+	task Slow(w,obj) {
+		wait(w);
+		wait(10);
 		ObjMove_SetAcceleration(obj,-(speed-speed2)/20);
 		ObjMove_SetMaxSpeed(obj,speed2);
-		wait(45);
+		wait(60);
 		ObjMove_SetAcceleration(obj,(speed-speed2)/20);
 		ObjMove_SetMaxSpeed(obj,speed);
 	}
 }
 
+task Move {
+	wait(180);
+	loop {
+		SetMovePositionRandom(objEnemyMain,40,20,10,4,GetCenterX-110,GetCenterX+110,GetCenterY-150,GetCenterY-70);
+		wait(120);
+	}
+}
 
 task End {
 	while(ObjEnemy_GetInfo(objEnemyMain, INFO_LIFE) > 0) { yield; }

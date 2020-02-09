@@ -1,3 +1,11 @@
+v0.4.0
+-Added improved boss sprite
+-Added new movement animations
+-Implemented teleportation function
+
+v0.3.1
+-Added non2 prototype
+
 v0.3.0
 -Added prototype of spell 1 with modifications from initial idea
 

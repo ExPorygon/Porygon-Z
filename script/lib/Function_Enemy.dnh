@@ -2,6 +2,66 @@
 
 let EffectList_Enemy = [];
 
+function TeleportBoss(objEnemyMain,x,y,frames) {
+	let scaleX = 1;
+	let scaleY = 1;
+	let maxscaleX = 0.8;
+	let maxscaleY = 1.5;
+	let alpha = 255;
+	let alpha2 = 0;
+	let anim_frames = 13;
+	//if(GetX==x && GetY==y) { return; }
+	PlaySoundEffect("teleportout",90);
+	let objOverlay = Overlay;
+	ascent(i in 0..anim_frames) {
+		scaleX = 0.2+maxscaleX*sin(90*(anim_frames-i)/anim_frames);
+		scaleY = 1+maxscaleY*sin(90*i/anim_frames);
+		if(i>(anim_frames-5)) { alpha-=255/5; }
+		alpha2+=255/(anim_frames-3);
+		SetBossAnimationAlpha(alpha);
+		ObjRender_SetAlpha(objOverlay,alpha2*(alpha/255));
+		ObjRender_SetPosition(objOverlay,GetX,GetY,0);
+		ObjRender_SetScaleXYZ(objEnemyMain,scaleX,scaleY,1);
+		ObjRender_SetScaleXYZ(objOverlay,scaleX,scaleY,1);
+		yield;
+	}
+	SetBossAnimationAlpha(0);
+	//Obj_Delete(objOverlay);
+	ObjRender_SetAlpha(objOverlay,0);
+	wait(6);
+	ObjMove_SetPosition(objEnemyMain,-500,-500);
+	wait(frames);
+	PlaySoundEffect("teleportin",90);
+	ObjMove_SetPosition(objEnemyMain,x,y);
+	ascent(i in 0..anim_frames) {
+		scaleX = 0.2+maxscaleX*sin(90*i/anim_frames);
+		scaleY = 1+maxscaleY*sin(90*(anim_frames-i)/anim_frames);
+		if(i<=5) { alpha+=255/5; }
+		alpha2-=255/(anim_frames-3);
+		SetBossAnimationAlpha(alpha);
+		ObjRender_SetAlpha(objOverlay,alpha2*(alpha/255));
+		ObjRender_SetPosition(objOverlay,GetX,GetY,0);
+		ObjRender_SetScaleXYZ(objEnemyMain,scaleX,scaleY,1);
+		ObjRender_SetScaleXYZ(objOverlay,scaleX,scaleY,1);
+		yield;
+	}
+	ObjRender_SetScaleXYZ(objEnemyMain,1,1,1);
+	Obj_Delete(objOverlay);
+
+	function Overlay {
+		let objImage = ObjPrim_Create(OBJ_SPRITE_2D);
+
+		ObjRender_SetBlendType(objImage,BLEND_ALPHA);
+		Obj_SetRenderPriorityI(objImage,41);
+		ObjRender_SetPosition(objImage,GetX,GetY,0);
+
+		AnimatePorygon_White(objImage);
+		//ObjPrim_SetTexture(objImage, MD ~ "IMG/Enemy/Stage 6/LilyBoss_White.png");
+
+		return objImage;
+	}
+}
+
 function GetDiscord {
 	return (GetAreaCommonData("PlayState","Infinite Discord",false) || GetCommonData("Discord",false) || GetCommonData("Simple Discord",false))
 }
@@ -15,7 +75,7 @@ function SetMovePositionRandom(obj,xdist,ydist,weight,maxspeed,left,right,top,bo
 	let destangle = rand(0,360);
 	let destx = ObjMove_GetX(obj)+xdist*RandNumber;
 	let desty = ObjMove_GetY(obj)+ydist*RandNumber;
-	
+
 	loop(200) {
 		if(destx<left || destx>right || desty<top || desty>bottom) {
 			destx = ObjMove_GetX(obj)+xdist*RandNumber;
@@ -219,19 +279,19 @@ function CheckPlayerPower(power) {
 	else { return false; }
 }
 task AnimateFamiliarA1(objFam,color,scale,alpha,dspin,freq) {
-	
+
 	ObjPrim_SetTexture(objFam,MD ~ "IMG/Enemy/Fam_" ~color~ ".png");
 	ObjRender_SetBlendType(objFam,BLEND_ADD_ARGB);
 	ObjSprite2D_SetSourceRect(objFam,0,0,256,256);
 	ObjSprite2D_SetDestCenter(objFam);
 	ObjRender_SetScaleXYZ(objFam,scale,scale,scale);
 	ObjRender_SetColor(objFam,alpha,alpha,alpha);
-	
+
 	EffectList_Enemy = EffectList_Enemy ~ [objFam];
-	
+
 	let spin = 0;
 	let count = 0;
-	
+
 	while(!Obj_IsDeleted(objFam)) {
 		ObjRender_SetAngleZ(objFam,spin);
 		if(count==freq) {
@@ -242,19 +302,19 @@ task AnimateFamiliarA1(objFam,color,scale,alpha,dspin,freq) {
 		spin+=dspin;
 		yield;
 	}
-	
+
 	task PulseEffect(scale2,alpha2,angle) {
 		let objEffect = ObjPrim_Create(OBJ_SPRITE_2D);
 		ObjPrim_SetTexture(objEffect,MD ~ "IMG/Enemy/Fam_" ~color~ ".png");
 		ObjRender_SetBlendType(objEffect,BLEND_ADD_ARGB);
 		ObjSprite2D_SetSourceRect(objEffect,0,0,256,256);
 		ObjSprite2D_SetDestCenter(objEffect);
-		
+
 		let initalpha = alpha2-110;
 		alpha2 = initalpha;
 		let maxscale = 2*scale2;
 		EffectList_Enemy = EffectList_Enemy ~ [objEffect];
-		
+
 		ascent(i in 0..20) {
 			scale2 = maxscale*sin(90*i/20);
 			alpha2 -= initalpha/20;
@@ -269,7 +329,7 @@ task AnimateFamiliarA1(objFam,color,scale,alpha,dspin,freq) {
 	}
 }
 task AnimateFamiliarA2(objFam,color,scale,alpha,dspin,freq) {
-	
+
 	ObjPrim_SetTexture(objFam,MD ~ "IMG/Enemy/Fam_" ~color~ ".png");
 	ObjRender_SetBlendType(objFam,BLEND_ADD_ARGB);
 	ObjSprite2D_SetSourceRect(objFam,0,0,256,256);
@@ -277,15 +337,15 @@ task AnimateFamiliarA2(objFam,color,scale,alpha,dspin,freq) {
 	ObjRender_SetScaleXYZ(objFam,scale,scale,scale);
 	ObjRender_SetColor(objFam,alpha,alpha,alpha);
 	EffectList_Enemy = EffectList_Enemy ~ [objFam];
-	
+
 	let objFam2 = ObjPrim_Create(OBJ_SPRITE_2D);
 	ObjRender_SetPosition(objFam2,ObjRender_GetX(objFam),ObjRender_GetY(objFam),0);
 	AnimateFamiliarA1(objFam2,color,scale,alpha,-dspin,freq);
 	EffectList_Enemy = EffectList_Enemy ~ [objFam2];
-	
+
 	let spin = 0;
 	let count = 0;
-	
+
 	while(!Obj_IsDeleted(objFam)) {
 		ObjRender_SetPosition(objFam2,ObjRender_GetX(objFam),ObjRender_GetY(objFam),0);
 		ObjRender_SetAngleZ(objFam,spin);
@@ -304,12 +364,12 @@ task AnimateFamiliarA2(objFam,color,scale,alpha,dspin,freq) {
 		ObjRender_SetBlendType(objEffect,BLEND_ADD_ARGB);
 		ObjSprite2D_SetSourceRect(objEffect,0,0,256,256);
 		ObjSprite2D_SetDestCenter(objEffect);
-		
+
 		let initalpha = alpha2-110;
 		alpha2 = initalpha;
 		let maxscale = 2*scale2;
 		EffectList_Enemy = EffectList_Enemy ~ [objEffect];
-		
+
 		ascent(i in 0..20) {
 			scale2 = maxscale*sin(90*i/20);
 			alpha2 -= initalpha/20;
@@ -388,7 +448,7 @@ way2: bullets per side
 way_angle: integer only, 1 for normal polygons, more than 1 for polygrams
 */
 
-function PolygonShot(x, y, speed, angle, way, way2, way_angle, graphic, delay){ 
+function PolygonShot(x, y, speed, angle, way, way2, way_angle, graphic, delay){
     let bpos_x = [];
     let bpos_y = [];
     ascent(i in 0..way){
@@ -416,7 +476,7 @@ function PolygonShot(x, y, speed, angle, way, way2, way_angle, graphic, delay){
             CreateShotA1(x, y, vs * speed, va, graphic, delay);
         }
     }
-    
+
     function GetLinePosition(from_pos, to_pos, pos_t){
         return (from_pos + (to_pos - from_pos) * pos_t);
     }
