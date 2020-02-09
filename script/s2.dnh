@@ -1,6 +1,6 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
-#Title["Spell01"]
+#Title["Spell02"]
 #Text[""]
 #Background["./Background.dnh"]
 #System["system/System.dnh"]
@@ -27,14 +27,12 @@ let GetTimer = 0;
 let GetX = 0;
 let GetY = 0;
 
-let gl_speed = 0;
-let gl_active = -1;
-let gl_scale = 0.25;
+let gl_speed = 0.7;
+let gl_active = 0;
+let gl_scale = 0.3;
 let gl_size = 512*gl_scale;
 let gl_wait = 180;
 let gl_startup_max = 15;
-let gl_warn = -1;
-let gl_earlyoff = -1;
 
 @Loading {
 }
@@ -82,20 +80,33 @@ let gl_earlyoff = -1;
 }
 
 task mainTask {
+	let c = 0;
 	wait(20);
 	/* Fire1; */
 	Switch;
-	let type = 0;
-	let c = 0;
-	ascent(i in -2..3) {
-		type = c%2;
-		Block(0+type,GetCenterX-gl_size*2,GetCenterY+gl_size*i,1);
-		Block(1-type,GetCenterX-gl_size*1,GetCenterY+gl_size*i,-1);
-		Block(0+type,GetCenterX,GetCenterY+gl_size*i,1);
-		Block(1-type,GetCenterX+gl_size*1,GetCenterY+gl_size*i,1);
-		Block(0+type,GetCenterX+gl_size*2,GetCenterY+gl_size*i,-1);
-		c++;
-		wait(8);
+	loop {
+		c = 0;
+		Block(0,GetCenterX-gl_size*2,-gl_size/2,1);
+		Block(1,GetCenterX-gl_size*1,GetStgFrameHeight+gl_size/2,-1);
+		Block(0,GetCenterX,-gl_size/2,1);
+		Block(1,GetCenterX+gl_size*1,GetStgFrameHeight+gl_size/2,-1);
+		Block(0,GetCenterX+gl_size*2,-gl_size/2,1);
+		loop {
+			c+=gl_speed;
+			if(c>gl_size) { break; }
+			yield;
+		}
+		c = 0;
+		Block(1,GetCenterX-gl_size*2,-gl_size/2,1);
+		Block(0,GetCenterX-gl_size*1,GetStgFrameHeight+gl_size/2,-1);
+		Block(1,GetCenterX,-gl_size/2,1);
+		Block(0,GetCenterX+gl_size*1,GetStgFrameHeight+gl_size/2,-1);
+		Block(1,GetCenterX+gl_size*2,-gl_size/2,1);
+		loop {
+			c+=gl_speed;
+			if(c>gl_size) { break; }
+			yield;
+		}
 	}
 }
 
@@ -117,23 +128,20 @@ task Fire1 {
 }
 
 task Switch {
-	let c = -1;
+	let c = 0;
 	loop {
 		c++;
-		wait(gl_wait-135);
-		gl_warn = c%2;
-		Warning;
-		wait(135-gl_startup_max);
-		gl_earlyoff = (c+1)%2;
-		wait(gl_startup_max);
 		gl_active = c%2;
+		wait(gl_wait-75);
+		Warning;
+		wait(75);
 		if(gl_wait>120) { gl_wait-=8; }
-		/* if(gl_speed<1.5) { gl_speed+=0.08; } */
+		if(gl_speed<1.5) { gl_speed+=0.08; }
 	}
 }
 
 task Warning {
-	let w = 45;
+	let w = 25;
 	loop(3) {
 		PlaySoundEffect("chime",100);
 		wait(w);
@@ -157,25 +165,13 @@ task Block(type,x,y,dir) {
 	let a_min = 70;
 	let a_max = 200;
 	let a_diff = a_max-a_min;
-	let scaleMod = 2;
-	let alphaMod = 3;
-	let warnStart = false;
 	if(gl_active==type) { alpha = 200; } else { alpha = 70; }
 	ObjRender_SetPosition(obj,x,y,0);
+	ObjRender_SetScaleXYZ(obj,scale,scale,scale);
 
 	Hitbox;
 
 	while(!Obj_IsDeleted(obj)) {
-		if(gl_warn==type && !warnStart) { Overlay; warnStart = true; }
-		if(gl_warn!=type) { warnStart = false; }
-		if(scaleMod>1) {
-			scaleMod-=1/30;
-			alphaMod-=2/30;
-		}
-		else {
-			scaleMod = 1;
-			alphaMod = 1;
-		}
 		if(gl_active==type) {
 			if(alpha<200) { alpha+=a_diff/gl_startup_max; }
 		}
@@ -184,9 +180,8 @@ task Block(type,x,y,dir) {
 		}
 
 		y+=gl_speed*dir;
-		ObjRender_SetScaleXYZ(obj,scale*scaleMod,scale*scaleMod,scale*scaleMod);
 		ObjRender_SetY(obj,y);
-		ObjRender_SetAlpha(obj,alpha*alphaMod);
+		ObjRender_SetAlpha(obj,alpha);
 		yield;
 	}
 
@@ -201,7 +196,7 @@ task Block(type,x,y,dir) {
 		while(!Obj_IsDeleted(obj)) {
 			ObjMove_SetPosition(objhitbox,ObjRender_GetX(obj),ObjRender_GetY(obj)-512/2*scale);
 			if(gl_active==type) { startup++; } else { startup = 0; }
-			if(gl_active==type && startup>=startup_max && gl_earlyoff!=type) {
+			if(gl_active==type && startup>=startup_max+5) {
 				ObjShot_SetIntersectionEnable(objhitbox,true);
 			}
 			else {
@@ -210,36 +205,6 @@ task Block(type,x,y,dir) {
 			yield;
 		}
 		Obj_Delete(objhitbox);
-	}
-
-	task Overlay {
-		let objOverlay = ObjPrim_Create(OBJ_SPRITE_2D);
-
-		ObjRender_SetBlendType(objOverlay, BLEND_ADD_ARGB);
-		Obj_SetRenderPriorityI(objOverlay,29);
-		ObjPrim_SetTexture(objOverlay,MD ~ "img/enemy/"~typeArray[type]~"_block.png");
-		ObjSprite2D_SetSourceRect(objOverlay, 0, 0, 512, 512);
-		ObjSprite2D_SetDestCenter(objOverlay);
-
-		let scaleMod = 1.5;
-		let alphaMod = 0;
-		ObjRender_SetPosition(objOverlay,x,y,0);
-
-		loop(135) {
-			if(scaleMod>1) {
-				scaleMod-=0.5/135;
-				alphaMod+=0.8/135;
-			}
-			else {
-				scaleMod = 1;
-				alphaMod = 0.6;
-			}
-			ObjRender_SetScaleXYZ(objOverlay,scale*scaleMod,scale*scaleMod,scale*scaleMod);
-			ObjRender_SetY(objOverlay,y);
-			ObjRender_SetAlpha(objOverlay,alpha*alphaMod);
-			yield;
-		}
-		Obj_Delete(objOverlay);
 	}
 }
 

@@ -1,1 +1,1 @@
-let stringVersion = "Version 0.4.0";
+let stringVersion = "Version 0.4.1";
