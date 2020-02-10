@@ -29,7 +29,7 @@ let slide = 0;
 
 @Initialize {
 	SetAutoDeleteObject(true);
-	
+
 	StageBG;
 	SpellBG;
 }
@@ -65,7 +65,7 @@ task SpellBG {
 	ObjSprite2D_SetSourceRect(obj2, 0, 0, 256*2, 256*50);
 	ObjSprite2D_SetDestCenter(obj2);
 	ObjRender_SetScaleXYZ(obj2,2,2,2);
-	
+
 	ObjRender_SetPosition(obj1, GetCenterX, GetCenterY, 0);
 	loop {
 		//ObjRender_SetAngleXYZ(obj1, 0, 0, spin);
@@ -88,18 +88,18 @@ task SpellBG {
 	}
 }
 task StageBG {
-	let StageBG1;	
+	let StageBG1;
 	let StageBGSky;
 	let dir = 0;
 	let dir2 = 0;
-	
+
 	SetCameraFocusX(0);
 	SetCameraFocusY(0);
 	SetCameraFocusZ(100);
 	SetCameraRadius(300);
 	SetCameraElevationAngle(272);
 	SetCameraAzimuthAngle(90);
-	
+
 	StageBG1 = ObjPrim_Create(OBJ_SPRITE_3D);
 	ObjRender_SetBlendType(StageBG1, BLEND_ADD_RGB);
 	ObjPrim_SetTexture(StageBG1, MD ~ "img/Background/Circle.png");
@@ -107,7 +107,7 @@ task StageBG {
 	ObjSprite3D_SetDestRect(StageBG1, -360, -360, 360, 360);
 	ObjRender_SetZWrite(StageBG1, true);
 	ObjRender_SetZTest(StageBG1, true);
-	
+
 	StageBGSky = ObjPrim_Create(OBJ_SPRITE_3D);
 	ObjRender_SetBlendType(StageBGSky, BLEND_ALPHA);
 	ObjRender_SetAlpha(StageBGSky, 255);
@@ -116,25 +116,25 @@ task StageBG {
 	ObjSprite3D_SetDestRect(StageBGSky, -256, -256, 256, 256);
 	//ObjRender_SetZWrite(StageBGSky, true);
 	//ObjRender_SetZTest(StageBGSky, true);
-	
+
 	ObjRender_SetPosition(StageBG1, 0, 420, -150);
 	ObjRender_SetScaleXYZ(StageBG1, 0.8, 0.8, 0.8);
 	ObjRender_SetColor(StageBG1, 200, 200, 200);
 	Obj_SetRenderPriority(StageBG1, 0.23);
-	
-	
+
+
 	ObjRender_SetPosition(StageBGSky, 0, 100, 100);
 	ObjRender_SetAngleXYZ(StageBGSky, 90, 90, 0);
 	Obj_SetRenderPriority(StageBGSky, 0.22);
-	
+
 	//SetFogEnable(true);
 	//SetFogParam(1200, 1500, 0, 0, 0);
-	
+
 	//CameraFlight;
 	yield;
 	BinaryRain;
 	while(!ResetStage){
-		
+
 		if(SpellActive) {
 			Obj_SetVisible(StageBG1,false);
 			Obj_SetVisible(StageBGSky,false);
@@ -151,7 +151,7 @@ task StageBG {
 	}
 	Obj_Delete(StageBG1);
 	Obj_Delete(StageBGSky);
-	
+
 	task BinaryRain {
 		let scale = 0;
 		while(!ResetStage) {
@@ -187,7 +187,7 @@ task StageBG {
 task Binary(type,x,y,z) {
 	let obj = ObjPrim_Create(OBJ_SPRITE_3D);
 	let speed = rand(1.4,2.2);
-	
+
 	ObjRender_SetBlendType(obj, BLEND_ADD_RGB);
 	if(type==0) { ObjPrim_SetTexture(obj, MD ~ "img/Background/zero.png"); }
 	if(type==1) { ObjPrim_SetTexture(obj, MD ~ "img/Background/one.png"); }
@@ -195,13 +195,13 @@ task Binary(type,x,y,z) {
 	ObjSprite3D_SetDestRect(obj, -64, -64, 64, 64);
 	// ObjRender_SetZWrite(obj, true);
 	// ObjRender_SetZTest(obj, true);
-	
+
 	Obj_SetRenderPriority(obj, 0.22);
 	ObjRender_SetAngleXYZ(obj,90,0,180);
 	let scale = rand(0.15,0.35);
 	ObjRender_SetScaleXYZ(obj,scale,scale,scale);
-	ObjRender_SetColor(obj,200,200,200);
-	
+	ObjRender_SetColor(obj,170,170,170);
+
 	loop(1200) {
 		if(SpellActive) {
 			Obj_SetVisible(obj,false);

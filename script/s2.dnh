@@ -50,7 +50,7 @@ let gl_startup_max = 15;
 	Obj_SetValue(objEnemyMain,"Boss Name","Porygon-Z");
 	Obj_SetValue(objEnemyMain,"Aura Color",[1,10,2]);
 	Obj_SetValue(objEnemyMain,"Circle Color","Pink");
-	Obj_SetValue(objEnemyMain,"Spell ID",01);
+	Obj_SetValue(objEnemyMain,"Spell ID",02);
 	Obj_SetValue(objScene,"Spell Base",1);
 	Obj_SetValue(objEnemyMain,"Cut Image",[MD ~ "IMG/Enemy/PoryCut.png"]);
 	//SetAutoDeleteObject(true);

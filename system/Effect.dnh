@@ -2483,7 +2483,7 @@ task cutin(SpellID,type,SpellCardName,CutImg) {
 		if(type=="TABLE") {
 			if(num==0) {
 				x = -40;
-				y = GetStgFrameHeight/2;
+				y = GetStgFrameHeight/2+40;
 			}
 			if(num==1) {
 				x = GetStgFrameWidth+40;
@@ -2498,7 +2498,7 @@ task cutin(SpellID,type,SpellCardName,CutImg) {
 		ObjPrim_SetTexture(obj,CutImg[num]);
 		Obj_SetRenderPriorityI(obj,30);
 		ObjSprite2D_SetSourceRect(obj,0,0,GetTextureWidth(CutImg[num]),GetTextureHeight(CutImg[num]));
-		ObjSprite2D_SetDestRect(obj,-GetTextureWidth(CutImg[num])/2,-GetTextureHeight(CutImg[num])/2+250,GetTextureWidth(CutImg[num])/2,GetTextureHeight(CutImg[num])/2+250);
+		ObjSprite2D_SetDestRect(obj,-GetTextureWidth(CutImg[num])/2,-GetTextureHeight(CutImg[num])/2,GetTextureWidth(CutImg[num])/2,GetTextureHeight(CutImg[num])/2);
 
 
 		while(!Obj_IsDeleted(obj)){

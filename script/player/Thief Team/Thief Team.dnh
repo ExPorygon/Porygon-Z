@@ -489,8 +489,8 @@ task Spell1 {
 	ForceUnFocus(480);
 	SetPlayerInvincibilityFrame(390);
 	SetPlayerSpeed(SlowSpeed*1.1,SlowSpeed*1.1);
-	let spl = "";
-	cutin(objManage," \""~spl~"\"",CSD ~ "IMG/NazrinCut.png",0,0,600,600);
+	let spl = "Seeker Sign &quot;Defended Burial&quot;";
+	cutin(objManage,spl,CSD ~ "IMG/NazrinCut.png",0,0,600,600);
 	SpellBurst;
 	PlaySE(effect2);
 	ScreenShake(60,20);
@@ -582,8 +582,8 @@ task Spell2 {
 	ForceFocus(420);
 	SetPlayerInvincibilityFrame(480);
 	SetPlayerSpeed(SlowSpeed*0.4,SlowSpeed*0.4);
-	let spl = "";
-	cutin(objManage," \""~spl~"\"",CSD ~ "IMG/MarisaCut.png",0,0,600,600);
+	let spl = "Magnification &quot;Convergent Spark&quot;";
+	cutin(objManage,spl,CSD ~ "IMG/MarisaCut.png",0,0,600,600);
 	SpellBurst;
 	PlaySE(effect);
 	SpellDiamond(0,255,64,64);

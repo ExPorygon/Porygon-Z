@@ -1,3 +1,8 @@
+v0.5.0
+-Added prototype names for player bombs
+-Dimmed the background numbers
+-Added prototype of spell3
+
 v0.4.2
 -Ported binary concentration effects
 -Updated binary concentration graphics

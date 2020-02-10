@@ -54,13 +54,15 @@ let gl_earlyoff = -1;
 	Obj_SetValue(objEnemyMain,"Circle Color","Pink");
 	Obj_SetValue(objEnemyMain,"Spell ID",01);
 	Obj_SetValue(objScene,"Spell Base",1);
-	Obj_SetValue(objEnemyMain,"Cut Image",[MD ~ "IMG/Enemy/PoryCut.png"]);
+	Obj_SetValue(objEnemyMain,"Cut Image",[MD ~ "img/enemy/PoryCut.png"]);
 	//SetAutoDeleteObject(true);
 	PlayEnemyHitSound(objEnemyMain, 1);
 	Obj_SetValue(objEnemyMain,"Animation","PORYGON");
 
+	SpellDeclare(objEnemyMain,120);
+
 	SetInvincibilityDamageRate(objEnemyMain, 240, 50, 38);
-	ObjMove_SetDestAtWeight(objEnemyMain, GetCenterX, GetCenterY-170, 10, 5);
+	ObjMove_SetDestAtWeight(objEnemyMain, GetCenterX, GetCenterY-140, 10, 5);
 
 	SetCommonData("EndBossBG",true);
 
@@ -82,7 +84,7 @@ let gl_earlyoff = -1;
 }
 
 task mainTask {
-	wait(20);
+	wait(90);
 	/* Fire1; */
 	Switch;
 	let type = 0;
