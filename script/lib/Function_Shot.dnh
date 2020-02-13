@@ -71,7 +71,7 @@ function CreateShot01(xpos,ypos,speed,angle,graphic,delay) {
 		// HSVDelay(obj,speed,0,speed,delay);
 		obj = CreateDelayedShot(xpos,ypos,speed,angle,0,0,graphic,delay);
 	}
-	if(GetCommonData("Discord",false) && ObjRender_GetBlendType(obj)!=BLEND_ALPHA) { 
+	if(GetCommonData("Discord",false) && ObjRender_GetBlendType(obj)!=BLEND_ALPHA) {
 		ObjRender_SetBlendType(obj,BLEND_ALPHA);
 	}
 	return obj;
@@ -86,7 +86,7 @@ function CreateShot02(xpos,ypos,speed,angle,acceleration,maxspeed,graphic,delay)
 		// HSVDelay(obj,speed,acceleration,maxspeed,delay);
 		obj = CreateDelayedShot(xpos,ypos,speed,angle,acceleration,maxspeed,graphic,delay);
 	}
-	if(GetCommonData("Discord",false) && ObjRender_GetBlendType(obj)!=BLEND_ALPHA) { 
+	if(GetCommonData("Discord",false) && ObjRender_GetBlendType(obj)!=BLEND_ALPHA) {
 		ObjRender_SetBlendType(obj,BLEND_ALPHA);
 	}
 	return obj;
@@ -95,7 +95,7 @@ function CreateShot12(xpos,ypos,xspeed,yxpeed,xacceleration,yacceleration,xmaxsp
 	let obj = CreateShotB2(xpos,ypos,xspeed,yxpeed,xacceleration,yacceleration,xmaxspeed,ymaxspeed,graphic,delay);
 	// HSVDelay(obj,delay);
 	let DelayColor = [];
-	if(GetCommonData("Discord",false) && ObjRender_GetBlendType(obj)!=BLEND_ALPHA) { 
+	if(GetCommonData("Discord",false) && ObjRender_GetBlendType(obj)!=BLEND_ALPHA) {
 		ObjRender_SetBlendType(obj,BLEND_ALPHA);
 	}
 	return obj;
@@ -104,7 +104,7 @@ function CreateShotRing01(num,xpos,ypos,speed,angle,graphic,delay) {
 	let BulletArray = [];
 	loop(num) {
 		let obj = CreateShot01(xpos,ypos,speed,angle,graphic,delay);
-		if(GetCommonData("Discord",false) && ObjRender_GetBlendType(obj)!=BLEND_ALPHA) { 
+		if(GetCommonData("Discord",false) && ObjRender_GetBlendType(obj)!=BLEND_ALPHA) {
 			ObjRender_SetBlendType(obj,BLEND_ALPHA);
 		}
 		BulletArray = BulletArray ~ [obj];
@@ -116,7 +116,7 @@ function CreateShotRing02(num,xpos,ypos,speed,angle,acceleration,maxspeed,graphi
 	let BulletArray = [];
 	loop(num) {
 		let obj = CreateShot02(xpos,ypos,speed,angle,acceleration,maxspeed,graphic,delay);
-		if(GetCommonData("Discord",false) && ObjRender_GetBlendType(obj)!=BLEND_ALPHA) { 
+		if(GetCommonData("Discord",false) && ObjRender_GetBlendType(obj)!=BLEND_ALPHA) {
 			ObjRender_SetBlendType(obj,BLEND_ALPHA);
 		}
 		BulletArray = BulletArray ~ [obj];
@@ -130,7 +130,7 @@ function CreateLaser01(xpos,ypos,speed,angle,length,width,graphic,delay) {
 	ObjRender_SetBlendType(obj,BLEND_ADD_ARGB);
 	ObjLaser_SetIntersectionWidth(obj,width*0.7);
 	ObjLaser_SetGrazeInvalidFrame(obj,5);
-	if(GetCommonData("Discord",false) && ObjRender_GetBlendType(obj)!=BLEND_ALPHA) { 
+	if(GetCommonData("Discord",false) && ObjRender_GetBlendType(obj)!=BLEND_ALPHA) {
 		ObjRender_SetBlendType(obj,BLEND_ALPHA);
 	}
 	let DelayColor = [];
@@ -145,7 +145,7 @@ function CreateLaser02(xpos,ypos,speed,angle,acc,maxspeed,length,width,graphic,d
 	ObjRender_SetBlendType(obj,BLEND_ADD_ARGB);
 	ObjLaser_SetIntersectionWidth(obj,width*0.7);
 	ObjLaser_SetGrazeInvalidFrame(obj,5);
-	if(GetCommonData("Discord",false) && ObjRender_GetBlendType(obj)!=BLEND_ALPHA) { 
+	if(GetCommonData("Discord",false) && ObjRender_GetBlendType(obj)!=BLEND_ALPHA) {
 		ObjRender_SetBlendType(obj,BLEND_ALPHA);
 	}
 	let DelayColor = [];
@@ -157,7 +157,7 @@ function CreateLaserRing01(num,xpos,ypos,speed,angle,length,width,graphic,delay)
 	loop(num) {
 		let obj = CreateLaser01(xpos,ypos,speed,angle,length,width,graphic,delay);
 		ObjRender_SetBlendType(obj,BLEND_ADD_ARGB);
-		if(GetCommonData("Discord",false) && ObjRender_GetBlendType(obj)!=BLEND_ALPHA) { 
+		if(GetCommonData("Discord",false) && ObjRender_GetBlendType(obj)!=BLEND_ALPHA) {
 			ObjRender_SetBlendType(obj,BLEND_ALPHA);
 		}
 		LaserArray = LaserArray ~ [obj];
@@ -170,7 +170,8 @@ function CreateStraightLaser01(xpos,ypos,angle,length,width,del,graphic,delay) {
 	ObjRender_SetBlendType(obj,BLEND_ADD_ARGB);
 	ObjLaser_SetGrazeInvalidFrame(obj,5);
 	Obj_SetValue(obj,"__Delete Frame__",del);
-	if(GetCommonData("Discord",false) && ObjRender_GetBlendType(obj)!=BLEND_ALPHA) { 
+	Obj_SetValue(obj,"__DELAY__",delay);
+	if(GetCommonData("Discord",false) && ObjRender_GetBlendType(obj)!=BLEND_ALPHA) {
 		ObjRender_SetBlendType(obj,BLEND_ALPHA);
 	}
 	Obj_SetValue(obj,"Width",width);
@@ -185,7 +186,7 @@ function CreateCurvyLaserA1(xpos,ypos,speed,angle,len,width,trailgraphic,delay) 
 	ObjShot_SetIntersectionEnable(obj,false);
 	LaserTrail;
 	return obj;
-	
+
 	task LaserTrail {
 		let del = len;
 		let speed = 0;
@@ -204,7 +205,7 @@ function CreateCurvyLaserA1(xpos,ypos,speed,angle,len,width,trailgraphic,delay) 
 		let objTrail = CreateStraightLaserA1(ObjMove_GetX(obj)-40*cos(ObjMove_GetAngle(obj)),ObjMove_GetY(obj)-40*sin(ObjMove_GetAngle(obj)),ObjMove_GetAngle(obj),120,initwidth,1200,trailgraphic,0);
 		Obj_SetValue(objTrail,"Laser Base",false);
 		ObjStLaser_SetSource(objTrail,false);
-		
+
 		let initlength = 120;
 		let width = initwidth;
 		let len = initlength;
@@ -227,7 +228,7 @@ function CreateCurvyLaserA2(xpos,ypos,speed,angle,len,width,bulletgraphic,trailg
 	ObjRender_SetBlendType(obj,BLEND_ADD_ARGB);
 	LaserTrail;
 	return obj;
-	
+
 	task LaserTrail {
 		let del = len;
 		let speed = 0;
@@ -246,7 +247,7 @@ function CreateCurvyLaserA2(xpos,ypos,speed,angle,len,width,bulletgraphic,trailg
 		let objTrail = CreateStraightLaserA1(ObjMove_GetX(obj)-40*cos(ObjMove_GetAngle(obj)),ObjMove_GetY(obj)-40*sin(ObjMove_GetAngle(obj)),ObjMove_GetAngle(obj),120,initwidth,1200,trailgraphic,0);
 		Obj_SetValue(objTrail,"Laser Base",false);
 		ObjStLaser_SetSource(objTrail,false);
-		
+
 		let initlength = 120;
 		let width = initwidth;
 		let len = initlength;
@@ -272,7 +273,7 @@ function CreateCurvyLaserB1(xpos,ypos,speed,angle,len,width,trailgraphic,trailra
 	Obj_SetVisible(obj,false);
 	LaserTrail;
 	return obj;
-	
+
 	task LaserTrail {
 		let speed = 0;
 		while(!Obj_IsDeleted(obj)) {
@@ -287,11 +288,11 @@ function CreateCurvyLaserB1(xpos,ypos,speed,angle,len,width,trailgraphic,trailra
 		initlength = trailrate*ObjMove_GetSpeed(obj)*initlength;
 		let len = initlength;
 		let alpha = 0;
-		
+
 		let objTrail = CreateStraightLaserA1(ObjMove_GetX(obj),ObjMove_GetY(obj),ObjMove_GetAngle(obj),initlength,initwidth,1200,trailgraphic,0);
 		Obj_SetValue(objTrail,"Laser Base",false);
 		ObjStLaser_SetSource(objTrail,false);
-		
+
 		loop(del) {
 			if(alpha<200){ alpha+=16; }
 			width-=initwidth/del;
@@ -316,7 +317,7 @@ function CreateCurvyLaserB2(xpos,ypos,speed,angle,len,width,bulletgraphic,trailg
 	ObjRender_SetBlendType(obj,BLEND_ADD_ARGB);
 	LaserTrail;
 	return obj;
-	
+
 	task LaserTrail {
 		let del = len;
 		let speed = 0;
@@ -329,7 +330,7 @@ function CreateCurvyLaserB2(xpos,ypos,speed,angle,len,width,bulletgraphic,trailg
 		let objTrail = CreateStraightLaserA1(ObjMove_GetX(obj)-40*cos(ObjMove_GetAngle(obj)),ObjMove_GetY(obj)-40*sin(ObjMove_GetAngle(obj)),ObjMove_GetAngle(obj),120,initwidth,1200,trailgraphic,0);
 		Obj_SetValue(objTrail,"Laser Base",false);
 		ObjStLaser_SetSource(objTrail,false);
-		
+
 		let initlength = 120;
 		let width = initwidth;
 		let len = initlength;
@@ -355,7 +356,7 @@ function CreateCurvyLaserC1(xpos,ypos,speed,angle,len,width,trailrate,delay) { /
 	// ObjMove_AddPatternA2(obj, delay, speed, angle, accel, av, maxspd);
 	LaserTrail;
 	return obj;
-	
+
 	task LaserTrail {
 		let del = len;
 		let x = 0;
@@ -363,14 +364,14 @@ function CreateCurvyLaserC1(xpos,ypos,speed,angle,len,width,trailrate,delay) { /
 		let speed = 0;
 		let w = 0;
 		let angle2 = angle;
-		
+
 		let objTrail = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
 		ObjPrim_SetTexture(objTrail, MD ~ "Script/test.png");
 		ObjRender_SetBlendType(objTrail, BLEND_ADD_ARGB);
 		Obj_SetRenderPriorityI(objTrail, GetShotRenderPriorityI);
-		
+
 		ClearVertices;
-		
+
 		while(!Obj_IsDeleted(obj)) {
 			x = ObjMove_GetX(obj);
 			y = ObjMove_GetY(obj);
@@ -378,7 +379,7 @@ function CreateCurvyLaserC1(xpos,ypos,speed,angle,len,width,trailrate,delay) { /
 			angle2 = absolute(ObjMove_GetAngle(obj)-angle);
 			angle = ObjMove_GetAngle(obj);
 			w = 1;
-			
+
 			if(absolute(speed)>0) {
 				if(w>=0) {
 					FadeLaser(x,y,speed,angle,angle2,width,del,w);
@@ -390,13 +391,13 @@ function CreateCurvyLaserC1(xpos,ypos,speed,angle,len,width,trailrate,delay) { /
 		}
 		task FadeLaser(x,y,speed,angle,angle2,initwidth,del,w) {
 			let width = initwidth;
-			
+
 			loop(del) {
 				ObjRender_SetPosition(objTrail, x, y, 0);
 				ObjRender_SetAngleZ(objTrail, angle+90);
-				
+
 				ObjRender_SetScaleXYZ(objTrail, initwidth/7.5, (speed*w)/4, 1);
-				
+
 				ObjSpriteList2D_SetSourceRect(objTrail, 16, 0, 31, 15);
 				ObjSpriteList2D_SetDestCenter(objTrail);
 				ObjSpriteList2D_AddVertex(objTrail);
@@ -407,9 +408,9 @@ function CreateCurvyLaserC1(xpos,ypos,speed,angle,len,width,trailrate,delay) { /
 				ObjRender_SetAngleZ(objTrail, angle+90);
 				ObjSpriteList2D_SetSourceRect(objTrail, 16, 0, 31, 15);
 				ObjSpriteList2D_SetDestCenter(objTrail);
-				
+
 				ObjRender_SetScaleXYZ(objTrail, width/7.5, (speed*w)/4, 1);
-				
+
 				ObjSpriteList2D_AddVertex(objTrail);
 				width-=initwidth/20;
 				yield;
@@ -454,13 +455,13 @@ task EffectSlashRainbow(type,x,y,angle,length) {
 task EffectObject(type,x,y,speed,angle,color) {
 	if(!GetAreaCommonData("Options","Particle",true)) { return; }
 	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
-	
+
 	ObjPrim_SetTexture(obj, MD ~ "System/IMG/Effect/" ~ type ~ ".png");
 	ObjSprite2D_SetSourceRect(obj,0,0,256,256);
 	ObjSprite2D_SetDestCenter(obj);
 	ObjRender_SetBlendType(obj, BLEND_ADD_ARGB);
 	Obj_SetRenderPriorityI(obj, 50);
-	
+
 	let alpha = randEff(300,500);
 	let spinA = randEff(0,180);
 	let spinB = randEff(0,180);
@@ -470,7 +471,7 @@ task EffectObject(type,x,y,speed,angle,color) {
 	let dir = angle+randEff(-50,50);
 	let scale = randEff(0.15,0.25);
 	let initspeed = speed;
-	
+
 	loop(90) {
 		ObjRender_SetPosition(obj,x,y,0);
 		ObjRender_SetColor(obj,min(RED*(alpha/255),200), min(GREEN*(alpha/255),200), min(BLUE*(alpha/255),200));
@@ -492,16 +493,16 @@ function PagodaLaser(x,y,angle,maxwidth,color,graphic,delay,del) {
 	Obj_SetValue(objHitbox,"Laser Base",false);
 	PagodaBeam;
 	return objHitbox;
-	
+
 	task PagodaBeam {
 		let objLaser1 = ObjPrim_Create(OBJ_SPRITE_2D);
 		let objLaser2 = ObjPrim_Create(OBJ_SPRITE_2D);
 		let objDetail = ObjPrim_Create(OBJ_SPRITE_2D);
 		let objFire = ObjPrim_Create(OBJ_SPRITE_2D);
 		let objFire2 = ObjPrim_Create(OBJ_SPRITE_2D);
-		
+
 		EffectList_Shot = EffectList_Shot ~ [objLaser1,objLaser2,objDetail,objFire,objFire2];
-		
+
 		let width = 2;
 		let length = 0;
 		let fire_scale = 1.2;
@@ -511,38 +512,38 @@ function PagodaLaser(x,y,angle,maxwidth,color,graphic,delay,del) {
 		let renderWidth = width/40;
 		let color_width = 1.1;
 		let scroll = 17;
-		
+
 		Obj_SetVisible(objHitbox,false);
 		//Obj_SetVisible(objLaser1,false);
 		//Obj_SetVisible(objLaser2,false);
 		//Obj_SetVisible(objDetail,false);
-		
+
 		ObjRender_SetBlendType(objLaser1, BLEND_ALPHA);
 		Obj_SetRenderPriorityI(objLaser1, 48);
 		ObjPrim_SetTexture(objLaser1, GetModuleDirectory ~ "System/IMG/Effect/PagodaLaser.png");
 		ObjSprite2D_SetSourceRect(objLaser1, 0, 32, 256, 64);
 		ObjSprite2D_SetDestRect(objLaser1, 0.5, -16, 256.5, 16);
 		ObjRender_SetColor(objLaser1,color[0],color[1],color[2]);
-		
+
 		ObjRender_SetBlendType(objLaser2, BLEND_ALPHA);
 		Obj_SetRenderPriorityI(objLaser2, 48);
 		ObjPrim_SetTexture(objLaser2, GetModuleDirectory ~ "System/IMG/Effect/PagodaLaser.png");
 		ObjSprite2D_SetSourceRect(objLaser2, 0, 32, 256, 64);
 		ObjSprite2D_SetDestRect(objLaser2, 0.5, -16, 256.5, 16);
 		ObjRender_SetColor(objLaser2,color[0],color[1],color[2]);
-		
+
 		ObjRender_SetBlendType(objDetail, BLEND_ADD_ARGB);
 		Obj_SetRenderPriorityI(objDetail, 49);
 		ObjPrim_SetTexture(objDetail, GetModuleDirectory ~ "System/IMG/Effect/PagodaLaser.png");
 		ObjSprite2D_SetSourceRect(objDetail, 0, 0, 256, 32);
 		ObjSprite2D_SetDestRect(objDetail, 0.5, -16, 256.5, 16);
-		
+
 		ObjRender_SetBlendType(objFire, BLEND_ALPHA);
 		Obj_SetRenderPriorityI(objFire, 47);
 		ObjPrim_SetTexture(objFire, GetModuleDirectory ~ "System/IMG/Effect/PagodaLaser.png");
 		ObjRender_SetColor(objFire,color[0],color[1],color[2]);
 		ObjRender_SetScaleXYZ(objFire,fire_scale,fire_scale,1);
-		
+
 		ObjRender_SetBlendType(objFire2, BLEND_ADD_ARGB);
 		Obj_SetRenderPriorityI(objFire2, 50);
 		ObjPrim_SetTexture(objFire2, GetModuleDirectory ~ "System/IMG/Effect/PagodaLaser.png");
@@ -558,33 +559,33 @@ function PagodaLaser(x,y,angle,maxwidth,color,graphic,delay,del) {
 			ObjRender_SetAngleZ(objLaser1,ObjStLaser_GetAngle(objHitbox));
 			//ObjRender_SetColor(objLaser1,color[0]-40,color[1]-40,color[2]-40);
 			//ObjSprite2D_SetSourceRect(objLaser1, 0-detail_count, 32, 256-detail_count, 64);
-			
+
 			ObjRender_SetScaleXYZ(objLaser2,2.5,renderWidth*color_width,0);
 			ObjRender_SetPosition(objLaser2,ObjMove_GetX(objHitbox),ObjRender_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objLaser2,ObjStLaser_GetAngle(objHitbox));
 			//ObjRender_SetColor(objLaser2,color[0]-40,color[1]-40,color[2]-40);
 			//ObjSprite2D_SetSourceRect(objLaser2, 0-detail_count, 32, 256-detail_count, 64);
-			
-			
+
+
 			ObjRender_SetScaleXYZ(objDetail,1,renderWidth,0);
 			ObjRender_SetPosition(objDetail,ObjMove_GetX(objHitbox),ObjRender_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objDetail,ObjStLaser_GetAngle(objHitbox));
 			ObjSprite2D_SetSourceRect(objDetail, 0-detail_count, 0, 512-detail_count, 32);
 			ObjSprite2D_SetDestRect(objDetail, 0.5, -16, 513, 16);
-			
-			
+
+
 			ObjRender_SetPosition(objFire,ObjMove_GetX(objHitbox),ObjRender_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objFire,ObjStLaser_GetAngle(objHitbox));
 			if(fire_count%2==0) { ObjSprite2D_SetSourceRect(objFire, 1, 128, 123, 256); }
 			else if(fire_count%2==1) { ObjSprite2D_SetSourceRect(objFire, 128, 128, 255, 256); }
 			ObjSprite2D_SetDestRect(objFire, 0.5, -63, 128.5, 59);
-			
+
 			ObjRender_SetPosition(objFire2,ObjMove_GetX(objHitbox),ObjRender_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objFire2,ObjStLaser_GetAngle(objHitbox));
 			if(fire_count%2==0) { ObjSprite2D_SetSourceRect(objFire2, 1, 128, 123, 256); }
 			else if(fire_count%2==1) { ObjSprite2D_SetSourceRect(objFire2, 129, 128, 255, 256); }
 			ObjSprite2D_SetDestRect(objFire2, 0.5, -63, 128.5, 59);
-			
+
 			if(Obj_IsDeleted(objHitbox)) {
 				Obj_Delete(objLaser1);
 				Obj_Delete(objLaser2);
@@ -592,7 +593,7 @@ function PagodaLaser(x,y,angle,maxwidth,color,graphic,delay,del) {
 				Obj_Delete(objFire);
 				Obj_Delete(objFire2);
 			}
-			
+
 			fire_count+=0.5;
 			detail_count+=scroll;
 			yield;
@@ -606,32 +607,32 @@ function PagodaLaser(x,y,angle,maxwidth,color,graphic,delay,del) {
 			ObjRender_SetPosition(objLaser1,ObjMove_GetX(objHitbox),ObjMove_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objLaser1,ObjStLaser_GetAngle(objHitbox));
 			//ObjSprite2D_SetSourceRect(objLaser2, 0-detail_count, 0, 256-detail_count, 32);
-			
+
 			ObjRender_SetScaleXYZ(objLaser2,2.5*(length/700),renderWidth*color_width,0);
 			ObjRender_SetPosition(objLaser2,ObjMove_GetX(objHitbox),ObjMove_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objLaser2,ObjStLaser_GetAngle(objHitbox));
 			//ObjSprite2D_SetSourceRect(objLaser2, 0-detail_count, 0, 256-detail_count, 32);
-			
-			
+
+
 			ObjRender_SetScaleXYZ(objDetail,1,renderWidth,0);
 			ObjRender_SetPosition(objDetail,ObjMove_GetX(objHitbox),ObjMove_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objDetail,ObjStLaser_GetAngle(objHitbox));
 			ObjSprite2D_SetSourceRect(objDetail, 0-detail_count, 0, 512-detail_count, 32);
 			ObjSprite2D_SetDestRect(objDetail, 0.5, -16, 513, 16);
-			
-			
+
+
 			ObjRender_SetPosition(objFire,ObjMove_GetX(objHitbox),ObjMove_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objFire,ObjStLaser_GetAngle(objHitbox));
 			if(fire_count%2==0) { ObjSprite2D_SetSourceRect(objFire, 1, 128, 123, 256); }
 			else if(fire_count%2==1) { ObjSprite2D_SetSourceRect(objFire, 128, 128, 255, 256); }
 			ObjSprite2D_SetDestRect(objFire, 0.5, -63, 128.5, 59);
-			
+
 			ObjRender_SetPosition(objFire2,ObjMove_GetX(objHitbox),ObjRender_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objFire2,ObjStLaser_GetAngle(objHitbox));
 			if(fire_count%2==0) { ObjSprite2D_SetSourceRect(objFire2, 1, 128, 123, 256); }
 			else if(fire_count%2==1) { ObjSprite2D_SetSourceRect(objFire2, 129, 128, 255, 256); }
 			ObjSprite2D_SetDestRect(objFire2, 0.5, -63, 128.5, 59);
-			
+
 			SetShotIntersectionLine(ObjMove_GetX(objHitbox),ObjMove_GetY(objHitbox),ObjMove_GetX(objHitbox)+100*cos(ObjStLaser_GetAngle(objHitbox)),ObjMove_GetY(objHitbox)+100*sin(ObjStLaser_GetAngle(objHitbox)),maxwidth*(1/3));
 			if(Obj_IsDeleted(objHitbox)) {
 				Obj_Delete(objLaser1);
@@ -640,14 +641,14 @@ function PagodaLaser(x,y,angle,maxwidth,color,graphic,delay,del) {
 				Obj_Delete(objFire);
 				Obj_Delete(objFire2);
 			}
-			
+
 			length+=700/20;
 			width+=(maxwidth-2)/20;
 			fire_count+=0.5;
 			detail_count+=scroll;
 			yield;
 		}
-		
+
 		loop(del) {
 			if(Obj_IsDeleted(objHitbox)) { break; }
 			renderWidth = width/40;
@@ -656,32 +657,32 @@ function PagodaLaser(x,y,angle,maxwidth,color,graphic,delay,del) {
 			ObjRender_SetPosition(objLaser1,ObjMove_GetX(objHitbox),ObjMove_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objLaser1,ObjStLaser_GetAngle(objHitbox));
 			//ObjSprite2D_SetSourceRect(objLaser1, 0-detail_count, 0, 256-detail_count, 32);
-			
+
 			ObjRender_SetScaleXYZ(objLaser2,2.5*(length/700),renderWidth*color_width,0);
 			ObjRender_SetPosition(objLaser2,ObjMove_GetX(objHitbox),ObjMove_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objLaser2,ObjStLaser_GetAngle(objHitbox));
 			//ObjSprite2D_SetSourceRect(objLaser2, 0-detail_count, 0, 256-detail_count, 32);
-			
-			
+
+
 			ObjRender_SetScaleXYZ(objDetail,1,renderWidth,0);
 			ObjRender_SetPosition(objDetail,ObjMove_GetX(objHitbox),ObjMove_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objDetail,ObjStLaser_GetAngle(objHitbox));
 			ObjSprite2D_SetSourceRect(objDetail, 0-detail_count, 0, 512-detail_count, 32);
 			ObjSprite2D_SetDestRect(objDetail, 0.5, -16, 513, 16);
-			
-			
+
+
 			ObjRender_SetPosition(objFire,ObjMove_GetX(objHitbox),ObjMove_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objFire,ObjStLaser_GetAngle(objHitbox));
 			if(fire_count%2==0) { ObjSprite2D_SetSourceRect(objFire, 1, 128, 123, 256); }
 			else if(fire_count%2==1) { ObjSprite2D_SetSourceRect(objFire, 128, 128, 255, 256); }
 			ObjSprite2D_SetDestRect(objFire, 0.5, -63, 128.5, 59);
-			
+
 			ObjRender_SetPosition(objFire2,ObjMove_GetX(objHitbox),ObjRender_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objFire2,ObjStLaser_GetAngle(objHitbox));
 			if(fire_count%2==0) { ObjSprite2D_SetSourceRect(objFire2, 1, 128, 123, 256); }
 			else if(fire_count%2==1) { ObjSprite2D_SetSourceRect(objFire2, 129, 128, 255, 256); }
 			ObjSprite2D_SetDestRect(objFire2, 0.5, -63, 128.5, 59);
-			
+
 			SetShotIntersectionLine(ObjMove_GetX(objHitbox),ObjMove_GetY(objHitbox),ObjMove_GetX(objHitbox)+100*cos(ObjStLaser_GetAngle(objHitbox)),ObjMove_GetY(objHitbox)+100*sin(ObjStLaser_GetAngle(objHitbox)),maxwidth*(1/3));
 			if(Obj_IsDeleted(objHitbox)) {
 				Obj_Delete(objLaser1);
@@ -690,51 +691,51 @@ function PagodaLaser(x,y,angle,maxwidth,color,graphic,delay,del) {
 				Obj_Delete(objFire);
 				Obj_Delete(objFire2);
 			}
-			
+
 			fire_count+=0.5;
 			detail_count+=scroll;
 			yield;
 		}
-		
+
 		loop(30) {
 			if(Obj_IsDeleted(objHitbox)) { break; }
 			renderWidth = width/40;
 
 			Obj_SetValue(objHitbox,"Effect",false);
 			ObjShot_SetIntersectionEnable(objHitbox,false);
-		
+
 			ObjRender_SetScaleXYZ(objLaser1,2.5,renderWidth*color_width,1);
 			ObjRender_SetPosition(objLaser1,ObjMove_GetX(objHitbox),ObjMove_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objLaser1,ObjStLaser_GetAngle(objHitbox));
 			//ObjSprite2D_SetSourceRect(objLaser1, 0-detail_count, 0, 256-detail_count, 32);
-			
+
 			ObjRender_SetScaleXYZ(objLaser2,2.5,renderWidth*color_width,0);
 			ObjRender_SetPosition(objLaser2,ObjMove_GetX(objHitbox),ObjMove_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objLaser2,ObjStLaser_GetAngle(objHitbox));
 			//ObjSprite2D_SetSourceRect(objLaser2, 0-detail_count, 0, 256-detail_count, 32);
-			
-			
+
+
 			ObjRender_SetScaleXYZ(objDetail,1,renderWidth,0);
 			ObjRender_SetPosition(objDetail,ObjMove_GetX(objHitbox),ObjMove_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objDetail,ObjStLaser_GetAngle(objHitbox));
 			ObjSprite2D_SetSourceRect(objDetail, 0-detail_count, 0, 512-detail_count, 32);
 			ObjSprite2D_SetDestRect(objDetail, 0.5, -16, 513, 16);
-			
-			
+
+
 			ObjRender_SetScaleY(objFire,fire_scale*(renderWidth));
 			ObjRender_SetPosition(objFire,ObjMove_GetX(objHitbox),ObjMove_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objFire,ObjStLaser_GetAngle(objHitbox));
 			if(fire_count%2==0) { ObjSprite2D_SetSourceRect(objFire, 1, 128, 123, 256); }
 			else if(fire_count%2==1) { ObjSprite2D_SetSourceRect(objFire, 128, 128, 255, 256); }
 			ObjSprite2D_SetDestRect(objFire, 0.5, -63, 128.5, 59);
-			
+
 			ObjRender_SetScaleY(objFire2,fire_scale2*(renderWidth));
 			ObjRender_SetPosition(objFire2,ObjMove_GetX(objHitbox),ObjRender_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objFire2,ObjStLaser_GetAngle(objHitbox));
 			if(fire_count%2==0) { ObjSprite2D_SetSourceRect(objFire2, 1, 128, 123, 256); }
 			else if(fire_count%2==1) { ObjSprite2D_SetSourceRect(objFire2, 129, 128, 255, 256); }
 			ObjSprite2D_SetDestRect(objFire2, 0.5, -63, 128.5, 59);
-			
+
 			if(Obj_IsDeleted(objHitbox)) {
 				Obj_Delete(objLaser1);
 				Obj_Delete(objLaser2);
@@ -742,7 +743,7 @@ function PagodaLaser(x,y,angle,maxwidth,color,graphic,delay,del) {
 				Obj_Delete(objFire);
 				Obj_Delete(objFire2);
 			}
-			
+
 			width-=(maxwidth+2)/30;
 			fire_count+=0.5;
 			detail_count+=scroll;
@@ -761,16 +762,16 @@ function PagodaLaser_Inv(x,y,angle,maxwidth,color,graphic,delay,del) {
 	Obj_SetValue(objHitbox,"Laser Base",false);
 	PagodaBeam;
 	return objHitbox;
-	
+
 	task PagodaBeam {
 		let objLaser1 = ObjPrim_Create(OBJ_SPRITE_2D);
 		let objLaser2 = ObjPrim_Create(OBJ_SPRITE_2D);
 		let objDetail = ObjPrim_Create(OBJ_SPRITE_2D);
 		let objFire = ObjPrim_Create(OBJ_SPRITE_2D);
 		let objFire2 = ObjPrim_Create(OBJ_SPRITE_2D);
-		
+
 		EffectList_Shot = EffectList_Shot ~ [objLaser1,objLaser2,objDetail,objFire,objFire2];
-		
+
 		let width = 2;
 		let length = 0;
 		let fire_scale = 1.2;
@@ -780,38 +781,38 @@ function PagodaLaser_Inv(x,y,angle,maxwidth,color,graphic,delay,del) {
 		let renderWidth = width/40;
 		let color_width = 1.1;
 		let scroll = 17;
-		
+
 		Obj_SetVisible(objHitbox,false);
 		//Obj_SetVisible(objLaser1,false);
 		//Obj_SetVisible(objLaser2,false);
 		//Obj_SetVisible(objDetail,false);
-		
+
 		ObjRender_SetBlendType(objLaser1, BLEND_ALPHA);
 		Obj_SetRenderPriorityI(objLaser1, 48);
 		ObjPrim_SetTexture(objLaser1, GetModuleDirectory ~ "System/IMG/Effect/PagodaLaser.png");
 		ObjSprite2D_SetSourceRect(objLaser1, 0, 32, 256, 64);
 		ObjSprite2D_SetDestRect(objLaser1, 0.5, -16, 256.5, 16);
 		ObjRender_SetColor(objLaser1,color[0],color[1],color[2]);
-		
+
 		ObjRender_SetBlendType(objLaser2, BLEND_ALPHA);
 		Obj_SetRenderPriorityI(objLaser2, 48);
 		ObjPrim_SetTexture(objLaser2, GetModuleDirectory ~ "System/IMG/Effect/PagodaLaser.png");
 		ObjSprite2D_SetSourceRect(objLaser2, 0, 32, 256, 64);
 		ObjSprite2D_SetDestRect(objLaser2, 0.5, -16, 256.5, 16);
 		ObjRender_SetColor(objLaser2,color[0],color[1],color[2]);
-		
+
 		ObjRender_SetBlendType(objDetail, BLEND_SUBTRACT);
 		Obj_SetRenderPriorityI(objDetail, 49);
 		ObjPrim_SetTexture(objDetail, GetModuleDirectory ~ "System/IMG/Effect/PagodaLaser.png");
 		ObjSprite2D_SetSourceRect(objDetail, 0, 0, 256, 32);
 		ObjSprite2D_SetDestRect(objDetail, 0.5, -16, 256.5, 16);
-		
+
 		ObjRender_SetBlendType(objFire, BLEND_ALPHA);
 		Obj_SetRenderPriorityI(objFire, 47);
 		ObjPrim_SetTexture(objFire, GetModuleDirectory ~ "System/IMG/Effect/PagodaLaser.png");
 		ObjRender_SetColor(objFire,color[0],color[1],color[2]);
 		ObjRender_SetScaleXYZ(objFire,fire_scale,fire_scale,1);
-		
+
 		ObjRender_SetBlendType(objFire2, BLEND_SUBTRACT);
 		Obj_SetRenderPriorityI(objFire2, 50);
 		ObjPrim_SetTexture(objFire2, GetModuleDirectory ~ "System/IMG/Effect/PagodaLaser.png");
@@ -827,33 +828,33 @@ function PagodaLaser_Inv(x,y,angle,maxwidth,color,graphic,delay,del) {
 			ObjRender_SetAngleZ(objLaser1,ObjStLaser_GetAngle(objHitbox));
 			//ObjRender_SetColor(objLaser1,color[0]-40,color[1]-40,color[2]-40);
 			//ObjSprite2D_SetSourceRect(objLaser1, 0-detail_count, 32, 256-detail_count, 64);
-			
+
 			ObjRender_SetScaleXYZ(objLaser2,2.5,renderWidth*color_width,0);
 			ObjRender_SetPosition(objLaser2,ObjMove_GetX(objHitbox),ObjRender_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objLaser2,ObjStLaser_GetAngle(objHitbox));
 			//ObjRender_SetColor(objLaser2,color[0]-40,color[1]-40,color[2]-40);
 			//ObjSprite2D_SetSourceRect(objLaser2, 0-detail_count, 32, 256-detail_count, 64);
-			
-			
+
+
 			ObjRender_SetScaleXYZ(objDetail,1,renderWidth,0);
 			ObjRender_SetPosition(objDetail,ObjMove_GetX(objHitbox),ObjRender_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objDetail,ObjStLaser_GetAngle(objHitbox));
 			ObjSprite2D_SetSourceRect(objDetail, 0-detail_count, 0, 512-detail_count, 32);
 			ObjSprite2D_SetDestRect(objDetail, 0.5, -16, 513, 16);
-			
-			
+
+
 			ObjRender_SetPosition(objFire,ObjMove_GetX(objHitbox),ObjRender_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objFire,ObjStLaser_GetAngle(objHitbox));
 			if(fire_count%2==0) { ObjSprite2D_SetSourceRect(objFire, 1, 128, 123, 256); }
 			else if(fire_count%2==1) { ObjSprite2D_SetSourceRect(objFire, 128, 128, 255, 256); }
 			ObjSprite2D_SetDestRect(objFire, 0.5, -63, 128.5, 59);
-			
+
 			ObjRender_SetPosition(objFire2,ObjMove_GetX(objHitbox),ObjRender_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objFire2,ObjStLaser_GetAngle(objHitbox));
 			if(fire_count%2==0) { ObjSprite2D_SetSourceRect(objFire2, 1, 128, 123, 256); }
 			else if(fire_count%2==1) { ObjSprite2D_SetSourceRect(objFire2, 129, 128, 255, 256); }
 			ObjSprite2D_SetDestRect(objFire2, 0.5, -63, 128.5, 59);
-			
+
 			if(Obj_IsDeleted(objHitbox)) {
 				Obj_Delete(objLaser1);
 				Obj_Delete(objLaser2);
@@ -861,7 +862,7 @@ function PagodaLaser_Inv(x,y,angle,maxwidth,color,graphic,delay,del) {
 				Obj_Delete(objFire);
 				Obj_Delete(objFire2);
 			}
-			
+
 			fire_count+=0.5;
 			detail_count+=scroll;
 			yield;
@@ -875,32 +876,32 @@ function PagodaLaser_Inv(x,y,angle,maxwidth,color,graphic,delay,del) {
 			ObjRender_SetPosition(objLaser1,ObjMove_GetX(objHitbox),ObjMove_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objLaser1,ObjStLaser_GetAngle(objHitbox));
 			//ObjSprite2D_SetSourceRect(objLaser2, 0-detail_count, 0, 256-detail_count, 32);
-			
+
 			ObjRender_SetScaleXYZ(objLaser2,2.5*(length/700),renderWidth*color_width,0);
 			ObjRender_SetPosition(objLaser2,ObjMove_GetX(objHitbox),ObjMove_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objLaser2,ObjStLaser_GetAngle(objHitbox));
 			//ObjSprite2D_SetSourceRect(objLaser2, 0-detail_count, 0, 256-detail_count, 32);
-			
-			
+
+
 			ObjRender_SetScaleXYZ(objDetail,1,renderWidth,0);
 			ObjRender_SetPosition(objDetail,ObjMove_GetX(objHitbox),ObjMove_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objDetail,ObjStLaser_GetAngle(objHitbox));
 			ObjSprite2D_SetSourceRect(objDetail, 0-detail_count, 0, 512-detail_count, 32);
 			ObjSprite2D_SetDestRect(objDetail, 0.5, -16, 513, 16);
-			
-			
+
+
 			ObjRender_SetPosition(objFire,ObjMove_GetX(objHitbox),ObjMove_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objFire,ObjStLaser_GetAngle(objHitbox));
 			if(fire_count%2==0) { ObjSprite2D_SetSourceRect(objFire, 1, 128, 123, 256); }
 			else if(fire_count%2==1) { ObjSprite2D_SetSourceRect(objFire, 128, 128, 255, 256); }
 			ObjSprite2D_SetDestRect(objFire, 0.5, -63, 128.5, 59);
-			
+
 			ObjRender_SetPosition(objFire2,ObjMove_GetX(objHitbox),ObjRender_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objFire2,ObjStLaser_GetAngle(objHitbox));
 			if(fire_count%2==0) { ObjSprite2D_SetSourceRect(objFire2, 1, 128, 123, 256); }
 			else if(fire_count%2==1) { ObjSprite2D_SetSourceRect(objFire2, 129, 128, 255, 256); }
 			ObjSprite2D_SetDestRect(objFire2, 0.5, -63, 128.5, 59);
-			
+
 			SetShotIntersectionLine(ObjMove_GetX(objHitbox),ObjMove_GetY(objHitbox),ObjMove_GetX(objHitbox)+100*cos(ObjStLaser_GetAngle(objHitbox)),ObjMove_GetY(objHitbox)+100*sin(ObjStLaser_GetAngle(objHitbox)),maxwidth*(1/3));
 			if(Obj_IsDeleted(objHitbox)) {
 				Obj_Delete(objLaser1);
@@ -909,14 +910,14 @@ function PagodaLaser_Inv(x,y,angle,maxwidth,color,graphic,delay,del) {
 				Obj_Delete(objFire);
 				Obj_Delete(objFire2);
 			}
-			
+
 			length+=700/20;
 			width+=(maxwidth-2)/20;
 			fire_count+=0.5;
 			detail_count+=scroll;
 			yield;
 		}
-		
+
 		loop(del) {
 			if(Obj_IsDeleted(objHitbox)) { break; }
 			renderWidth = width/40;
@@ -925,32 +926,32 @@ function PagodaLaser_Inv(x,y,angle,maxwidth,color,graphic,delay,del) {
 			ObjRender_SetPosition(objLaser1,ObjMove_GetX(objHitbox),ObjMove_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objLaser1,ObjStLaser_GetAngle(objHitbox));
 			//ObjSprite2D_SetSourceRect(objLaser1, 0-detail_count, 0, 256-detail_count, 32);
-			
+
 			ObjRender_SetScaleXYZ(objLaser2,2.5*(length/700),renderWidth*color_width,0);
 			ObjRender_SetPosition(objLaser2,ObjMove_GetX(objHitbox),ObjMove_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objLaser2,ObjStLaser_GetAngle(objHitbox));
 			//ObjSprite2D_SetSourceRect(objLaser2, 0-detail_count, 0, 256-detail_count, 32);
-			
-			
+
+
 			ObjRender_SetScaleXYZ(objDetail,1,renderWidth,0);
 			ObjRender_SetPosition(objDetail,ObjMove_GetX(objHitbox),ObjMove_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objDetail,ObjStLaser_GetAngle(objHitbox));
 			ObjSprite2D_SetSourceRect(objDetail, 0-detail_count, 0, 512-detail_count, 32);
 			ObjSprite2D_SetDestRect(objDetail, 0.5, -16, 513, 16);
-			
-			
+
+
 			ObjRender_SetPosition(objFire,ObjMove_GetX(objHitbox),ObjMove_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objFire,ObjStLaser_GetAngle(objHitbox));
 			if(fire_count%2==0) { ObjSprite2D_SetSourceRect(objFire, 1, 128, 123, 256); }
 			else if(fire_count%2==1) { ObjSprite2D_SetSourceRect(objFire, 128, 128, 255, 256); }
 			ObjSprite2D_SetDestRect(objFire, 0.5, -63, 128.5, 59);
-			
+
 			ObjRender_SetPosition(objFire2,ObjMove_GetX(objHitbox),ObjRender_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objFire2,ObjStLaser_GetAngle(objHitbox));
 			if(fire_count%2==0) { ObjSprite2D_SetSourceRect(objFire2, 1, 128, 123, 256); }
 			else if(fire_count%2==1) { ObjSprite2D_SetSourceRect(objFire2, 129, 128, 255, 256); }
 			ObjSprite2D_SetDestRect(objFire2, 0.5, -63, 128.5, 59);
-			
+
 			SetShotIntersectionLine(ObjMove_GetX(objHitbox),ObjMove_GetY(objHitbox),ObjMove_GetX(objHitbox)+100*cos(ObjStLaser_GetAngle(objHitbox)),ObjMove_GetY(objHitbox)+100*sin(ObjStLaser_GetAngle(objHitbox)),maxwidth*(1/3));
 			if(Obj_IsDeleted(objHitbox)) {
 				Obj_Delete(objLaser1);
@@ -959,51 +960,51 @@ function PagodaLaser_Inv(x,y,angle,maxwidth,color,graphic,delay,del) {
 				Obj_Delete(objFire);
 				Obj_Delete(objFire2);
 			}
-			
+
 			fire_count+=0.5;
 			detail_count+=scroll;
 			yield;
 		}
-		
+
 		loop(30) {
 			if(Obj_IsDeleted(objHitbox)) { break; }
 			renderWidth = width/40;
 
 			Obj_SetValue(objHitbox,"Effect",false);
 			ObjShot_SetIntersectionEnable(objHitbox,false);
-		
+
 			ObjRender_SetScaleXYZ(objLaser1,2.5,renderWidth*color_width,1);
 			ObjRender_SetPosition(objLaser1,ObjMove_GetX(objHitbox),ObjMove_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objLaser1,ObjStLaser_GetAngle(objHitbox));
 			//ObjSprite2D_SetSourceRect(objLaser1, 0-detail_count, 0, 256-detail_count, 32);
-			
+
 			ObjRender_SetScaleXYZ(objLaser2,2.5,renderWidth*color_width,0);
 			ObjRender_SetPosition(objLaser2,ObjMove_GetX(objHitbox),ObjMove_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objLaser2,ObjStLaser_GetAngle(objHitbox));
 			//ObjSprite2D_SetSourceRect(objLaser2, 0-detail_count, 0, 256-detail_count, 32);
-			
-			
+
+
 			ObjRender_SetScaleXYZ(objDetail,1,renderWidth,0);
 			ObjRender_SetPosition(objDetail,ObjMove_GetX(objHitbox),ObjMove_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objDetail,ObjStLaser_GetAngle(objHitbox));
 			ObjSprite2D_SetSourceRect(objDetail, 0-detail_count, 0, 512-detail_count, 32);
 			ObjSprite2D_SetDestRect(objDetail, 0.5, -16, 513, 16);
-			
-			
+
+
 			ObjRender_SetScaleY(objFire,fire_scale*(renderWidth));
 			ObjRender_SetPosition(objFire,ObjMove_GetX(objHitbox),ObjMove_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objFire,ObjStLaser_GetAngle(objHitbox));
 			if(fire_count%2==0) { ObjSprite2D_SetSourceRect(objFire, 1, 128, 123, 256); }
 			else if(fire_count%2==1) { ObjSprite2D_SetSourceRect(objFire, 128, 128, 255, 256); }
 			ObjSprite2D_SetDestRect(objFire, 0.5, -63, 128.5, 59);
-			
+
 			ObjRender_SetScaleY(objFire2,fire_scale2*(renderWidth));
 			ObjRender_SetPosition(objFire2,ObjMove_GetX(objHitbox),ObjRender_GetY(objHitbox),0);
 			ObjRender_SetAngleZ(objFire2,ObjStLaser_GetAngle(objHitbox));
 			if(fire_count%2==0) { ObjSprite2D_SetSourceRect(objFire2, 1, 128, 123, 256); }
 			else if(fire_count%2==1) { ObjSprite2D_SetSourceRect(objFire2, 129, 128, 255, 256); }
 			ObjSprite2D_SetDestRect(objFire2, 0.5, -63, 128.5, 59);
-			
+
 			if(Obj_IsDeleted(objHitbox)) {
 				Obj_Delete(objLaser1);
 				Obj_Delete(objLaser2);
@@ -1011,7 +1012,7 @@ function PagodaLaser_Inv(x,y,angle,maxwidth,color,graphic,delay,del) {
 				Obj_Delete(objFire);
 				Obj_Delete(objFire2);
 			}
-			
+
 			width-=(maxwidth+2)/30;
 			fire_count+=0.5;
 			detail_count+=scroll;
@@ -1036,7 +1037,7 @@ function CreateDelayedShot(x,y,speed,ang,acc,maxspeed,graphic,delay) {
 	let obj = ObjShot_Create(OBJ_SHOT);
 	DelayedShot;
 	return obj;
-	
+
 	task DelayedShot {
 		ObjMove_SetPosition(obj,x,y);
 		ObjMove_SetSpeed(obj,speed);
@@ -1044,9 +1045,9 @@ function CreateDelayedShot(x,y,speed,ang,acc,maxspeed,graphic,delay) {
 		ObjMove_SetAcceleration(obj,acc);
 		ObjMove_SetMaxSpeed(obj,maxspeed);
 		ObjShot_SetGraphic(obj,graphic);
-	
+
 		// DelayEx(obj,delay);
-		
+
 		// wait(delay);
 		// if(!Obj_IsDeleted(obj)) { ObjShot_Regist(obj); }
 		ObjShot_SetDelay(obj, delay);
@@ -1057,7 +1058,7 @@ function CreateDelayedLaser(x,y,speed,ang,len,width,graphic,delay) {
 	let obj = ObjShot_Create(OBJ_LOOSE_LASER);
 	DelayedLaser;
 	return obj;
-	
+
 	task DelayedLaser {
 		ObjMove_SetPosition(obj,x,y);
 		ObjMove_SetSpeed(obj,speed);
@@ -1066,9 +1067,9 @@ function CreateDelayedLaser(x,y,speed,ang,len,width,graphic,delay) {
 		ObjLaser_SetRenderWidth(obj,width);
 		ObjLaser_SetIntersectionWidth(obj,width*0.9);
 		ObjShot_SetGraphic(obj,graphic);
-	
+
 		DelayEx(obj,delay);
-		
+
 		wait(delay);
 		if(!Obj_IsDeleted(obj)) { ObjShot_Regist(obj); }
 	}

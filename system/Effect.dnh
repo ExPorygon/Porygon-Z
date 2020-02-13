@@ -682,13 +682,13 @@ task LaserBase(objLaser,width) {
 	let graphic = ObjShot_GetImageID(objLaser);
 	let delayColor = GetShotDataInfoA1(graphic,TARGET_ENEMY,INFO_DELAY_COLOR);
 	let colorID = 0;
-	if(delayColor == [255, 64, 64]) { colorID = 1; }
-	if(delayColor == [255, 128, 64]) { colorID = 2; }
-	if(delayColor == [255, 255, 64]) { colorID = 3; }
-	if(delayColor == [64, 255, 64]) { colorID = 4; }
-	if(delayColor == [64, 255, 255]) { colorID = 5; }
-	if(delayColor == [64, 64, 255]) { colorID = 6; }
-	if(delayColor == [255, 64, 255]) { colorID = 7; }
+	if(delayColor == [255, 63, 63]) { colorID = 1; }
+	if(delayColor == [255, 128, 63]) { colorID = 2; }
+	if(delayColor == [255, 255, 63]) { colorID = 3; }
+	if(delayColor == [63, 255, 63]) { colorID = 4; }
+	if(delayColor == [63, 255, 255]) { colorID = 5; }
+	if(delayColor == [63, 63, 255]) { colorID = 6; }
+	if(delayColor == [255, 63, 255]) { colorID = 7; }
 
 	let objBase = ObjPrim_Create(OBJ_SPRITE_2D);
 	ObjRender_SetBlendType(objBase, BLEND_ADD_ARGB);
@@ -713,14 +713,14 @@ task LaserBase(objLaser,width) {
 	let scale = scaleBase*scaleFactor*scale2;
 	let alphaFactor = 1;
 	let del = Obj_GetValueD(objLaser,"__Delete Frame__",10000);
+	let delay = Obj_GetValueD(objLaser,"__DELAY__",0);
 
 	while(!Obj_IsDeleted(objLaser)) {
 		if(count%3==0) { visible = visible*-1; }
 		spin+=15;
 		count++;
-		if(count>=del || Obj_GetValueD(objLaser,"Laser Base Fade",false)) { alphaFactor-=1/25; }
-		if(alphaFactor<=0) { break; }
-
+		if(count>=del+delay-75 || Obj_GetValueD(objLaser,"Laser Base Fade",false)) { alphaFactor-=1/75; }
+		
 		ObjRender_SetColor(objBase,255*alphaFactor,255*alphaFactor,255*alphaFactor);
 		ObjRender_SetColor(objBase_Flash,80*alphaFactor,80*alphaFactor,80*alphaFactor);
 		ObjRender_SetScaleXYZ(objBase,scale,scale,scale);
@@ -731,6 +731,7 @@ task LaserBase(objLaser,width) {
 		ObjRender_SetAngleZ(objBase_Flash,spin);
 		if(visible==1) { Obj_SetVisible(objBase_Flash,true); }
 		else { Obj_SetVisible(objBase_Flash,false); }
+		if(alphaFactor<=0) { break; }
 		yield;
 	}
 	Obj_Delete(objBase);

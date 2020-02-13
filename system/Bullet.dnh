@@ -21,7 +21,7 @@ let BreakRender = ID_INVALID;
 	else { ObjRender_SetBlendType(BreakRender,BLEND_ALPHA); }
 	yield;
 }
-	
+
 @Event {
 	alternative(GetEventType)
 	case(EV_DELETE_SHOT) {
@@ -116,7 +116,7 @@ task DeleteShotWave(type,x,y,speed) {
 	}
 	if(type==4) {
 		let rval = 600+round(speed*30); //it is meant to be 600, but there are added frames to have it persist 30 more frames
-		while(r<=rval) { 
+		while(r<=rval) {
 			let ShotAll = GetShotIdInCircleA2(x,y,r,TARGET_ENEMY);
 			ascent(i in 0..length(ShotAll)) {
 				let objid = ShotAll[i];
@@ -143,7 +143,7 @@ task LaserDelete(obj,width) {
 	let graphic = 0;
 	let x_init = 0;
 	let y_init = 0;
-	if(!Obj_IsDeleted(obj)) { 
+	if(!Obj_IsDeleted(obj)) {
 		x_init = ObjRender_GetX(obj);
 		y_init = ObjRender_GetY(obj);
 	}
@@ -225,14 +225,14 @@ task StLaserDelete(obj,width) {
 
 function BulletDeleteEffect(xpos,ypos,graphic,objShot) {
 	if(!GetAreaCommonData("Options","BulletDelete",true)) {
-		if(!Obj_GetValueD(objShot,"Fade Effect",false)) { 
-			// SimpleDelete(xpos,ypos,graphic,objShot); 
-		
+		if(!Obj_GetValueD(objShot,"Fade Effect",false)) {
+			// SimpleDelete(xpos,ypos,graphic,objShot);
+
 			ObjMove_SetSpeed(objShot, 0);
 			ObjMove_SetMaxSpeed(objShot, 0);
 			ObjMove_SetAcceleration(objShot, 0);
 			ObjShot_FadeDelete(objShot);
-		
+
 		}
 		return;
 	}
@@ -270,7 +270,7 @@ task BulletBreak(xpos,ypos,scale,RED,GREEN,BLUE) {
 	//let speed = randEff(1.3,2);
 	//let dir = randEff(0,360);
 	//let maxscale = scale;
-	
+
 	/*
 	Obj_SetRenderPriorityI(objbreak,49);
 	ObjPrim_SetTexture(objbreak, MD ~ "System/IMG/Effect/BulletBreak.png");
@@ -280,8 +280,8 @@ task BulletBreak(xpos,ypos,scale,RED,GREEN,BLUE) {
 	ObjRender_SetAngleXYZ(objbreak,0,0,randEff(0,360));
 	ObjRender_SetColor(objbreak,RED,GREEN,BLUE);
 	ObjRender_SetScaleXYZ(objbreak,scale*0.6,scale*0.6,scale*0.6);
-	
-	
+
+
 	ObjSprite2D_SetDestRect(objbreak, -32, -32, 32, 32);
 	ascent(i in 0..8){
 		ObjSprite2D_SetSourceRect(objbreak,64*i,0,64*(i+1),64);
@@ -289,10 +289,10 @@ task BulletBreak(xpos,ypos,scale,RED,GREEN,BLUE) {
 	}
 	Obj_Delete(objbreak);
 	*/
-	
+
 	let bnang = randEff(0, 360);
 	let bscl = scale*0.6;
-	
+
 	ascent(i in 0..8*w-1){
 		let amod = round(i/w);
 		ObjSpriteList2D_SetSourceRect(BreakRender, 64*amod, 0, 64+64*amod, 64);
@@ -303,9 +303,9 @@ task BulletBreak(xpos,ypos,scale,RED,GREEN,BLUE) {
 		ObjSpriteList2D_AddVertex(BreakRender);
 		yield;
 	}
-	
-	
-	
+
+
+
 	/*
 	loop(24) {
 		if(count>=w*0) { ObjSprite2D_SetSourceRect(objbreak,0,0,64,64); }
@@ -317,7 +317,7 @@ task BulletBreak(xpos,ypos,scale,RED,GREEN,BLUE) {
 		if(count>=w*6) { ObjSprite2D_SetSourceRect(objbreak,384,0,448,64); }
 		if(count>=w*7) { ObjSprite2D_SetSourceRect(objbreak,448,0,512,64); }
 		ObjSprite2D_SetDestCenter(objbreak);
-	
+
 		// ObjRender_SetPosition(objbreak,xpos,ypos,0);
 		// ObjRender_SetAlpha(objbreak,255-count*3);
 		// if(speed>0) { speed-=0.10; }
@@ -365,11 +365,11 @@ function HSVToRGB(hue,saturation,value) {
 		G = 0;
 		B = 255-255*(hue-300)/60;
 	}
-	
+
 	R = R*(value/100);
 	G = G*(value/100);
 	B = B*(value/100);
-	
+
 	let high = R;
 	if(G>high) { high = G; }
 	if(B>high) { high = B; }
@@ -384,11 +384,11 @@ function InitRender(obj, pri, image){
 	obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
 	Obj_SetRenderPriority(obj, pri);
 	ObjPrim_SetTexture(obj, image);
-	
+
 	DoStuff;
 	return obj;
-	
-	
+
+
 	task DoStuff{
 		while(!Obj_IsDeleted(obj)){
 			ObjSpriteList2D_ClearVertexCount(obj);
@@ -396,4 +396,3 @@ function InitRender(obj, pri, image){
 		}
 	}
 }
-
