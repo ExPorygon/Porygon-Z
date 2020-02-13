@@ -129,7 +129,7 @@ ShotData{ id=125 rect=(136,318,170,352) render=ALPHA collision = (6, 0, 0) angul
 ShotData{ id=126 rect=(170,318,204,352) render=ALPHA collision = (6, 0, 0) angular_velocity = 0 delay_color= (63, 255, 63) fixed_angle=false }
 ShotData{ id=127 rect=(204,318,238,352) render=ALPHA collision = (6, 0, 0) angular_velocity = 0 delay_color= (255, 255, 63) fixed_angle=false }
 ShotData{ id=128 rect=(238,318,272,352) render=ALPHA collision = (6, 0, 0) angular_velocity = 0 delay_color= (255, 255, 255) fixed_angle=false }
-ShotData{ id=129 
+ShotData{ id=129
 AnimationData{
 animation_data=(3,0,352,34,386)
 animation_data=(3,34,352,68,386)
@@ -145,7 +145,7 @@ animation_data=(3,340,352,374,386)
 animation_data=(3,374,352,408,386)
 }
 render=ADD_ARGB collision = (5, 0, 0) angular_velocity = 0 delay_color= (255, 255, 255) fixed_angle=false }
-ShotData{ id=130 
+ShotData{ id=130
 AnimationData{
 animation_data=(3,0,386,34,420)
 animation_data=(3,34,386,68,420)
@@ -161,7 +161,7 @@ animation_data=(3,340,386,374,420)
 animation_data=(3,374,386,408,420)
 }
 render=ADD_ARGB collision = (5, 0, 0) angular_velocity = 0 delay_color= (255, 63, 63) fixed_angle=false }
-ShotData{ id=131 
+ShotData{ id=131
 AnimationData{
 animation_data=(3,0,420,34,454)
 animation_data=(3,34,420,68,454)
@@ -177,7 +177,7 @@ animation_data=(3,340,420,374,454)
 animation_data=(3,374,420,408,454)
 }
 render=ADD_ARGB collision = (5, 0, 0) angular_velocity = 0 delay_color= (255, 63, 255) fixed_angle=false }
-ShotData{ id=132 
+ShotData{ id=132
 AnimationData{
 animation_data=(3,0,454,34,488)
 animation_data=(3,34,454,68,488)
@@ -193,7 +193,7 @@ animation_data=(3,340,454,374,488)
 animation_data=(3,374,454,408,488)
 }
 render=ADD_ARGB collision = (5, 0, 0) angular_velocity = 0 delay_color= (63, 63, 255) fixed_angle=false }
-ShotData{ id=133 
+ShotData{ id=133
 AnimationData{
 animation_data=(3,0,488,34,522)
 animation_data=(3,34,488,68,522)
@@ -209,7 +209,7 @@ animation_data=(3,340,488,374,522)
 animation_data=(3,374,488,408,522)
 }
 render=ADD_ARGB collision = (5, 0, 0) angular_velocity = 0 delay_color= (63, 211, 255) fixed_angle=false }
-ShotData{ id=134 
+ShotData{ id=134
 AnimationData{
 animation_data=(3,0,522,34,556)
 animation_data=(3,34,522,68,556)
@@ -225,7 +225,7 @@ animation_data=(3,340,522,374,556)
 animation_data=(3,374,522,408,556)
 }
 render=ADD_ARGB collision = (5, 0, 0) angular_velocity = 0 delay_color= (63, 255, 63) fixed_angle=false }
-ShotData{ id=135 
+ShotData{ id=135
 AnimationData{
 animation_data=(3,0,556,34,590)
 animation_data=(3,34,556,68,590)
@@ -241,7 +241,7 @@ animation_data=(3,340,556,374,590)
 animation_data=(3,374,556,408,590)
 }
 render=ADD_ARGB collision = (5, 0, 0) angular_velocity = 0 delay_color= (255, 255, 63) fixed_angle=false }
-ShotData{ id=136 
+ShotData{ id=136
 AnimationData{
 animation_data=(3,0,590,34,624)
 animation_data=(3,34,590,68,624)
@@ -257,56 +257,56 @@ animation_data=(3,340,590,374,624)
 animation_data=(3,374,590,408,624)
 }
 render=ADD_ARGB collision = (5, 0, 0) angular_velocity = 0 delay_color= (255, 255, 255) fixed_angle=false }
-ShotData{ id=137 
+ShotData{ id=137
 AnimationData{
 animation_data=(10,0,624,34,658)
 animation_data=(10,34,624,68,658)
 animation_data=(10,68,624,102,658)
 }
 render=ALPHA collision = (6, 0, 0) angular_velocity = 0 delay_color= (255, 255, 255) fixed_angle=true }
-ShotData{ id=138 
+ShotData{ id=138
 AnimationData{
 animation_data=(10,102,624,136,658)
 animation_data=(10,136,624,170,658)
 animation_data=(10,170,624,204,658)
 }
 render=ALPHA collision = (6, 0, 0) angular_velocity = 0 delay_color= (255, 63, 63) fixed_angle=true }
-ShotData{ id=139 
+ShotData{ id=139
 AnimationData{
 animation_data=(10,204,624,238,658)
 animation_data=(10,238,624,272,658)
 animation_data=(10,272,624,306,658)
 }
 render=ALPHA collision = (6, 0, 0) angular_velocity = 0 delay_color= (255, 63, 255) fixed_angle=true }
-ShotData{ id=140 
+ShotData{ id=140
 AnimationData{
 animation_data=(10,306,624,340,658)
 animation_data=(10,340,624,374,658)
 animation_data=(10,374,624,408,658)
 }
 render=ALPHA collision = (6, 0, 0) angular_velocity = 0 delay_color= (63, 63, 255) fixed_angle=true }
-ShotData{ id=141 
+ShotData{ id=141
 AnimationData{
 animation_data=(10,0,658,34,692)
 animation_data=(10,34,658,68,692)
 animation_data=(10,68,658,102,692)
 }
 render=ALPHA collision = (6, 0, 0) angular_velocity = 0 delay_color= (63, 211, 255) fixed_angle=true }
-ShotData{ id=142 
+ShotData{ id=142
 AnimationData{
 animation_data=(10,102,658,136,692)
 animation_data=(10,136,658,170,692)
 animation_data=(10,170,658,204,692)
 }
 render=ALPHA collision = (6, 0, 0) angular_velocity = 0 delay_color= (63, 255, 63) fixed_angle=true }
-ShotData{ id=143 
+ShotData{ id=143
 AnimationData{
 animation_data=(10,204,658,238,692)
 animation_data=(10,238,658,272,692)
 animation_data=(10,272,658,306,692)
 }
 render=ALPHA collision = (6, 0, 0) angular_velocity = 0 delay_color= (255, 255, 63) fixed_angle=true }
-ShotData{ id=144 
+ShotData{ id=144
 AnimationData{
 animation_data=(10,306,658,340,692)
 animation_data=(10,340,658,374,692)
@@ -321,7 +321,7 @@ ShotData{ id=149 rect=(136,692,170,726) render=ALPHA collision = (6, 0, 0) angul
 ShotData{ id=150 rect=(170,692,204,726) render=ALPHA collision = (6, 0, 0) angular_velocity = 0 delay_color= (63, 255, 63) fixed_angle=true }
 ShotData{ id=151 rect=(204,692,238,726) render=ALPHA collision = (6, 0, 0) angular_velocity = 0 delay_color= (255, 255, 63) fixed_angle=true }
 ShotData{ id=152 rect=(238,692,272,726) render=ALPHA collision = (6, 0, 0) angular_velocity = 0 delay_color= (255, 255, 255) fixed_angle=true }
-ShotData{ id=153 
+ShotData{ id=153
 AnimationData{
 animation_data=(6,0,738,66,804)
 animation_data=(6,66,738,132,804)
@@ -336,8 +336,8 @@ animation_data=(6,594,738,660,804)
 animation_data=(6,660,738,726,804)
 animation_data=(6,726,738,792,804)
 }
-render=ADD_ARGB collision = (12, 0, 0) angular_velocity = 1 delay_color= (255, 255, 255) fixed_angle=false }
-ShotData{ id=154 
+render=ADD_ARGB collision = (12, 0, 0) angular_velocity = 40 delay_color= (255, 255, 255) fixed_angle=false }
+ShotData{ id=154
 AnimationData{
 animation_data=(6,0,804,66,870)
 animation_data=(6,66,804,132,870)
@@ -353,7 +353,7 @@ animation_data=(6,660,804,726,870)
 animation_data=(6,726,804,792,870)
 }
 render=ADD_ARGB collision = (12, 0, 0) angular_velocity = 1 delay_color= (255, 63, 63) fixed_angle=false }
-ShotData{ id=155 
+ShotData{ id=155
 AnimationData{
 animation_data=(6,0,870,66,936)
 animation_data=(6,66,870,132,936)
@@ -369,7 +369,7 @@ animation_data=(6,660,870,726,936)
 animation_data=(6,726,870,792,936)
 }
 render=ADD_ARGB collision = (12, 0, 0) angular_velocity = 1 delay_color= (255, 63, 255) fixed_angle=false }
-ShotData{ id=156 
+ShotData{ id=156
 AnimationData{
 animation_data=(6,0,936,66,1002)
 animation_data=(6,66,936,132,1002)
@@ -385,7 +385,7 @@ animation_data=(6,660,936,726,1002)
 animation_data=(6,726,936,792,1002)
 }
 render=ADD_ARGB collision = (12, 0, 0) angular_velocity = 1 delay_color= (63, 63, 255) fixed_angle=false }
-ShotData{ id=157 
+ShotData{ id=157
 AnimationData{
 animation_data=(6,0,1002,66,1068)
 animation_data=(6,66,1002,132,1068)
@@ -401,7 +401,7 @@ animation_data=(6,660,1002,726,1068)
 animation_data=(6,726,1002,792,1068)
 }
 render=ADD_ARGB collision = (12, 0, 0) angular_velocity = 1 delay_color= (63, 211, 255) fixed_angle=false }
-ShotData{ id=158 
+ShotData{ id=158
 AnimationData{
 animation_data=(6,0,1068,66,1134)
 animation_data=(6,66,1068,132,1134)
@@ -417,7 +417,7 @@ animation_data=(6,660,1068,726,1134)
 animation_data=(6,726,1068,792,1134)
 }
 render=ADD_ARGB collision = (12, 0, 0) angular_velocity = 1 delay_color= (63, 255, 63) fixed_angle=false }
-ShotData{ id=159 
+ShotData{ id=159
 AnimationData{
 animation_data=(6,0,1134,66,1200)
 animation_data=(6,66,1134,132,1200)
@@ -433,7 +433,7 @@ animation_data=(6,660,1134,726,1200)
 animation_data=(6,726,1134,792,1200)
 }
 render=ADD_ARGB collision = (12, 0, 0) angular_velocity = 1 delay_color= (255, 255, 63) fixed_angle=false }
-ShotData{ id=160 
+ShotData{ id=160
 AnimationData{
 animation_data=(6,0,1200,66,1266)
 animation_data=(6,66,1200,132,1266)
@@ -457,7 +457,7 @@ ShotData{ id=165 rect=(264,1266,330,1332) render=ADD_ARGB collision = (12, 0, 0)
 ShotData{ id=166 rect=(330,1266,396,1332) render=ADD_ARGB collision = (12, 0, 0) angular_velocity = 0 delay_color= (63, 255, 63) fixed_angle=false }
 ShotData{ id=167 rect=(396,1266,462,1332) render=ADD_ARGB collision = (12, 0, 0) angular_velocity = 0 delay_color= (255, 255, 63) fixed_angle=false }
 ShotData{ id=168 rect=(462,1266,528,1332) render=ADD_ARGB collision = (12, 0, 0) angular_velocity = 0 delay_color= (255, 255, 255) fixed_angle=false }
-ShotData{ id=169 
+ShotData{ id=169
 AnimationData{
 animation_data=(10,0,1332,66,1398)
 animation_data=(10,66,1332,132,1398)
@@ -465,7 +465,7 @@ animation_data=(10,132,1332,198,1398)
 animation_data=(10,198,1332,264,1398)
 }
 render=ADD_ARGB collision = (9, 0, 0) angular_velocity = 0 delay_color= (255, 255, 255) fixed_angle=false }
-ShotData{ id=170 
+ShotData{ id=170
 AnimationData{
 animation_data=(10,264,1332,330,1398)
 animation_data=(10,330,1332,396,1398)
@@ -473,7 +473,7 @@ animation_data=(10,396,1332,462,1398)
 animation_data=(10,462,1332,528,1398)
 }
 render=ADD_ARGB collision = (9, 0, 0) angular_velocity = 0 delay_color= (255, 63, 63) fixed_angle=false }
-ShotData{ id=171 
+ShotData{ id=171
 AnimationData{
 animation_data=(10,528,1332,594,1398)
 animation_data=(10,594,1332,660,1398)
@@ -481,7 +481,7 @@ animation_data=(10,660,1332,726,1398)
 animation_data=(10,726,1332,792,1398)
 }
 render=ADD_ARGB collision = (9, 0, 0) angular_velocity = 0 delay_color= (255, 63, 255) fixed_angle=false }
-ShotData{ id=172 
+ShotData{ id=172
 AnimationData{
 animation_data=(10,0,1398,66,1464)
 animation_data=(10,66,1398,132,1464)
@@ -489,7 +489,7 @@ animation_data=(10,132,1398,198,1464)
 animation_data=(10,198,1398,264,1464)
 }
 render=ADD_ARGB collision = (9, 0, 0) angular_velocity = 0 delay_color= (63, 63, 255) fixed_angle=false }
-ShotData{ id=173 
+ShotData{ id=173
 AnimationData{
 animation_data=(10,264,1398,330,1464)
 animation_data=(10,330,1398,396,1464)
@@ -497,7 +497,7 @@ animation_data=(10,396,1398,462,1464)
 animation_data=(10,462,1398,528,1464)
 }
 render=ADD_ARGB collision = (9, 0, 0) angular_velocity = 0 delay_color= (63, 211, 255) fixed_angle=false }
-ShotData{ id=174 
+ShotData{ id=174
 AnimationData{
 animation_data=(10,528,1398,594,1464)
 animation_data=(10,594,1398,660,1464)
@@ -505,7 +505,7 @@ animation_data=(10,660,1398,726,1464)
 animation_data=(10,726,1398,792,1464)
 }
 render=ADD_ARGB collision = (9, 0, 0) angular_velocity = 0 delay_color= (63, 255, 63) fixed_angle=false }
-ShotData{ id=175 
+ShotData{ id=175
 AnimationData{
 animation_data=(10,0,1464,66,1530)
 animation_data=(10,66,1464,132,1530)
@@ -513,7 +513,7 @@ animation_data=(10,132,1464,198,1530)
 animation_data=(10,198,1464,264,1530)
 }
 render=ADD_ARGB collision = (9, 0, 0) angular_velocity = 0 delay_color= (255, 255, 63) fixed_angle=false }
-ShotData{ id=176 
+ShotData{ id=176
 AnimationData{
 animation_data=(10,264,1464,330,1530)
 animation_data=(10,330,1464,396,1530)
@@ -530,3 +530,6 @@ ShotData{ id=182 rect=(408,386,442,420) render=ADD_ARGB collision = (8, 0, 0) an
 ShotData{ id=183 rect=(408,420,442,454) render=ADD_ARGB collision = (8, 0, 0) angular_velocity = 0 delay_color= (255, 255, 63) fixed_angle=false }
 ShotData{ id=184 rect=(408,454,442,488) render=ADD_ARGB collision = (8, 0, 0) angular_velocity = 0 delay_color= (255, 255, 255) fixed_angle=false }
 delay_rect = (0,2013,33,2046)
+
+//Added bubble by ExPorygon
+ShotData{ id=185 rect=(1,1545,67,1611) render=ADD_ARGB collision = 14 angular_velocity = 15 delay_color= (255, 63, 63) fixed_angle=true }

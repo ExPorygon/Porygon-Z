@@ -187,3 +187,6 @@ let LASER_CYAN = 181;
 let LASER_GREEN = 182;
 let LASER_YELLOW = 183;
 let LASER_WHITE = 184;
+
+//Added bubble by ExPorygon
+let BUBBLE_RED = 185;

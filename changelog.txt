@@ -1,3 +1,7 @@
+v0.6.1
+-Finished prototype of spell3
+-Added red bubble to shotsheet
+
 v0.6.0
 -Added prototype of spell4
 -Fixed laserbase colors to work with dark's shotsheet

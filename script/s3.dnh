@@ -85,6 +85,7 @@ let gl_earlyoff = -1;
 
 task mainTask {
 	wait(120);
+	PlaySoundEffect("effect2",100);
 	Orb(0);
 	Orb(1);
 	Orb(2);
@@ -92,6 +93,8 @@ task mainTask {
 
 task Orb(color) {
 	let objOrb = CreateShot01(GetCenterX,GetCenterY,0,0,0,0);
+	ObjShot_SetIntersectionEnable(objOrb,false);
+
 	let r = 0;
 	let r_max = 220;
 	let r_acc = 8;
@@ -102,6 +105,7 @@ task Orb(color) {
 	alternative(color)
 	case(0) {
 		ObjShot_SetGraphic(objOrb, MIKO_ORB_RED);
+		Fire2(0);
 	}
 	case(1) {
 		ObjShot_SetGraphic(objOrb, MIKO_ORB_YELLOW);
@@ -124,10 +128,11 @@ task Orb(color) {
 	if(color==0) { ExplosionA2(objOrb,"MAGIC",[255,96,96],[255,96,96]); }
 	if(color==1) { ExplosionA2(objOrb,"MAGIC",[255,255,96],[255,255,96]); }
 	if(color==2) { ExplosionA2(objOrb,"MAGIC",[96,96,255],[96,96,255]); }
+	PlaySoundEffect("death",90);
 	Obj_Delete(objOrb);
 
 	task Fire1 {
-		wait(60);
+		wait(120);
 		let graphic = 0;
 		alternative(color)
 		case(0) {
@@ -147,9 +152,20 @@ task Orb(color) {
 		}
 	}
 	task Fire2(color) {
-		wait(60);
+		wait(120);
 		alternative(color)
+		case(0) {
+			wait(120);
+			loop {
+				loop(3) {
+					SummerRed(ObjMove_GetX(objOrb),ObjMove_GetY(objOrb),GetAngleToPlayer(objOrb));
+					wait(15);
+				}
+				wait(120);
+			}
+		}
 		case(1) {
+			wait(240);
 			loop {
 				ascent(i in -4..5) {
 					DelayedLaser(ObjMove_GetX(objOrb),ObjMove_GetY(objOrb),dir-180+i*20);
@@ -197,6 +213,8 @@ task Orb(color) {
 		//Obj_SetVisible(objEnemy,false);
 
 		ObjRender_SetScaleXYZ(objLine,scaleX,scaleY,1);
+		ObjRender_SetAlpha(objLine,alpha);
+		wait(45);
 		while(!Obj_IsDeleted(objOrb)) {
 			if(alpha<255) { alpha+=255/20; }
 			ObjRender_SetAlpha(objLine,alpha);
@@ -207,7 +225,24 @@ task Orb(color) {
 		Obj_Delete(objLine);
 	}
 }
-
+task SummerRed(x,y,dir) {
+	//let dir = GetAngleToPlayer(objEnemyMain);
+	let obj = CreateShot02(x,y,1,dir,4/80,5,BUBBLE_RED,10);
+	/* ObjRender_SetScaleXYZ(obj,1.5,1.5,1.5); */
+	PlaySoundEffect("fire",80);
+	while(!Obj_IsDeleted(obj)) {
+		loop(1) {
+			DeleteShot(ObjMove_GetX(obj)+rand(-20,20),ObjMove_GetY(obj)+rand(-20,20));
+		}
+		wait(2);
+	}
+	task DeleteShot(x,y) {
+		let obj2 = CreateShot01(x,y,0,dir,FIREBALL_RED,5);
+		wait(40);
+		NotifyEventAll(EV_DELETE_SHOT,[ObjMove_GetX(obj2),ObjMove_GetY(obj2),FIREBALL_RED,obj2]);
+		Obj_Delete(obj2);
+	}
+}
 task DiamondShot01(num,x,y,r,d,speed,dir) { //num and d must be a whole number
 	ascent(i in 0..num+1) {
 		CreateShot01(x+r*i*cos(dir+90),y+r*i*sin(dir+90),speed,dir,DIAMOND_CYAN,i*d);
