@@ -31,7 +31,7 @@ let gl_speed = 0;
 let gl_active = -1;
 let gl_scale = 0.25;
 let gl_size = 512*gl_scale;
-let gl_wait = 180;
+let gl_wait = 300;
 let gl_startup_max = 15;
 let gl_warn = -1;
 let gl_earlyoff = -1;
@@ -41,8 +41,8 @@ let gl_earlyoff = -1;
 
 @Event {
 	alternative(GetEventType)
-	case(EV_REQUEST_LIFE){ SetScriptResult(2000); }
-	case(EV_REQUEST_TIMER){	SetScriptResult(40); }
+	case(EV_REQUEST_LIFE){ SetScriptResult(1400); }
+	case(EV_REQUEST_TIMER){	SetScriptResult(50); }
 }
 @Initialize {
 	objEnemyMain = ObjEnemy_Create(OBJ_ENEMY_BOSS);
@@ -61,7 +61,7 @@ let gl_earlyoff = -1;
 
 	SpellDeclare(objEnemyMain,120);
 
-	SetInvincibilityDamageRate(objEnemyMain, 240, 50, 38);
+	SetInvincibilityDamageRate(objEnemyMain, 240, 50, 30);
 	ObjMove_SetDestAtWeight(objEnemyMain, GetCenterX, GetCenterY-140, 10, 5);
 
 	SetCommonData("EndBossBG",true);
@@ -86,6 +86,8 @@ let gl_earlyoff = -1;
 task mainTask {
 	wait(90);
 	/* Fire1; */
+	Fire2;
+	Fire3;
 	Switch;
 	let type = 0;
 	let c = 0;
@@ -98,6 +100,52 @@ task mainTask {
 		Block(0+type,GetCenterX+gl_size*2,GetCenterY+gl_size*i,-1);
 		c++;
 		wait(8);
+	}
+}
+
+task Fire3 {
+	wait(330);
+	let dir = rand(0,360);
+	loop {
+		loop(8) {
+			PlaySoundEffect("shot3",35);
+			DiamondShot01(7,GetX,GetY,2,1,4.5,dir);
+			DiamondShot01(7,GetX,GetY,2,1,4.5,dir+180);
+			wait(10);
+			dir+=360/14;
+		}
+		dir+=360/28+4;
+	}
+}
+
+task Fire2 {
+	wait(270);
+	loop {
+		PlaySoundEffect("charge2",100);
+		ConcentrationBinaryA1(objEnemyMain,30,7,160,[255,64,255]);
+		wait(60);
+		SetMovePositionRandom(objEnemyMain,50,20,10,3,GetCenterX-110,GetCenterX+110,GetCenterY-150,GetCenterY-70);
+		loop(3) {
+			HomingRing;
+			wait(15);
+		}
+		wait(150);
+	}
+	task HomingRing {
+		PlaySoundEffect("shot",85);
+		let obj = CreateShotRing01(20,GetX,GetY,4.5,rand(0,360),DIAMOND_LARGE_MAGENTA,10);
+		ascent(i in 0..length(obj)) {
+			ManageShot(obj[i]);
+		}
+	}
+	task ManageShot(obj) {
+		wait(20);
+		ObjMove_SetAcceleration(obj, -ObjMove_GetSpeed(obj)/20);
+		wait(75);
+		PlaySoundEffect("wave",85);
+		ObjMove_SetAngle(obj, GetAngleToPlayer(obj));
+		ObjMove_SetAcceleration(obj, 6/60);
+		ObjMove_SetMaxSpeed(obj, 6);
 	}
 }
 
@@ -129,7 +177,7 @@ task Switch {
 		gl_earlyoff = (c+1)%2;
 		wait(gl_startup_max);
 		gl_active = c%2;
-		if(gl_wait>120) { gl_wait-=8; }
+		/* if(gl_wait>120) { gl_wait-=8; } */
 		/* if(gl_speed<1.5) { gl_speed+=0.08; } */
 	}
 }
@@ -167,7 +215,7 @@ task Block(type,x,y,dir) {
 
 	Hitbox;
 
-	while(!Obj_IsDeleted(obj)) {
+	while(!Obj_IsDeleted(objEnemyMain)) {
 		if(gl_warn==type && !warnStart) { Overlay; warnStart = true; }
 		if(gl_warn!=type) { warnStart = false; }
 		if(scaleMod>1) {
@@ -191,6 +239,7 @@ task Block(type,x,y,dir) {
 		ObjRender_SetAlpha(obj,alpha*alphaMod);
 		yield;
 	}
+	Obj_Delete(obj);
 
 	task Hitbox {
 		let length = 512*scale*1.05;
@@ -228,6 +277,7 @@ task Block(type,x,y,dir) {
 		ObjRender_SetPosition(objOverlay,x,y,0);
 
 		loop(135) {
+			if(Obj_IsDeleted(objEnemyMain)) { break; }
 			if(scaleMod>1) {
 				scaleMod-=0.5/135;
 				alphaMod+=0.8/135;
@@ -247,25 +297,28 @@ task Block(type,x,y,dir) {
 
 task DiamondShot01(num,x,y,r,d,speed,dir) { //num and d must be a whole number
 	ascent(i in 0..num+1) {
-		CreateShot01(x+r*i*cos(dir+90),y+r*i*sin(dir+90),speed,dir,DIAMOND_CYAN,i*d);
+		CreateShot01(x+r*i*cos(dir+90),y+r*i*sin(dir+90),speed,dir,DIAMOND_CYAN,i*d+10);
 	}
 	ascent(i in 0..num+1) {
-		CreateShot01(x+r*i*cos(dir-90),y+r*i*sin(dir-90),speed,dir,DIAMOND_CYAN,i*d);
+		CreateShot01(x+r*i*cos(dir-90),y+r*i*sin(dir-90),speed,dir,DIAMOND_CYAN,i*d+10);
 	}
 	wait((num-1)*d);
 	descent(i in 0..num) {
-		CreateShot01(x+r*i*cos(dir+90),y+r*i*sin(dir+90),speed,dir,DIAMOND_CYAN,((num+1)*d)-i*d);
+		CreateShot01(x+r*i*cos(dir+90),y+r*i*sin(dir+90),speed,dir,DIAMOND_CYAN,((num+1)*d)-i*d+10);
 	}
 	descent(i in 0..num) {
-		CreateShot01(x+r*i*cos(dir-90),y+r*i*sin(dir-90),speed,dir,DIAMOND_CYAN,((num+1)*d)-i*d);
+		CreateShot01(x+r*i*cos(dir-90),y+r*i*sin(dir-90),speed,dir,DIAMOND_CYAN,((num+1)*d)-i*d+10);
 	}
 }
 
 task End {
 	while(ObjEnemy_GetInfo(objEnemyMain, INFO_LIFE) > 0) { yield; }
-	DeleteShotWave(1,GetX,GetY,30);
+	DeleteShotAll(TYPE_ALL,TYPE_ITEM);
 	if(GetPlayerInvincibilityFrame<=15) { SetPlayerInvincibilityFrame(15); }
+	PlaySoundEffect("bonus",100);
+	CreateItems01(1,7,GetX,GetY,0);
 	PlaySoundEffect("shot",100);
 	Obj_Delete(objEnemyMain);
+	yield;
 	CloseScript(GetOwnScriptID);
 }

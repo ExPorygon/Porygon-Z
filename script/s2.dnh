@@ -27,12 +27,14 @@ let GetTimer = 0;
 let GetX = 0;
 let GetY = 0;
 
-let gl_speed = 0.7;
-let gl_active = 0;
-let gl_scale = 0.3;
+let gl_speed = 0;
+let gl_active = -1;
+let gl_scale = 0.25;
 let gl_size = 512*gl_scale;
 let gl_wait = 180;
 let gl_startup_max = 15;
+let gl_warn = -1;
+let gl_earlyoff = -1;
 
 @Loading {
 }
@@ -40,7 +42,7 @@ let gl_startup_max = 15;
 @Event {
 	alternative(GetEventType)
 	case(EV_REQUEST_LIFE){ SetScriptResult(2000); }
-	case(EV_REQUEST_TIMER){	SetScriptResult(40); }
+	case(EV_REQUEST_TIMER){	SetScriptResult(50); }
 }
 @Initialize {
 	objEnemyMain = ObjEnemy_Create(OBJ_ENEMY_BOSS);
@@ -50,15 +52,17 @@ let gl_startup_max = 15;
 	Obj_SetValue(objEnemyMain,"Boss Name","Porygon-Z");
 	Obj_SetValue(objEnemyMain,"Aura Color",[1,10,2]);
 	Obj_SetValue(objEnemyMain,"Circle Color","Pink");
-	Obj_SetValue(objEnemyMain,"Spell ID",02);
+	Obj_SetValue(objEnemyMain,"Spell ID",03);
 	Obj_SetValue(objScene,"Spell Base",1);
-	Obj_SetValue(objEnemyMain,"Cut Image",[MD ~ "IMG/Enemy/PoryCut.png"]);
+	Obj_SetValue(objEnemyMain,"Cut Image",[MD ~ "img/enemy/PoryCut.png"]);
 	//SetAutoDeleteObject(true);
 	PlayEnemyHitSound(objEnemyMain, 1);
 	Obj_SetValue(objEnemyMain,"Animation","PORYGON");
 
-	SetInvincibilityDamageRate(objEnemyMain, 240, 50, 38);
-	ObjMove_SetDestAtWeight(objEnemyMain, GetCenterX, GetCenterY-170, 10, 5);
+	SpellDeclare(objEnemyMain,120);
+
+	SetInvincibilityDamageRate(objEnemyMain, 240, 50, 30);
+	ObjMove_SetDestAtWeight(objEnemyMain, GetCenterX, GetCenterY-140, 10, 5);
 
 	SetCommonData("EndBossBG",true);
 
@@ -80,134 +84,173 @@ let gl_startup_max = 15;
 }
 
 task mainTask {
-	let c = 0;
-	wait(20);
-	/* Fire1; */
-	Switch;
-	loop {
-		c = 0;
-		Block(0,GetCenterX-gl_size*2,-gl_size/2,1);
-		Block(1,GetCenterX-gl_size*1,GetStgFrameHeight+gl_size/2,-1);
-		Block(0,GetCenterX,-gl_size/2,1);
-		Block(1,GetCenterX+gl_size*1,GetStgFrameHeight+gl_size/2,-1);
-		Block(0,GetCenterX+gl_size*2,-gl_size/2,1);
-		loop {
-			c+=gl_speed;
-			if(c>gl_size) { break; }
-			yield;
-		}
-		c = 0;
-		Block(1,GetCenterX-gl_size*2,-gl_size/2,1);
-		Block(0,GetCenterX-gl_size*1,GetStgFrameHeight+gl_size/2,-1);
-		Block(1,GetCenterX,-gl_size/2,1);
-		Block(0,GetCenterX+gl_size*1,GetStgFrameHeight+gl_size/2,-1);
-		Block(1,GetCenterX+gl_size*2,-gl_size/2,1);
-		loop {
-			c+=gl_speed;
-			if(c>gl_size) { break; }
-			yield;
-		}
-	}
-}
-
-task Fire1 {
+	wait(60);
+	PlaySoundEffect("charge",100);
+	ConcentrationBinaryA2(objEnemyMain,90,7,160,[255,64,255]);
 	wait(120);
-	let dir = rand(0,360);
-	loop {
-		loop(6) {
-			loop(8) {
-				DiamondShot01(7,GetX,GetY,2,2,2.0,dir);
-				CreateShot01(GetX,GetY,2.0,dir,DIAMOND_LARGE_MAGENTA,14);
-				dir+=360/6;
-			}
-			wait(30);
-			dir+=360/12+4;
-		}
-		wait(120);
-	}
+	PlaySoundEffect("effect2",100);
+	Orb(0);
+	Orb(1);
+	Orb(2);
 }
 
-task Switch {
-	let c = 0;
-	loop {
-		c++;
-		gl_active = c%2;
-		wait(gl_wait-75);
-		Warning;
-		wait(75);
-		if(gl_wait>120) { gl_wait-=8; }
-		if(gl_speed<1.5) { gl_speed+=0.08; }
+task Orb(color) {
+	let objOrb = CreateShot01(GetCenterX,GetCenterY,0,0,0,0);
+	ObjShot_SetIntersectionEnable(objOrb,false);
+	ObjShot_SetSpellResist(objOrb,true);
+
+	let r = 0;
+	let r_max = 220;
+	let r_acc = 8;
+	let dir = 0;
+	let spin = 0.6;
+	Line;
+
+	alternative(color)
+	case(0) {
+		ObjShot_SetGraphic(objOrb, MIKO_ORB_RED);
+		Fire2(0);
 	}
-}
-
-task Warning {
-	let w = 25;
-	loop(3) {
-		PlaySoundEffect("chime",100);
-		wait(w);
+	case(1) {
+		ObjShot_SetGraphic(objOrb, MIKO_ORB_YELLOW);
+		Fire2(1);
+		dir = 120;
 	}
-	PlaySoundEffect("chime2",100);
-}
-
-task Block(type,x,y,dir) {
-	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
-
-	let typeArray = ["zero","one"];
-
-	ObjRender_SetBlendType(obj, BLEND_ALPHA);
-	Obj_SetRenderPriorityI(obj,29);
-	ObjPrim_SetTexture(obj,MD ~ "img/enemy/"~typeArray[type]~"_block.png");
-	ObjSprite2D_SetSourceRect(obj, 0, 0, 512, 512);
-	ObjSprite2D_SetDestCenter(obj);
-
-	let scale = gl_scale;
-	let alpha = 0;
-	let a_min = 70;
-	let a_max = 200;
-	let a_diff = a_max-a_min;
-	if(gl_active==type) { alpha = 200; } else { alpha = 70; }
-	ObjRender_SetPosition(obj,x,y,0);
-	ObjRender_SetScaleXYZ(obj,scale,scale,scale);
-
-	Hitbox;
-
-	while(!Obj_IsDeleted(obj)) {
-		if(gl_active==type) {
-			if(alpha<200) { alpha+=a_diff/gl_startup_max; }
-		}
-		else {
-			if(alpha>70) { alpha-=a_diff/gl_startup_max; }
-		}
-
-		y+=gl_speed*dir;
-		ObjRender_SetY(obj,y);
-		ObjRender_SetAlpha(obj,alpha);
+	case(2) {
+		ObjShot_SetGraphic(objOrb, MIKO_ORB_BLUE);
+		Fire2(2);
+		dir = 240;
+	}
+	Fire1;
+	while(GetLife>0) {
+		if(r_acc>1) { r_acc-=5/30; }
+		if(r<r_max) { r+=r_acc; } else { r = r_max; }
+		ObjMove_SetPosition(objOrb,GetCenterX+r*cos(dir),GetCenterY+r*sin(dir));
+		dir+=spin;
 		yield;
 	}
+	if(color==0) { ExplosionA2(objOrb,"MAGIC",[255,96,96],[255,96,96]); }
+	if(color==1) { ExplosionA2(objOrb,"MAGIC",[255,255,96],[255,255,96]); }
+	if(color==2) { ExplosionA2(objOrb,"MAGIC",[96,96,255],[96,96,255]); }
+	PlaySoundEffect("death",90);
+	Obj_Delete(objOrb);
 
-	task Hitbox {
-		let length = 512*scale*1.05;
-		let width = 512*scale*1.03;
-		let startup = 0;
-		let startup_max = gl_startup_max;
-		let objhitbox = CreateStraightLaserA1(GetCenterX,GetCenterY,90,length,width,10000,LASER_GRAY,0);
-		ObjLaser_SetIntersectionWidth(objhitbox,width);
-		Obj_SetVisible(objhitbox,false);
-		while(!Obj_IsDeleted(obj)) {
-			ObjMove_SetPosition(objhitbox,ObjRender_GetX(obj),ObjRender_GetY(obj)-512/2*scale);
-			if(gl_active==type) { startup++; } else { startup = 0; }
-			if(gl_active==type && startup>=startup_max+5) {
-				ObjShot_SetIntersectionEnable(objhitbox,true);
+	task Fire1 {
+		wait(120);
+		let graphic = 0;
+		alternative(color)
+		case(0) {
+			graphic = DIAMOND_RED;
+		}
+		case(1) {
+			graphic = DIAMOND_YELLOW;
+		}
+		case(2) {
+			graphic = DIAMOND_BLUE;
+		}
+		loop {
+			CreateShot01(ObjMove_GetX(objOrb),ObjMove_GetY(objOrb),3,dir,graphic,15);
+			CreateShot01(ObjMove_GetX(objOrb),ObjMove_GetY(objOrb),3,dir+3,graphic,15);
+			CreateShot01(ObjMove_GetX(objOrb),ObjMove_GetY(objOrb),3,dir-3,graphic,15);
+			wait(4);
+		}
+	}
+	task Fire2(color) {
+		wait(120);
+		alternative(color)
+		case(0) {
+			wait(120);
+			loop {
+				loop(3) {
+					SummerRed(ObjMove_GetX(objOrb),ObjMove_GetY(objOrb),GetAngleToPlayer(objOrb));
+					wait(12);
+				}
+				wait(120);
 			}
-			else {
-				ObjShot_SetIntersectionEnable(objhitbox,false);
+		}
+		case(1) {
+			wait(240);
+			loop {
+				ascent(i in -4..5) {
+					DelayedLaser(ObjMove_GetX(objOrb),ObjMove_GetY(objOrb),dir-180+i*20);
+					wait(5);
+				}
+				wait(240);
 			}
+		}
+		case(2) {
+			loop {
+				PlaySoundEffect("shot",75);
+				ShootShape(ObjMove_GetX(objOrb), ObjMove_GetY(objOrb), 2.2, dir, 4, 12, DIAMOND_BLUE, 20);
+				wait(10);
+				PlaySoundEffect("shot",75);
+				ShootShape(ObjMove_GetX(objOrb), ObjMove_GetY(objOrb), 2.2, dir+30, 4, 6, DIAMOND_BLUE, 20);
+				wait(10);
+				PlaySoundEffect("shot",75);
+				ShootShape(ObjMove_GetX(objOrb), ObjMove_GetY(objOrb), 2.2, dir+60, 4, 6, DIAMOND_BLUE, 20);
+				wait(120);
+			}
+		}
+	}
+	task DelayedLaser(x,y,dir) {
+		let obj = CreateStraightLaserA1(x,y,dir,0,50,79,LASER_YELLOW,80);
+		let len = 0;
+		loop(60) {
+			len+=300/15;
+			ObjLaser_SetLength(obj,len);
 			yield;
 		}
-		Obj_Delete(objhitbox);
+		PlaySoundEffect("laser4",75);
+		CreateLaser01(x,y,18,dir,350,30,MIKO_ORB_YELLOW,10);
+		wait(19);
+		Obj_Delete(obj);
+	}
+	task Line {
+		let objLine = ObjPrim_Create(OBJ_SPRITE_2D);
+
+		ObjPrim_SetTexture(objLine,MD ~ "img/enemy/line.png");
+		Obj_SetRenderPriorityI(objLine,39);
+		//ObjRender_SetBlendType(objLine,BLEND_ADD_ARGB);
+		ObjSprite2D_SetSourceRect(objLine,0,0,128,32);
+		ObjSprite2D_SetDestRect(objLine,0,-16,128,16);
+
+		let scaleX = 3.0;
+		let scaleY = 0.1;
+		let alpha = 0;
+
+		//Obj_SetVisible(objEnemy,false);
+
+		ObjRender_SetScaleXYZ(objLine,scaleX,scaleY,1);
+		ObjRender_SetAlpha(objLine,alpha);
+		wait(45);
+		while(!Obj_IsDeleted(objOrb)) {
+			if(alpha<255) { alpha+=255/20; }
+			ObjRender_SetAlpha(objLine,alpha);
+			ObjRender_SetPosition(objLine,ObjMove_GetX(objOrb),ObjMove_GetY(objOrb),0);
+			ObjRender_SetAngleZ(objLine,dir-150);
+			yield;
+		}
+		Obj_Delete(objLine);
 	}
 }
-
+task SummerRed(x,y,dir) {
+	//let dir = GetAngleToPlayer(objEnemyMain);
+	let obj = CreateShot02(x,y,1,dir,4/80,5,BUBBLE_RED,10);
+	/* ObjRender_SetScaleXYZ(obj,1.5,1.5,1.5); */
+	PlaySoundEffect("fire",80);
+	while(!Obj_IsDeleted(obj)) {
+		loop(1) {
+			DeleteShot(ObjMove_GetX(obj)+rand(-18,18),ObjMove_GetY(obj)+rand(-18,18));
+		}
+		wait(2);
+	}
+	task DeleteShot(x,y) {
+		let obj2 = CreateShot01(x,y,0,dir,FIREBALL_RED,5);
+		wait(20);
+		NotifyEventAll(EV_DELETE_SHOT,[ObjMove_GetX(obj2),ObjMove_GetY(obj2),FIREBALL_RED,obj2]);
+		Obj_Delete(obj2);
+	}
+}
 task DiamondShot01(num,x,y,r,d,speed,dir) { //num and d must be a whole number
 	ascent(i in 0..num+1) {
 		CreateShot01(x+r*i*cos(dir+90),y+r*i*sin(dir+90),speed,dir,DIAMOND_CYAN,i*d);
@@ -224,11 +267,25 @@ task DiamondShot01(num,x,y,r,d,speed,dir) { //num and d must be a whole number
 	}
 }
 
+function ShootShape(spawnX, spawnY, v, angle, num, bside, graphic, delay) {
+	ascent(i in 0..num) {
+		let sx = spawnX+cos(angle+i*360/num); let sy = spawnY+sin(angle+i*360/num); let sxN = spawnX+cos(angle+(i+1)*360/num); let syN = spawnY+sin(angle+(i+1)*360/num);
+		CreateShot01(spawnX, spawnY, v*(((sx-spawnX)^2+(sy-spawnY)^2)^0.5), atan2(sy-spawnY,sx-spawnX), graphic, delay);
+		ascent(j in 0..bside) {
+			let toAngle = atan2(syN-sy,sxN-sx); let toDist = (((sxN-sx)^2+(syN-sy)^2)^0.5); let sx2 = sx+toDist/bside*j*cos(toAngle); let sy2 = sy+toDist/bside*j*sin(toAngle);
+			CreateShot01(spawnX, spawnY, v*(((sx2-spawnX)^2+(sy2-spawnY)^2)^0.5), atan2(sy2-spawnY,sx2-spawnX), graphic, delay);
+		}
+	}
+}
+
 task End {
 	while(ObjEnemy_GetInfo(objEnemyMain, INFO_LIFE) > 0) { yield; }
-	DeleteShotWave(1,GetX,GetY,30);
+	DeleteShotAll(TYPE_ALL,TYPE_ITEM);
 	if(GetPlayerInvincibilityFrame<=15) { SetPlayerInvincibilityFrame(15); }
+	PlaySoundEffect("bonus",100);
+	CreateItems01(1,7,GetX,GetY,0);
 	PlaySoundEffect("shot",100);
 	Obj_Delete(objEnemyMain);
+	yield;
 	CloseScript(GetOwnScriptID);
 }

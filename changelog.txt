@@ -1,3 +1,11 @@
+v0.7.0
+-Finished prototype of all attacks
+-Implemented music
+-Implemented more binary effects
+-Added the stage
+-Changed chime.ogg
+-Added item drops
+
 v0.6.1
 -Finished prototype of spell3
 -Added red bubble to shotsheet

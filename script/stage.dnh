@@ -1,0 +1,266 @@
+#TouhouDanmakufu[Stage]
+#ScriptVersion[3]
+#Title["Porygon-Z Stage"]
+#Background["./Background.dnh"]
+#System["System/System.dnh"]
+#Player["script/player/Thief Team/Thief Team.dnh"]
+
+let CSD = GetCurrentScriptDirectory;
+let MD = GetModuleDirectory;
+
+let GetCenterX = GetStgFrameWidth/2;
+let GetCenterY = GetStgFrameHeight/2;
+let objBoss_Mid = ID_INVALID;
+let objBoss_End = ID_INVALID;
+let objBoss_Last = ID_INVALID;
+let PhaseEnd = false;
+let stageFrames = 0;
+let continueDelay = false;
+let fullPowerDelay = false;
+let lang = GetAreaCommonData("Options","Language",0);
+let dialogue = [];
+let debugFrameCounter = 0;
+let scriptEnemy;
+
+#include"System/Dialogue.dnh"
+#include"System/LIB/Event_Const.dnh"
+#include"Script/LIB/Data_Const.dnh"
+#include"Script/LIB/Function_Audio.dnh"
+#include"Script/LIB/Portrait_Const.dnh"
+#include"Script/LIB/Function_Texture.dnh"
+#include"Script/LIB/Function_Effect.dnh"
+#include"Script/LIB/Function_Stage.dnh"
+
+@Loading {
+}
+@Initialize {
+	SetPlayerLife(4);
+	Stage;
+}
+
+@Event {
+	alternative(GetEventType)
+	case(EV_PAUSE_ENTER) {
+		if(!IsReplay) { SaveCommonDataAreaToReplayFile("ReplayData"); }
+	}
+	case(EV_PLAYER_SHOOTDOWN) {
+		SetAreaCommonData("Last Word Checks","NMNB",1);
+	}
+	case(EV_PLAYER_SPELL) {
+		SetAreaCommonData("Last Word Checks","BombsUsed",1);
+		SetAreaCommonData("Last Word Checks","NMNB",1);
+	}
+}
+
+@MainLoop {
+	yield;
+}
+
+@Finalize {
+}
+
+
+task Stage {
+	//SetAreaCommonData("PlayState","Difficulty",0);
+	let diff = GetAreaCommonData("PlayState","Difficulty",2);
+	alternative(GetAreaCommonData("PlayState","Difficulty",2))
+	case(0)	{
+		/* objBoss_End = LoadEndBoss_E; */
+	}
+	case(1)	{
+		/* objBoss_End = LoadEndBoss_N; */
+	}
+	case(2)	{
+		objBoss_End = LoadEndBoss_H;
+	}
+	case(3)	{
+		/* objBoss_End = LoadEndBoss_L; */
+	}
+	/* LoadSound(MD ~ "bgm/boss.ogg");
+	PlayBGM(MD ~ "bgm/boss.ogg",0,600); */
+	PlayMusicEx;
+	CreateBoss(objBoss_End);
+	while(!Obj_IsDeleted(objBoss_End)) { yield; }
+	wait(300);
+	CloseStgScene;
+}
+task Title {
+	let objStar = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjRender_SetBlendType(objStar,BLEND_ALPHA);
+	Obj_SetRenderPriorityI(objStar,90);
+	ObjPrim_SetTexture(objStar, MD ~ "IMG/Title/Logo/Logo_6.png");
+	ObjSprite2D_SetSourceRect(objStar,0,0,192,192);
+	ObjSprite2D_SetDestCenter(objStar);
+
+	let objStage = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjRender_SetBlendType(objStage,BLEND_ALPHA);
+	Obj_SetRenderPriorityI(objStage,90);
+	ObjPrim_SetTexture(objStage, MD ~ "IMG/Title/Logo/Logo_6.png");
+	ObjSprite2D_SetSourceRect(objStage,192,0,512,128);
+	ObjSprite2D_SetDestCenter(objStage);
+
+	let objTitle = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjRender_SetBlendType(objTitle,BLEND_ALPHA);
+	Obj_SetRenderPriorityI(objTitle,90);
+	ObjPrim_SetTexture(objTitle, MD ~ "IMG/Title/Logo/Logo_6.png");
+	ObjSprite2D_SetSourceRect(objTitle,0,192,512,256);
+	ObjSprite2D_SetDestCenter(objTitle);
+
+	let objText = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjRender_SetBlendType(objText,BLEND_ALPHA);
+	Obj_SetRenderPriorityI(objText,90);
+	ObjPrim_SetTexture(objText, MD ~ "IMG/Title/Logo/Logo_6.png");
+	ObjSprite2D_SetSourceRect(objText,192,128,512,192);
+	ObjSprite2D_SetDestCenter(objText);
+
+	let x = GetCenterX;
+	let y = 128;
+	let alphaStar = 0;
+	let alphaText = 0;
+	let spin = 0;
+
+	ObjRender_SetScaleXYZ(objStar,0.6,0.6,0.6);
+	ObjRender_SetScaleXYZ(objStage,0.5,0.5,0.5);
+	ObjRender_SetScaleXYZ(objTitle,0.5,0.5,0.5);
+	ObjRender_SetScaleXYZ(objText,0.8,0.8,0.8);
+
+	loop(300) {
+		if(x>GetCenterX-80) { x-=1; spin-=216/80; alphaStar+=255/80; }
+		else if(alphaText<255){ alphaText+=255/90; }
+		ObjRender_SetAlpha(objStar,alphaStar);
+		ObjRender_SetAlpha(objStage,alphaText);
+		ObjRender_SetAlpha(objTitle,alphaText);
+		ObjRender_SetAlpha(objText,alphaText);
+		ObjRender_SetPosition(objStar,x,y+10,0);
+		ObjRender_SetPosition(objStage,x,y,0);
+		ObjRender_SetPosition(objTitle,GetCenterX+100,120,0);
+		ObjRender_SetPosition(objText,GetCenterX+100,155,0);
+		ObjRender_SetAngleZ(objStar,spin);
+		yield;
+	}
+	loop(90) {
+		ObjRender_SetAlpha(objStar,alphaStar);
+		ObjRender_SetAlpha(objStage,alphaText);
+		ObjRender_SetAlpha(objTitle,alphaText);
+		ObjRender_SetAlpha(objText,alphaText);
+		alphaStar-=255/90;
+		alphaText-=255/90;
+		yield;
+	}
+	Obj_Delete(objStar);
+	Obj_Delete(objStage);
+	Obj_Delete(objTitle);
+	Obj_Delete(objText);
+}
+task FadeWhite {
+	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjRender_SetBlendType(obj,BLEND_ALPHA);
+	Obj_SetRenderPriorityI(obj,100);
+	ObjPrim_SetTexture(obj, MD ~ "IMG/Background/white2.png");
+	ObjSprite2D_SetSourceRect(obj,0,0,640,480);
+	ObjSprite2D_SetDestCenter(obj);
+
+	let alpha = 0;
+
+	ObjRender_SetPosition(obj,320,240,0);
+
+	loop(300) {
+		alpha+=255/300;
+		ObjRender_SetAlpha(obj,alpha);
+		yield;
+	}
+}
+function LoadEndBoss_H {
+	let CSD = GetCurrentScriptDirectory;
+
+	let obj = ObjEnemyBossScene_Create;
+	ObjEnemyBossScene_Add(obj, 0, CSD ~ "w1.dnh");
+	ObjEnemyBossScene_Add(obj, 1, CSD ~ "n1.dnh");
+	ObjEnemyBossScene_Add(obj, 1, CSD ~ "s1.dnh");
+	ObjEnemyBossScene_Add(obj, 2, CSD ~ "n2.dnh");
+	ObjEnemyBossScene_Add(obj, 2, CSD ~ "s2.dnh");
+	ObjEnemyBossScene_Add(obj, 3, CSD ~ "n3.dnh");
+	ObjEnemyBossScene_Add(obj, 3, CSD ~ "s3.dnh");
+	ObjEnemyBossScene_Add(obj, 4, CSD ~ "n4.dnh");
+	ObjEnemyBossScene_Add(obj, 4, CSD ~ "s4.dnh");
+	ObjEnemyBossScene_LoadInThread(obj);
+	return obj;
+}
+function CreateBoss(obj) {
+	ObjEnemyBossScene_Regist(obj);
+}
+function PlayMusicEx {
+	let objSound = ObjSound_Create;
+	ObjSound_Load(objSound,MD ~ "bgm/boss_short.ogg");
+
+	ObjSound_SetRestartEnable(objSound,true);
+	/* ObjSound_SetLoopSampleCount(objSound,5594400,11188800);//55934426 */
+	ObjSound_SetLoopEnable(objSound,true);
+
+	//ObjSound_SetVolumeRate(objSound,GetAreaCommonData("Options","Music",100));
+	ObjSound_SetSoundDivision(objSound,SOUND_BGM);
+
+	DrawBGMText("Slipstream");
+	ObjSound_Play(objSound);
+
+	SetVolume;
+	return objSound;
+
+	task SetVolume {
+		while(!Obj_IsDeleted(objSound)) {
+			ObjSound_SetVolumeRate(objSound,GetAreaCommonData("Options","Music",100));
+			yield;
+		}
+	}
+	task DrawBGMText(text) {
+		let objText = ObjText_Create;
+		let x = 0;
+		let y = 0;
+
+		ObjText_SetText(objText, "BGM: " ~ text);
+		ObjText_SetFontType(objText, "Open Sans Condensed");
+		ObjText_SetFontSize(objText, 18);
+		ObjText_SetFontBold(objText, true);
+		ObjText_SetFontColorTop(objText, 128, 0, 255);
+		ObjText_SetFontColorBottom(objText, 255, 255, 255);
+		ObjText_SetFontBorderType(objText, BORDER_FULL);
+		ObjText_SetFontBorderColor(objText, 0, 0, 0);
+		ObjText_SetFontBorderWidth(objText, 1);
+		ObjText_SetHorizontalAlignment(objText, ALIGNMENT_RIGHT);
+		ObjText_SetMaxWidth(objText, 500);
+		Obj_SetRenderPriorityI(objText, 79);
+
+		ObjRender_SetY(objText,GetStgFrameHeight-19);
+
+		let objText_local = objText;
+
+		while(x<335 && !Obj_IsDeleted(objText_local)) {
+			ObjRender_SetX(objText,210-x);
+			x+=3;
+			if(GetAreaCommonData("PlayState","Mode","Main")=="Main Menu") { WriteLog("DELETE"); Obj_Delete(objText_local); }
+			yield;
+		}
+		ObjRender_SetX(objText,210-335);
+		loop(180) {
+			if(GetAreaCommonData("PlayState","Mode","Main")=="Main Menu") { WriteLog("DELETE");  Obj_Delete(objText_local); }
+			yield;
+		}
+		while(y<20 && !Obj_IsDeleted(objText_local)) {
+			ObjRender_SetY(objText,GetStgFrameHeight-19+y);
+			y+=1;
+			if(GetAreaCommonData("PlayState","Mode","Main")=="Main Menu") { WriteLog("DELETE");  Obj_Delete(objText_local); }
+			yield;
+		}
+		Obj_Delete(objText_local);
+	}
+}
+function SetEnemyLifeToZero {
+	let enm = GetAllEnemyID;
+	ascent(i in 0..length(enm)) {
+		Obj_SetValue(enm[i],"Item",false);
+		ObjEnemy_SetLife(enm[i],0);
+	}
+}
+function wait(w) {
+	loop(w) { yield; }
+}

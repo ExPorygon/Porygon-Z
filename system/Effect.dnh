@@ -418,6 +418,9 @@ function isInIdsArray(id){
 
 		case(10) { PPCExplode(objEnemy,eventParam[2]); }
 		case(11) { PPCExplodeRainbow(objEnemy); }
+
+		case(12) { ExplosionB2_Binary(objEnemy,eventParam[2],eventParam[3]); }
+		case(13) { ExplosionB3_Binary(objEnemy,eventParam[2],eventParam[3]); }
 	}
 	case(EV_CONCENTRATION) {
 		let eventParam = GetEventArgument(0);
@@ -720,7 +723,7 @@ task LaserBase(objLaser,width) {
 		spin+=15;
 		count++;
 		if(count>=del+delay-75 || Obj_GetValueD(objLaser,"Laser Base Fade",false)) { alphaFactor-=1/75; }
-		
+
 		ObjRender_SetColor(objBase,255*alphaFactor,255*alphaFactor,255*alphaFactor);
 		ObjRender_SetColor(objBase_Flash,80*alphaFactor,80*alphaFactor,80*alphaFactor);
 		ObjRender_SetScaleXYZ(objBase,scale,scale,scale);
@@ -3833,6 +3836,35 @@ task ExplosionB2(objEnemy,type,circlecolor,starcolor) {
 	Obj_Delete(objEnemy);
 	DeleteShotAll_EventVer(TYPE_ALL, TYPE_ITEM);
 }
+task ExplosionB2_Binary(objEnemy,circlecolor,starcolor) {
+	SetCommonData("BossExploding", true);
+	let angle = randEff(0,360);
+	ObjEnemy_SetLife(objEnemy, 1);
+	ObjEnemy_SetDamageRate(objEnemy,0,0);
+	PlaySoundEffect("explode",85);
+	DefaultCircleA1(objEnemy,3.0,circlecolor,0,0,0);
+	ScreenShake(30,30);
+	ObjMove_SetSpeed(objEnemy,0.3);
+	ObjMove_SetAngle(objEnemy,195);
+	loop(90/4) {
+		ExplodeObjectBinary01(ObjRender_GetX(objEnemy), ObjRender_GetY(objEnemy), randEff(1.5,4.0), randEff(0,360), starcolor);
+		ExplodeObjectBinary02(ObjRender_GetX(objEnemy), ObjRender_GetY(objEnemy), randEff(1.5,4.0), randEff(0,360), starcolor);
+		loop(4) { yield; }
+	}
+	PlaySoundEffect("explode",85);
+	DefaultCircleA1(objEnemy,3.0,circlecolor,0,0,0);
+	ScreenShake(90,50);
+	loop(40) {
+		ExplodeObjectBinary01(ObjRender_GetX(objEnemy), ObjRender_GetY(objEnemy), randEff(2,6), angle, starcolor);
+		angle+=360/80;
+		ExplodeObjectBinary02(ObjRender_GetX(objEnemy), ObjRender_GetY(objEnemy), randEff(2,6), angle, starcolor);
+		angle+=360/80;
+	}
+	SetCommonData("BossExploding", false);
+	ObjEnemy_SetLife(objEnemy, 0);
+	Obj_Delete(objEnemy);
+	DeleteShotAll_EventVer(TYPE_ALL, TYPE_ITEM);
+}
 task ExplosionB3(objEnemy,type,circlecolor,starcolor) {
 	SetCommonData("BossExploding", true);
 	let angle = randEff(0,360);
@@ -3853,6 +3885,33 @@ task ExplosionB3(objEnemy,type,circlecolor,starcolor) {
 		ExplodeObject02(type, ObjRender_GetX(objEnemy), ObjRender_GetY(objEnemy), randEff(3.5,6.5), angle, [255,255,255]);
 		angle+=360/50;
 		ExplodeObject02(type, ObjRender_GetX(objEnemy), ObjRender_GetY(objEnemy), randEff(3.5,6.5), angle, starcolor);
+		angle+=360/50;
+	}
+	SetCommonData("BossExploding", false);
+	ObjEnemy_SetLife(objEnemy, 0);
+	Obj_Delete(objEnemy);
+	DeleteShotAll_EventVer(TYPE_ALL, TYPE_ITEM);
+}
+task ExplosionB3_Binary(objEnemy,circlecolor,starcolor) {
+	SetCommonData("BossExploding", true);
+	let angle = randEff(0,360);
+	ObjEnemy_SetLife(objEnemy, 1);
+	ObjEnemy_SetDamageRate(objEnemy,0,0);
+	PlaySoundEffect("explode",85);
+	ScreenShake(30,30);
+	DefaultCircleA1(objEnemy,3.0,circlecolor,0,0,0);
+	MSDEffectExplode(objEnemy, ObjRender_GetX(objEnemy), ObjRender_GetY(objEnemy), starcolor);
+	loop(150/3) {
+		ExplodeObjectBinary01(ObjRender_GetX(objEnemy), ObjRender_GetY(objEnemy), randEff(3.5,6.5), randEff(0,360), starcolor);
+		ExplodeObjectBinary02(ObjRender_GetX(objEnemy), ObjRender_GetY(objEnemy), randEff(3.5,6.5), randEff(0,360), starcolor);
+		loop(3) { yield; }
+	}
+	PlaySoundEffect("explode",85);
+	ScreenShake(90,50);
+	loop(25) {
+		ExplodeObjectBinary01(ObjRender_GetX(objEnemy), ObjRender_GetY(objEnemy), randEff(3.5,6.5), angle, starcolor);
+		angle+=360/50;
+		ExplodeObjectBinary02(ObjRender_GetX(objEnemy), ObjRender_GetY(objEnemy), randEff(3.5,6.5), angle, starcolor);
 		angle+=360/50;
 	}
 	SetCommonData("BossExploding", false);
@@ -4457,6 +4516,76 @@ task ExplodeObject02(type,x,y,speed,dir,color) {
 	Obj_SetRenderPriorityI(objStar,41);
 	ObjPrim_SetTexture(objStar, MD ~ "System/IMG/Effect/" ~ type ~ ".png");
 	if(type=="Glass") { ObjPrim_SetTexture(objStar, MD ~ "System/IMG/Effect/Shatter.png"); }
+	ObjSprite2D_SetSourceRect(objStar, 0, 0, 256, 256);
+	ObjSprite2D_SetDestCenter(objStar);
+
+	while(!Obj_IsDeleted(objStar)) {
+		ObjRender_SetPosition(objStar, x, y, 0);
+		ObjRender_SetScaleXYZ(objStar, scale, scale, scale);
+		ObjRender_SetAngleXYZ(objStar, spinA, spinB, spinA);
+		ObjRender_SetAlpha(objStar, alpha);
+		ObjRender_SetColor(objStar, RED*(alpha/255), GREEN*(alpha/255), BLUE*(alpha/255));
+		if(scale<0.38 && speed>0) { scale+=0.03; }
+		if(speed>1.0) { speed-=0.038; }
+		if(speed<=1.0 && alpha>0) { alpha-=15; scale-=0.035; }
+		if(alpha<=0) { Obj_Delete(objStar); }
+		spinA+=randEff(1,2);
+		spinB+=randEff(-1,-2);
+		x+=speed*cos(dir);
+		y+=speed*sin(dir);
+		yield;
+	}
+}
+task ExplodeObjectBinary01(x,y,speed,dir,color) {
+	if(!GetAreaCommonData("Options","Particle",true)) { return; }
+	let objStar = ObjPrim_Create(OBJ_SPRITE_2D);
+
+	let alpha = 200;
+	let spinA = randEff(0,180);
+	let spinB = randEff(0,180);
+	let RED = color[0];
+	let GREEN = color[1];
+	let BLUE = color[2];
+	let scale = 0;
+
+	ObjRender_SetBlendType(objStar, BLEND_ADD_RGB);
+	Obj_SetRenderPriorityI(objStar,41);
+	ObjPrim_SetTexture(objStar, GetModuleDirectory ~ "system/img/effect/Zero.png");
+	ObjSprite2D_SetSourceRect(objStar, 0, 0, 256, 256);
+	ObjSprite2D_SetDestCenter(objStar);
+
+	while(!Obj_IsDeleted(objStar)) {
+		ObjRender_SetPosition(objStar, x, y, 0);
+		ObjRender_SetScaleXYZ(objStar, scale, scale, scale);
+		ObjRender_SetAngleXYZ(objStar, spinA, spinB, spinA);
+		ObjRender_SetAlpha(objStar, alpha);
+		ObjRender_SetColor(objStar, RED*(alpha/255), GREEN*(alpha/255), BLUE*(alpha/255));
+		if(scale<0.38 && speed>0) { scale+=0.03; }
+		if(speed>1.0) { speed-=0.038; }
+		if(speed<=1.0 && alpha>0) { alpha-=15; scale-=0.035; }
+		if(alpha<=0) { Obj_Delete(objStar); }
+		spinA+=randEff(1,2);
+		spinB+=randEff(-1,-2);
+		x+=speed*cos(dir);
+		y+=speed*sin(dir);
+		yield;
+	}
+}
+task ExplodeObjectBinary02(x,y,speed,dir,color) {
+	if(!GetAreaCommonData("Options","Particle",true)) { return; }
+	let objStar = ObjPrim_Create(OBJ_SPRITE_2D);
+
+	let alpha = 200;
+	let spinA = randEff(0,180);
+	let spinB = randEff(0,180);
+	let RED = color[0];
+	let GREEN = color[1];
+	let BLUE = color[2];
+	let scale = 0;
+
+	ObjRender_SetBlendType(objStar, BLEND_ADD_RGB);
+	Obj_SetRenderPriorityI(objStar,41);
+	ObjPrim_SetTexture(objStar, GetModuleDirectory ~ "system/img/effect/One.png");
 	ObjSprite2D_SetSourceRect(objStar, 0, 0, 256, 256);
 	ObjSprite2D_SetDestCenter(objStar);
 

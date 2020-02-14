@@ -32,7 +32,7 @@ let GetY = 0;
 
 @Event {
 	alternative(GetEventType)
-	case(EV_REQUEST_LIFE){ SetScriptResult(5000); }
+	case(EV_REQUEST_LIFE){ SetScriptResult(5500); }
 	case(EV_REQUEST_TIMER){	SetScriptResult(40); }
 }
 @Initialize {
@@ -42,13 +42,13 @@ let GetY = 0;
 
 	Obj_SetValue(objEnemyMain,"Boss Name","Porygon-Z");
 	Obj_SetValue(objEnemyMain,"Aura Color",[1,10,2]);
-	Obj_SetValue(objEnemyMain,"Circle Color","Azure");
+	Obj_SetValue(objEnemyMain,"Circle Color","Pink");
 	PlayEnemyHitSound(objEnemyMain, 1);
-	/* Obj_SetValue(objEnemyMain,"Animation","E1"); */
+	Obj_SetValue(objEnemyMain,"Animation","PORYGON");
 
-	SetInvincibilityDamageRate(objEnemyMain, 120, 250, 200);
+	SetInvincibilityDamageRate(objEnemyMain, 120, 250, 180);
 
-	ObjMove_SetPosition(objEnemyMain, GetCenterX, GetCenterY-130);
+	ObjMove_SetPosition(objEnemyMain, GetCenterX, GetCenterY-110);
 
 	mainTask;
 	End;
@@ -68,7 +68,7 @@ let GetY = 0;
 }
 
 task mainTask {
-	wait(120);
+	wait(180);
 	Fire1;
 	Fire2;
 }
@@ -76,6 +76,7 @@ task Fire1 {
 	let dir = rand(0,360);
 	loop {
 		loop(8) {
+			PlaySoundEffect("shot",80);
 			DiamondShot01(7,2,1,4.5,dir);
 			dir+=360/8;
 		}
@@ -87,6 +88,7 @@ task Fire1 {
 task Fire2 {
 	let dir = rand(0,360);
 	loop {
+		PlaySoundEffect("wave",80);
 		let obj = CreateShotRing01(25,GetX,GetY,3.0,dir,DIAMOND_LARGE_MAGENTA,15);
 		ascent(i in 0..length(obj)) {
 			ObjMove_SetAngularVelocity(obj[i],-0.7);
@@ -117,6 +119,8 @@ task End {
 	while(ObjEnemy_GetInfo(objEnemyMain, INFO_LIFE) > 0) { yield; }
 	DeleteShotWave(1,GetX,GetY,30);
 	if(GetPlayerInvincibilityFrame<=15) { SetPlayerInvincibilityFrame(15); }
+	PlaySoundEffect("bonus",100);
+	CreateItems01(1,7,GetX,GetY,0);
 	PlaySoundEffect("shot",100);
 	Obj_Delete(objEnemyMain);
 	CloseScript(GetOwnScriptID);

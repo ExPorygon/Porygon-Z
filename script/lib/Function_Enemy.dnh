@@ -62,6 +62,87 @@ function TeleportBoss(objEnemyMain,x,y,frames) {
 	}
 }
 
+function TeleportBossRandom(objEnemyMain,xdist,ydist,left,right,top,bottom,frames) {
+	let scaleX = 1;
+	let scaleY = 1;
+	let maxscaleX = 0.8;
+	let maxscaleY = 1.5;
+	let alpha = 255;
+	let alpha2 = 0;
+	let anim_frames = 13;
+
+	let destangle = rand(0,360);
+	let destx = ObjMove_GetX(objEnemyMain)+xdist*RandNumber;
+	let desty = ObjMove_GetY(objEnemyMain)+ydist*RandNumber;
+
+	loop(200) {
+		if(destx<left || destx>right || desty<top || desty>bottom) {
+			destx = ObjMove_GetX(objEnemyMain)+xdist*RandNumber;
+			desty = ObjMove_GetY(objEnemyMain)+ydist*RandNumber;
+		}
+		else {
+			break;
+		}
+	}
+	function RandNumber {
+		let num = 0;
+		while(num==0) {
+			num = round(rand(-1,1));
+		}
+		return num;
+	}
+
+	PlaySoundEffect("teleportout",90);
+	let objOverlay = Overlay;
+	ascent(i in 0..anim_frames) {
+		scaleX = 0.2+maxscaleX*sin(90*(anim_frames-i)/anim_frames);
+		scaleY = 1+maxscaleY*sin(90*i/anim_frames);
+		if(i>(anim_frames-5)) { alpha-=255/5; }
+		alpha2+=255/(anim_frames-3);
+		SetBossAnimationAlpha(alpha);
+		ObjRender_SetAlpha(objOverlay,alpha2*(alpha/255));
+		ObjRender_SetPosition(objOverlay,GetX,GetY,0);
+		ObjRender_SetScaleXYZ(objEnemyMain,scaleX,scaleY,1);
+		ObjRender_SetScaleXYZ(objOverlay,scaleX,scaleY,1);
+		yield;
+	}
+	SetBossAnimationAlpha(0);
+	//Obj_Delete(objOverlay);
+	ObjRender_SetAlpha(objOverlay,0);
+	wait(6);
+	ObjMove_SetPosition(objEnemyMain,-500,-500);
+	wait(frames);
+	PlaySoundEffect("teleportin",90);
+	ObjMove_SetPosition(objEnemyMain,destx,desty);
+	ascent(i in 0..anim_frames) {
+		scaleX = 0.2+maxscaleX*sin(90*i/anim_frames);
+		scaleY = 1+maxscaleY*sin(90*(anim_frames-i)/anim_frames);
+		if(i<=5) { alpha+=255/5; }
+		alpha2-=255/(anim_frames-3);
+		SetBossAnimationAlpha(alpha);
+		ObjRender_SetAlpha(objOverlay,alpha2*(alpha/255));
+		ObjRender_SetPosition(objOverlay,GetX,GetY,0);
+		ObjRender_SetScaleXYZ(objEnemyMain,scaleX,scaleY,1);
+		ObjRender_SetScaleXYZ(objOverlay,scaleX,scaleY,1);
+		yield;
+	}
+	ObjRender_SetScaleXYZ(objEnemyMain,1,1,1);
+	Obj_Delete(objOverlay);
+
+	function Overlay {
+		let objImage = ObjPrim_Create(OBJ_SPRITE_2D);
+
+		ObjRender_SetBlendType(objImage,BLEND_ALPHA);
+		Obj_SetRenderPriorityI(objImage,41);
+		ObjRender_SetPosition(objImage,GetX,GetY,0);
+
+		AnimatePorygon_White(objImage);
+		//ObjPrim_SetTexture(objImage, MD ~ "IMG/Enemy/Stage 6/LilyBoss_White.png");
+
+		return objImage;
+	}
+}
+
 function GetDiscord {
 	return (GetAreaCommonData("PlayState","Infinite Discord",false) || GetCommonData("Discord",false) || GetCommonData("Simple Discord",false))
 }

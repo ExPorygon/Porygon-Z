@@ -1,0 +1,169 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Noncard04"]
+#Text[""]
+#Background["./Background.dnh"]
+#System["system/System.dnh"]
+#Player["script/player/Thief Team/Thief Team.dnh"]
+
+#include"script/lib/Function_Misc.dnh"
+#include"script/lib/Function_Audio.dnh"
+#include"script/lib/Function_Rand.dnh"
+#include"script/lib/Function_Effect.dnh"
+#include"script/lib/Function_Enemy.dnh"
+#include"script/lib/Function_Shot.dnh"
+#include"script/lib/BossAnimation.dnh"
+#include"shot/DarkShot_Const.dnh"
+
+let CSD = GetCurrentScriptDirectory;
+let MD = GetModuleDirectory;
+
+let objEnemyMain;
+let objScene;
+let GetCenterX = GetStgFrameWidth/2;
+let GetCenterY = GetStgFrameHeight/2;
+let GetLife = 0;
+let GetTimer = 0;
+let GetX = 0;
+let GetY = 0;
+
+@Loading {
+}
+
+@Event {
+	alternative(GetEventType)
+	case(EV_REQUEST_LIFE){ SetScriptResult(6000); }
+	case(EV_REQUEST_TIMER){	SetScriptResult(40); }
+}
+@Initialize {
+	objEnemyMain = ObjEnemy_Create(OBJ_ENEMY_BOSS);
+	objScene = GetEnemyBossSceneObjectID;
+	ObjEnemy_Regist(objEnemyMain);
+
+	Obj_SetValue(objEnemyMain,"Boss Name","Porygon-Z");
+	Obj_SetValue(objEnemyMain,"Aura Color",[1,10,2]);
+	Obj_SetValue(objEnemyMain,"Circle Color","Pink");
+	PlayEnemyHitSound(objEnemyMain, 1);
+	Obj_SetValue(objEnemyMain,"Animation","PORYGON");
+
+	SetInvincibilityDamageRate(objEnemyMain, 120, 250, 150);
+
+	ObjMove_SetDestAtWeight(objEnemyMain, GetCenterX, GetCenterY-130, 10, 5);
+
+	mainTask;
+	End;
+
+}
+
+@MainLoop {
+	GetX = ObjMove_GetX(objEnemyMain);
+	GetY = ObjMove_GetY(objEnemyMain);
+	GetLife = ObjEnemy_GetInfo(objEnemyMain,INFO_LIFE);
+	GetTimer = ObjEnemyBossScene_GetInfo(objScene,INFO_TIMER);
+
+	ObjEnemy_SetIntersectionCircleToShot(objEnemyMain, GetX, GetY, 18);
+	ObjEnemy_SetIntersectionCircleToPlayer(objEnemyMain, GetX, GetY, 16);
+
+	yield;
+}
+
+task mainTask {
+	wait(180);
+	Move;
+	Fire1;
+	Fire2;
+}
+task Fire1 {
+	let dir = rand(0,360);
+	let off = rand(-25,25);
+	loop {
+		off = rand(-25,25);
+		PlaySoundEffect("shot2",90);
+		ascent(i in 0..14) {
+			DiamondShot02(6,0+i*65+off,0,3,2,6,1.8,90,DIAMOND_CYAN);
+		}
+		wait(120);
+		off = rand(-35,35);
+		PlaySoundEffect("shot2",90);
+		ascent(i in 0..10) {
+			DiamondShot02(6,0,0+i*110+off,3,2,6,1.8,0,DIAMOND_MAGENTA);
+			DiamondShot02(6,GetStgFrameWidth,0+i*110+off+55,3,2,6,1.8,180,DIAMOND_MAGENTA);
+		}
+		wait(120);
+	}
+}
+
+task Fire2 {
+	wait(180);
+	loop {
+		HomingRing;
+		wait(180);
+	}
+	task HomingRing {
+		PlaySoundEffect("shot",85);
+		let obj = CreateShotRing01(20,GetX,GetY,4.5,rand(0,360),DIAMOND_LARGE_RED,10);
+		ascent(i in 0..length(obj)) {
+			ManageShot(obj[i]);
+		}
+	}
+	task ManageShot(obj) {
+		wait(15);
+		ObjMove_SetAcceleration(obj, -ObjMove_GetSpeed(obj)/20);
+		wait(20);
+		PlaySoundEffect("wave",85);
+		ObjMove_SetAngle(obj, GetAngleToPlayer(obj));
+		ObjMove_SetAcceleration(obj, 6/45);
+		ObjMove_SetMaxSpeed(obj, 6);
+	}
+}
+
+task DiamondShot02(num,x,y,r,d,speed,speed2,dir,graphic) { //num and d must be a whole number
+	ascent(i in 0..num+1) {
+		let obj = CreateShot01(x+r*i*cos(dir+90),y+r*i*sin(dir+90),speed,dir,graphic,i*d);
+		Slow(i*d,obj);
+	}
+	ascent(i in 0..num+1) {
+		let obj = CreateShot01(x+r*i*cos(dir-90),y+r*i*sin(dir-90),speed,dir,graphic,i*d);
+		Slow(i*d,obj);
+	}
+	wait((num-1)*d);
+	descent(i in 0..num) {
+		let obj = CreateShot01(x+r*i*cos(dir+90),y+r*i*sin(dir+90),speed,dir,graphic,((num+1)*d)-i*d);
+		Slow(((num+1)*d)-i*d,obj);
+	}
+	descent(i in 0..num) {
+		let obj = CreateShot01(x+r*i*cos(dir-90),y+r*i*sin(dir-90),speed,dir,graphic,((num+1)*d)-i*d);
+		Slow(((num+1)*d)-i*d,obj);
+	}
+	task Slow(w,obj) {
+		wait(w);
+		wait(10);
+		loop {
+			ObjMove_SetAcceleration(obj,-(speed-speed2)/10);
+			ObjMove_SetMaxSpeed(obj,speed2);
+			wait(15);
+			ObjMove_SetAcceleration(obj,(speed-speed2)/10);
+			ObjMove_SetMaxSpeed(obj,speed);
+			wait(15);
+		}
+	}
+}
+
+task Move {
+	wait(180);
+	loop {
+		SetMovePositionRandom(objEnemyMain,40,20,10,4,GetCenterX-110,GetCenterX+110,GetCenterY-150,GetCenterY-70);
+		wait(120);
+	}
+}
+
+task End {
+	while(ObjEnemy_GetInfo(objEnemyMain, INFO_LIFE) > 0) { yield; }
+	DeleteShotWave(1,GetX,GetY,30);
+	if(GetPlayerInvincibilityFrame<=15) { SetPlayerInvincibilityFrame(15); }
+	PlaySoundEffect("bonus",100);
+	CreateItems01(1,7,GetX,GetY,0);
+	PlaySoundEffect("shot",100);
+	Obj_Delete(objEnemyMain);
+	CloseScript(GetOwnScriptID);
+}

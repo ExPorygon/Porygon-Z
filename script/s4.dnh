@@ -35,7 +35,7 @@ let gl_rot = 1;
 @Event {
 	alternative(GetEventType)
 	case(EV_REQUEST_LIFE){ SetScriptResult(2000); }
-	case(EV_REQUEST_TIMER){	SetScriptResult(40); }
+	case(EV_REQUEST_TIMER){	SetScriptResult(60); }
 }
 @Initialize {
 	objEnemyMain = ObjEnemy_Create(OBJ_ENEMY_BOSS);
@@ -45,7 +45,7 @@ let gl_rot = 1;
 	Obj_SetValue(objEnemyMain,"Boss Name","Porygon-Z");
 	Obj_SetValue(objEnemyMain,"Aura Color",[1,10,2]);
 	Obj_SetValue(objEnemyMain,"Circle Color","Pink");
-	Obj_SetValue(objEnemyMain,"Spell ID",01);
+	Obj_SetValue(objEnemyMain,"Spell ID",04);
 	Obj_SetValue(objScene,"Spell Base",1);
 	Obj_SetValue(objEnemyMain,"Cut Image",[MD ~ "img/enemy/PoryCut.png"]);
 	//SetAutoDeleteObject(true);
@@ -54,10 +54,8 @@ let gl_rot = 1;
 
 	SpellDeclare(objEnemyMain,120);
 
-	SetInvincibilityDamageRate(objEnemyMain, 240, 50, 38);
+	SetInvincibilityDamageRate(objEnemyMain, 240, 50, 20);
 	ObjMove_SetDestAtWeight(objEnemyMain, GetCenterX, GetCenterY, 10, 5);
-
-	SetCommonData("EndBossBG",true);
 
 	mainTask;
 	End;
@@ -71,31 +69,43 @@ let gl_rot = 1;
 	GetTimer = ObjEnemyBossScene_GetInfo(objScene,INFO_TIMER);
 
 	ObjEnemy_SetIntersectionCircleToShot(objEnemyMain, GetX, GetY, 18);
-	ObjEnemy_SetIntersectionCircleToPlayer(objEnemyMain, GetX, GetY, 16);
+	/* ObjEnemy_SetIntersectionCircleToPlayer(objEnemyMain, GetX, GetY, 16); */
 
 	yield;
 }
 
 task mainTask {
-	wait(90);
+	wait(120);
 	loop {
+		PlaySoundEffect("charge",100);
+		ConcentrationBinaryA2(objEnemyMain,90,7,160,[255,64,255]);
+		wait(120);
 		let dir = rand(0,360);
 		gl_rot = gl_rot*-1;
+		PlaySoundEffect("effect2",100);
 		loop(3) {
 			LaserTree(GetX,GetY,dir,160,120);
 			dir+=360/3;
 		}
-		wait(330);
+		wait(210);
+		PlaySoundEffect("charge",100);
+		ConcentrationBinaryA2(objEnemyMain,90,7,160,[255,64,255]);
+		wait(120);
+		PlaySoundEffect("effect2",100);
 		loop(4) {
 			LaserTree(GetX,GetY,dir,120,90);
 			dir+=360/4;
 		}
-		wait(330);
+		wait(210);
+		PlaySoundEffect("charge",100);
+		ConcentrationBinaryA2(objEnemyMain,90,7,160,[255,64,255]);
+		wait(120);
+		PlaySoundEffect("effect2",100);
 		loop(6) {
 			LaserTree(GetX,GetY,dir,120,60);
 			dir+=360/6;
 		}
-		wait(400);
+		wait(310);
 	}
 }
 
@@ -128,14 +138,17 @@ task LaserSegment(x,y,dir,maxlen,graphic) {
 		ObjLaser_SetLength(obj,len);
 		yield;
 	}
-	wait(45);
+	wait(15);
+	PlaySoundEffect("laser",100);
+	wait(30);
+	PlaySoundEffect("laser5",100);
 	let num = 3;
 	let seglen = maxlen/2;
 	ascent(i in 0..num) {
-		CreateShot02(x+seglen/num*i*cos(dir),y+seglen/num*i*sin(dir),0,dir+90*gl_rot,3/180,3,DIAMOND_LARGE_MAGENTA,40);
+		CreateShot02(x+seglen/num*i*cos(dir),y+seglen/num*i*sin(dir),0,dir+90*gl_rot,3/210,3,DIAMOND_LARGE_MAGENTA,40);
 	}
 	ascent(i in num..num*2) {
-		CreateShot02(x+seglen/num*i*cos(dir),y+seglen/num*i*sin(dir),0,dir-90*gl_rot,3/180,3,DIAMOND_LARGE_CYAN,40);
+		CreateShot02(x+seglen/num*i*cos(dir),y+seglen/num*i*sin(dir),0,dir-90*gl_rot,3/210,3,DIAMOND_LARGE_CYAN,40);
 	}
 	/* ascent(i in num*2..num*3) {
 		CreateShot02(x+seglen/num*i*cos(dir),y+seglen/num*i*sin(dir),0,dir+90,3/135,3,DIAMOND_LARGE_MAGENTA,40);
@@ -164,6 +177,6 @@ task End {
 	DeleteShotWave(1,GetX,GetY,30);
 	if(GetPlayerInvincibilityFrame<=15) { SetPlayerInvincibilityFrame(15); }
 	PlaySoundEffect("shot",100);
-	Obj_Delete(objEnemyMain);
+	ExplosionB3_Binary(objEnemyMain,"MAPLE",[255,96,200],[255,96,200]);
 	CloseScript(GetOwnScriptID);
 }

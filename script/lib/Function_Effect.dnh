@@ -92,6 +92,9 @@ function ExplosionB1(objEnemy,type,circlecolor,objectcolor) { //Standard boss en
 	if(type=="FEATHER") { NotifyEventAll(EV_EXPLODE,[[3.20],[objEnemy],objectcolor,circlecolor]); }
 	if(type=="GLASS") { NotifyEventAll(EV_EXPLODE,[[3.21],[objEnemy],objectcolor,circlecolor]); }
 }
+function ExplosionB2_Binary(objEnemy,type,circlecolor,objectcolor) {
+	NotifyEventAll(EV_EXPLODE,[[12],[objEnemy],objectcolor,circlecolor]);
+}
 function ExplosionB2(objEnemy,type,circlecolor,objectcolor) { //Standard "end of stage" boss enemy explosion effect
 	if(type=="STAR") { NotifyEventAll(EV_EXPLODE,[[4.01],[objEnemy],objectcolor,circlecolor]); }
 	if(type=="MAGIC") { NotifyEventAll(EV_EXPLODE,[[4.02],[objEnemy],objectcolor,circlecolor]); }
@@ -114,6 +117,9 @@ function ExplosionB2(objEnemy,type,circlecolor,objectcolor) { //Standard "end of
 	if(type=="SUN") { NotifyEventAll(EV_EXPLODE,[[4.19],[objEnemy],objectcolor,circlecolor]); }
 	if(type=="FEATHER") { NotifyEventAll(EV_EXPLODE,[[4.20],[objEnemy],objectcolor,circlecolor]); }
 	if(type=="GLASS") { NotifyEventAll(EV_EXPLODE,[[4.21],[objEnemy],objectcolor,circlecolor]); }
+}
+function ExplosionB3_Binary(objEnemy,type,circlecolor,objectcolor) {
+	NotifyEventAll(EV_EXPLODE,[[13],[objEnemy],objectcolor,circlecolor]);
 }
 function ExplosionB3(objEnemy,type,circlecolor,objectcolor) { //Boss enemy explosion effect modelled from Magical Singular Day
 	if(type=="STAR") { NotifyEventAll(EV_EXPLODE,[[5.01],[objEnemy],objectcolor,circlecolor]); }

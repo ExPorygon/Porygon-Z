@@ -1,0 +1,50 @@
+#include"Script/LIB/BossAnimation.dnh"
+#include"Script/LIB/Function_Misc.dnh"
+#include"Script/LIB/Function_Effect.dnh"
+#include"Script/LIB/Function_Audio.dnh"
+
+let CSD = GetCurrentScriptDirectory;
+let MD = GetModuleDirectory;
+
+let objEnemyMain;
+let GetCenterX = GetStgFrameWidth/2;
+let GetCenterY = GetStgFrameHeight/2;
+
+@Event {
+	alternative(GetEventType)
+	case(EV_REQUEST_LIFE){ SetScriptResult(1); }
+}
+@Initialize {
+	objEnemyMain = ObjEnemy_Create(OBJ_ENEMY_BOSS);
+	ObjEnemy_Regist(objEnemyMain);
+	Obj_SetValue(GetEnemyBossSceneObjectID,"Discord Start",true);
+	Obj_SetValue(objEnemyMain,"Animation","PORYGON");
+	Obj_SetValue(objEnemyMain,"Wait",true);
+	SetBossAnimationVisible(objEnemyMain,false);
+
+	ObjMove_SetPosition(objEnemyMain, GetCenterX, GetCenterY-110);
+
+	//SetCommonData("OnEvent",true);
+
+	End;
+
+}
+
+@MainLoop {
+	yield;
+}
+
+task End {
+	wait(700);
+	PlaySoundEffect("charge",100);
+	ConcentrationBinaryA2(objEnemyMain,90,7,160,[255,64,255]);
+	wait(135);
+	PlaySoundEffect("explode3",100);
+	ExplosionPPC(objEnemyMain,[255,64,255]);
+
+	SetCommonData("OnEvent",false);
+	ObjEnemy_SetLife(objEnemyMain,0);
+	Obj_SetValue(GetEnemyBossSceneObjectID,"Discord Start",false);
+	Obj_Delete(objEnemyMain);
+	CloseScript(GetOwnScriptID);
+}

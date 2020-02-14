@@ -42,13 +42,13 @@ let GetY = 0;
 
 	Obj_SetValue(objEnemyMain,"Boss Name","Porygon-Z");
 	Obj_SetValue(objEnemyMain,"Aura Color",[1,10,2]);
-	Obj_SetValue(objEnemyMain,"Circle Color","Azure");
+	Obj_SetValue(objEnemyMain,"Circle Color","Pink");
 	PlayEnemyHitSound(objEnemyMain, 1);
-	/* Obj_SetValue(objEnemyMain,"Animation","E1"); */
+	Obj_SetValue(objEnemyMain,"Animation","PORYGON");
 
-	SetInvincibilityDamageRate(objEnemyMain, 120, 250, 200);
+	SetInvincibilityDamageRate(objEnemyMain, 120, 250, 160);
 
-	ObjMove_SetPosition(objEnemyMain, GetCenterX, GetCenterY-130);
+	ObjMove_SetDestAtWeight(objEnemyMain, GetCenterX, GetCenterY-110, 10, 5);
 
 	mainTask;
 	End;
@@ -68,7 +68,7 @@ let GetY = 0;
 }
 
 task mainTask {
-	wait(20);
+	wait(180);
 	Move;
 	Fire1;
 	Fire2;
@@ -78,6 +78,7 @@ task Fire1 {
 	let off = rand(-25,25);
 	loop {
 		off = rand(-25,25);
+		PlaySoundEffect("shot2",90);
 		ascent(i in 0..14) {
 			DiamondShot02(6,0+i*70+off,0,3,2,6,1.8,90);
 		}
@@ -91,6 +92,7 @@ task Fire2 {
 	loop {
 		off = rand(-25,25);
 		ascent(i in 0..14) {
+			PlaySoundEffect("wave",75);
 			CreateShot02(0,0+i*50+off,2.0,0,1.5/30,3.5,DIAMOND_LARGE_MAGENTA,10);
 			wait(4);
 		}
@@ -145,6 +147,8 @@ task End {
 	while(ObjEnemy_GetInfo(objEnemyMain, INFO_LIFE) > 0) { yield; }
 	DeleteShotWave(1,GetX,GetY,30);
 	if(GetPlayerInvincibilityFrame<=15) { SetPlayerInvincibilityFrame(15); }
+	PlaySoundEffect("bonus",100);
+	CreateItems01(1,7,GetX,GetY,0);
 	PlaySoundEffect("shot",100);
 	Obj_Delete(objEnemyMain);
 	CloseScript(GetOwnScriptID);
